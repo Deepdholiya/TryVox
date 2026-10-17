@@ -24,12 +24,13 @@
   --green:#00B900; --green-soft:rgba(0,185,0,.12);
   --hdr-bg:rgba(255,255,255,.78);
   --dot:rgba(15,13,20,.14); --iso-ink:15,13,20; --iso-fill:#FFFFFF;
-  --logo-filter:none;
+  --logo-filter:none; --ic-hi:rgba(255,255,255,.7);
+  --pad:#D9D6DE; --pad-ink:#3C3846; --pad-line:rgba(40,36,48,.18); --glass-edge:rgba(255,255,255,.08); --ok:#59E07A;
   --glass:linear-gradient(162deg,#17151C 4%,#040306 96%); --glass-ink:#ECE8F4; --glass-ink-2:rgba(236,232,244,.58); --glass-ink-3:rgba(236,232,244,.34);
   --key:linear-gradient(155deg,#B583FF 12%,#8B4CF6 88%); --key-edge:rgba(230,210,255,.7);
   --key-cast:6px 9px 16px rgba(60,20,120,.28),3px 5px 7px rgba(60,20,120,.3),inset 1px 1px 0 rgba(255,255,255,.35);
   --key-cast-down:1px 2px 3px rgba(60,20,120,.4),inset 1px 1px 0 rgba(255,255,255,.2);
-  --how:linear-gradient(180deg,#5B3FB0 0%,#7444CF 38%,#6A2E92 72%,#2C2150 100%);
+  --how:linear-gradient(180deg,#8E62F7 0%,#7D4FEC 32%,#7444CF 62%,#6538BF 100%);
   --f-head:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-ital:"Instrument Serif",Georgia,"Times New Roman",serif;
   --f-sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -45,7 +46,7 @@
   --green:#3EDB5A; --green-soft:rgba(62,219,90,.14);
   --hdr-bg:rgba(10,9,13,.78);
   --dot:rgba(255,255,255,.12); --iso-ink:243,240,249; --iso-fill:#0A090D;
-  --logo-filter:invert(1);
+  --logo-filter:invert(1); --ic-hi:rgba(255,255,255,.06);
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0A090D; --bg-2:#131118; --panel:#121016;
@@ -55,7 +56,7 @@
   --green:#3EDB5A; --green-soft:rgba(62,219,90,.14);
   --hdr-bg:rgba(10,9,13,.78);
   --dot:rgba(255,255,255,.12); --iso-ink:243,240,249; --iso-fill:#0A090D;
-  --logo-filter:invert(1);
+  --logo-filter:invert(1); --ic-hi:rgba(255,255,255,.06);
   color-scheme:dark}
 
 *,*::before,*::after{box-sizing:border-box}
@@ -131,39 +132,66 @@ p{margin:0}
 .sheet .kbtn{margin-top:24px;width:100%;display:flex;font-size:12px;letter-spacing:.07em;border-bottom:1px solid var(--key-edge)}
 
 /* hero */
-.hero{padding-block:clamp(48px,7vw,88px) clamp(40px,6vw,72px)}
-.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(32px,5vw,72px);align-items:center}
-.hero h1{margin-top:22px}
-.hero .sub{margin-top:24px}
+.hero{padding-block:clamp(48px,7vw,88px) clamp(40px,6vw,64px)}
+.hero-top{display:grid;grid-template-columns:repeat(6,1fr);align-items:start;margin-top:22px}
+.hero-top h1{grid-column:1/5}
+.hero-side{grid-column:5/7;padding-top:10px}
+.hero .cta{margin-top:26px}
+.hero h1 .ln{display:block}
+.hero h1 em{color:var(--accent)}
+.rig{margin-top:clamp(40px,6vw,72px);display:grid;grid-template-columns:1fr 1fr;border-radius:14px;overflow:hidden;box-shadow:0 50px 90px -40px rgba(40,20,90,.45),0 0 0 1px var(--line-2);min-height:440px}
+.glass{background:var(--glass);color:var(--glass-ink);padding:26px 26px 22px;display:flex;flex-direction:column;position:relative;min-width:0}
+.glass::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 60% at 20% 0%,rgba(255,255,255,.06),transparent 60%);pointer-events:none}
+.g-status{font-family:var(--f-dot);font-weight:800;letter-spacing:.04em;font-size:26px;color:var(--glass-ink-2);display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--glass-edge);padding-bottom:14px;gap:12px;min-height:56px}
+.g-status small{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--glass-ink-3);text-transform:uppercase;white-space:nowrap}
+.g-status small b{color:var(--glass-ink);font-weight:400}
+.g-lcd{font-family:var(--f-dot);font-weight:800;font-size:clamp(22px,2.6vw,30px);letter-spacing:.03em;color:#CDB0FF;text-shadow:0 0 14px rgba(180,140,255,.45);margin-top:18px}
+.g-feed{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;margin:18px 0;min-height:150px;overflow:hidden}
+.msg{max-width:84%;font-size:14px;line-height:1.45;animation:pop .45s var(--ease) both}
+.msg.c{align-self:flex-end;background:#F1EEF6;color:#17131F;padding:10px 14px;border-radius:10px}
+.msg.a{align-self:flex-start;color:var(--glass-ink)}
+.msg.ev{font-family:var(--f-mono);font-size:12px;color:var(--glass-ink-2);border-left:1px solid var(--glass-ink-3);padding-left:10px}
+.msg.ev.ok{color:var(--ok);border-left-color:var(--ok)}
+.g-hint{font-size:15px;color:var(--glass-ink-2);max-width:36ch}
+.g-form{display:flex;gap:6px;margin-top:16px;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:5px;background:rgba(255,255,255,.03)}
+.g-form input{flex:1;min-width:0;background:transparent;border:0;outline:0;padding:0 10px;font-size:14px;color:var(--glass-ink)}
+.g-form input::placeholder{color:var(--glass-ink-3)}
+.g-form button{height:36px;padding:0 14px;border-radius:7px;background:#F1EEF6;color:#17131F;font-size:13.5px;font-weight:500}
+.g-fine{font-size:11.5px;color:var(--glass-ink-3);margin-top:10px}
+.g-done{margin-top:4px;font-size:14px;color:var(--glass-ink)}
+.g-done a{color:#CDB0FF;text-decoration:underline;text-underline-offset:3px}
+
+.pad{position:relative;background:var(--pad);color:var(--pad-ink);display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;min-width:0}
+.pad::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.55;pointer-events:none;mix-blend-mode:multiply}
+.pad::after{content:"";position:absolute;inset:0;background:linear-gradient(140deg,rgba(255,255,255,.5),transparent 45%,rgba(0,0,0,.06));pointer-events:none}
+.qd{position:relative;border-color:var(--pad-line);border-style:solid;border-width:0;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;z-index:1}
+.q1{border-right-width:1px;border-bottom-width:1px}
+.q2{border-bottom-width:1px}
+.q3{border-right-width:1px}
+.qd .led{display:inline-flex;align-items:center;gap:8px}
+.qd .led i{width:7px;height:7px;border-radius:50%;border:1px solid var(--pad-ink);opacity:.6;transition:all .3s}
+.qd .led.on i{background:#8B4CF6;border-color:#8B4CF6;opacity:1;box-shadow:0 0 8px 2px rgba(139,76,246,.55)}
+.mark{font-size:9.5px;opacity:.5}
+.grille{position:absolute;right:20px;top:18px;display:grid;grid-template-columns:repeat(7,4px);gap:7px 8px;z-index:1}
+.grille i{width:3px;height:3px;border-radius:50%;background:rgba(40,36,48,.5)}
+.dial{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:2;width:clamp(150px,15vw,210px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#EDEBF0,#C9C5CF 70%);box-shadow:0 18px 30px rgba(40,30,60,.28),inset 0 1px 0 rgba(255,255,255,.9),0 0 0 1px rgba(40,36,48,.12);display:grid;place-items:center;transition:transform .15s}
+.dial-face{width:84%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 32%,#FBFAFC,#E4E1E8 75%);box-shadow:0 6px 14px rgba(40,30,60,.22),inset 0 -3px 6px rgba(0,0,0,.06),inset 0 2px 2px #fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--pad-ink);transition:box-shadow .15s}
+.dial-face .dash{width:22px;height:3px;border-radius:2px;background:#8D8896;transition:background-color .3s,box-shadow .3s}
+.dial.live .dash{background:#8B4CF6;box-shadow:0 0 10px 2px rgba(139,76,246,.6)}
+.dial:hover .dial-face{box-shadow:0 8px 18px rgba(40,30,60,.26),inset 0 -3px 6px rgba(0,0,0,.06),inset 0 2px 2px #fff}
+.dial.down{transform:scale(.97)}
+.dial.down .dial-face{box-shadow:0 2px 4px rgba(40,30,60,.2),inset 0 2px 6px rgba(0,0,0,.08)}
+.dial::after{content:"";position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(139,76,246,.5);opacity:0;pointer-events:none}
+.dial.live::after{animation:ring 1.6s var(--ease) infinite}
+@keyframes ring{0%{opacity:.8;transform:scale(.9)}100%{opacity:0;transform:scale(1.35)}}
+
 .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:32px}
-.micro{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px;font-family:var(--f-mono);font-size:12px;color:var(--ink-3);letter-spacing:.03em}
+.micro{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-family:var(--f-mono);font-size:12px;color:var(--ink-3);letter-spacing:.03em}
 .micro span{display:inline-flex;align-items:center;gap:7px}
 .micro span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
-.board{position:relative;border:1px solid var(--line-2);border-radius:18px;background:var(--panel);overflow:hidden;box-shadow:0 40px 80px -40px rgba(40,20,90,.28)}
-.board::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:18px 18px;pointer-events:none}
-.board-top{position:relative;display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);font-family:var(--f-mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);background:var(--panel)}
-.board-top .live{display:inline-flex;align-items:center;gap:7px;color:var(--ink)}
-.board-top .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px var(--green-soft);animation:blink 1.6s infinite}
-@keyframes blink{50%{opacity:.35}}
-.board svg{display:block;width:100%;height:auto;position:relative}
-.sw-chip rect{fill:var(--panel);stroke:var(--line-2)}
-.sw-chip text{font-family:var(--f-mono);fill:var(--ink)}
-.sw-chip .s{fill:var(--ink-3);font-size:10px;letter-spacing:.06em}
-.sw-chip.on rect{stroke:var(--brand);stroke-width:1.6}
-.sw-line{fill:none;stroke:var(--line-2);stroke-width:1.2}
-.sw-hot{fill:none;stroke:var(--brand);stroke-width:2;stroke-linecap:round}
-.sw-dot{fill:var(--brand)}
-.sw-node .halo{fill:none;stroke:var(--brand);stroke-opacity:.5;transform-origin:280px 210px;animation:halo 2.4s var(--ease) infinite}
-@keyframes halo{0%{transform:scale(.85);opacity:.9}100%{transform:scale(1.5);opacity:0}}
-.sw-node .lbl{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;fill:var(--ink-3)}
-.sw-node .nm{font-family:var(--f-head);font-weight:600;font-size:14px;fill:var(--ink)}
-.sw-logo{filter:var(--logo-filter)}
-.board-foot{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:12px 18px;border-top:1px solid var(--line);font-family:var(--f-mono);font-size:12px;background:var(--panel)}
-.board-foot .ev{color:var(--accent)}
-.board-foot .tx{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.board-foot .ms{color:var(--ink);font-variant-numeric:tabular-nums}
-.board-note{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);margin-top:10px;text-align:right}
+.hero-actions{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-top:8px}
 
+@keyframes blink{50%{opacity:.35}}
 /* partner strip */
 .logos{padding-block:24px 56px}
 .logos .row{display:flex;align-items:center;gap:28px;border-top:1px solid var(--line);padding-top:28px}
@@ -231,12 +259,22 @@ p{margin:0}
 .iso .ln{stroke:rgb(var(--iso-ink));stroke-opacity:.5;fill:none}
 .iso .hatch{stroke:rgb(var(--iso-ink));stroke-opacity:.5}
 .iso .tx{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;fill:rgb(var(--iso-ink));fill-opacity:.6}
-.iso .ly.dim .ink,.iso .ly.dim .soft,.iso .ly.dim .ln,.iso .ly.dim .hatch,.iso .ly.dim .tx{opacity:.3}
-.iso .ly.dim .face{stroke-opacity:.3}
+.iso .ly.dim .ink,.iso .ly.dim .soft,.iso .ly.dim .ln,.iso .ly.dim .hatch,.iso .ly.dim .tx{opacity:.45}
+.iso .ly.dim .face{stroke-opacity:.35}
+.iso .ly.on .face{fill:color-mix(in srgb,var(--brand) 6%,var(--iso-fill))}
+.iso .bob{animation:bob 6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-5px)}}
+.iso .gd{stroke:rgb(var(--iso-ink));stroke-opacity:.22;stroke-dasharray:3 5}
+.iso .num{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;fill:rgb(var(--iso-ink));fill-opacity:.45;transition:fill .3s}
+.iso .lead{stroke:rgb(var(--iso-ink));stroke-opacity:.3}
+.iso .ly.on .num{fill:var(--brand);fill-opacity:1}
+.iso .ly.on .lead{stroke:var(--brand);stroke-opacity:.8}
+.iso .pk{fill:var(--brand)}
+.iso .pk.g{fill:var(--green)}
 .iso .ly.on .face{stroke:var(--brand);stroke-opacity:1;stroke-width:1.6}
 .iso .ly.on .tx{fill:var(--brand);fill-opacity:1}
 .iso .ly.on .ink{fill:var(--brand);fill-opacity:.9}
-.lcap{position:absolute;right:clamp(16px,3vw,32px);bottom:clamp(20px,4vh,40px);max-width:300px;background:var(--panel);border:1px solid var(--line-2);border-radius:12px;padding:14px 16px;box-shadow:0 20px 40px -24px rgba(20,10,40,.3)}
+.lcap{position:absolute;right:clamp(16px,3vw,32px);top:clamp(16px,3vh,28px);max-width:300px;background:var(--panel);border:1px solid var(--line-2);border-radius:12px;padding:14px 16px;box-shadow:0 20px 40px -24px rgba(20,10,40,.3)}
 .lcap b{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);font-weight:400}
 .lcap p{font-size:14px;color:var(--ink-2);margin-top:6px;line-height:1.45}
 
@@ -250,12 +288,21 @@ p{margin:0}
 .htrack{height:420vh;position:relative;margin-top:24px}
 .hstage{position:sticky;top:calc(var(--hdr) + env(safe-area-inset-top,0px));height:calc(100vh - var(--hdr));height:calc(100svh - var(--hdr));overflow:hidden}
 .hstage canvas{position:absolute;inset:0;width:100%;height:100%}
-.hstage .vig{position:absolute;left:50%;top:32%;width:min(1100px,120vw);height:56%;translate:-50% -50%;background:radial-gradient(closest-side,rgba(20,8,48,.45),transparent);pointer-events:none}
+.hstage .vig{position:absolute;left:50%;top:32%;width:min(1100px,120vw);height:56%;translate:-50% -50%;background:radial-gradient(closest-side,rgba(40,12,100,.28),transparent);pointer-events:none}
 .htitle{position:absolute;left:0;right:0;top:12%;text-align:center;pointer-events:none;padding-inline:20px}
 .htitle h3{font-family:var(--f-head);font-size:clamp(48px,7vw,96px);font-weight:500;letter-spacing:-.05em;color:#fff;line-height:1;transition:opacity .45s,transform .6s var(--ease)}
 .htitle h3 em{font-family:var(--f-ital);font-weight:400;letter-spacing:-.01em}
 .htitle p{margin:16px auto 0;font-size:clamp(16px,1.5vw,19px);color:rgba(245,241,255,.8);max-width:46ch;transition:opacity .45s .05s}
 .htitle.swap h3{opacity:0;transform:translateY(10px)}.htitle.swap p{opacity:0}
+.seg{position:absolute;left:50%;bottom:28px;translate:-50% 0;display:flex;align-items:center;gap:6px;padding:5px;border-radius:14px;background:#121016;box-shadow:0 18px 36px rgba(30,10,70,.4),0 0 0 1px rgba(255,255,255,.1);z-index:2;max-width:calc(100% - 32px)}
+.seg .cnt{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:rgba(236,232,244,.55);padding:0 10px 0 8px;white-space:nowrap}
+.seg .cnt b{color:#7CFF8A;font-weight:400}
+.seg .grp{display:flex;background:#1C1A21;border-radius:10px;padding:3px;box-shadow:inset 0 1px 3px rgba(0,0,0,.5)}
+.seg button{position:relative;height:32px;padding:0 15px;border-radius:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(236,232,244,.5);transition:color .2s,background-color .2s}
+.seg button:hover{color:#ECE8F4}
+.seg button.on{background:#3A3741;color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 2px 4px rgba(0,0,0,.4)}
+.seg button .pf{position:absolute;left:10px;right:10px;bottom:3px;height:2px;border-radius:2px;background:#7CFF8A;transform-origin:left;transform:scaleX(0)}
+.seg a{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:10px;background:var(--key);color:#fff;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;border:1px solid var(--key-edge)}
 .rail{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid rgba(255,255,255,.18);background:rgba(18,8,40,.28);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .rail button{position:relative;text-align:left;padding:18px clamp(14px,2vw,28px) 20px;border-right:1px solid rgba(255,255,255,.14);color:rgba(245,241,255,.55);transition:color .3s,background-color .3s}
 .rail button:last-child{border-right:0}
@@ -269,7 +316,7 @@ p{margin:0}
 
 /* story */
 .story{padding-block:clamp(80px,11vw,140px) clamp(48px,6vw,80px);display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(32px,5vw,64px);align-items:center}
-.quote{font-size:clamp(17px,1.6vw,20px);color:var(--ink-3);margin-top:28px;line-height:1.55}
+.quote{font-size:clamp(17px,1.6vw,20px);color:var(--ink-2);margin-top:28px;line-height:1.55}
 .quote b{color:var(--ink);font-weight:500}
 .stats{display:flex;gap:22px;align-items:center;margin-top:28px;flex-wrap:wrap}
 .stats div{display:flex;flex-direction:column}
@@ -286,8 +333,16 @@ p{margin:0}
 @keyframes orb{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.9);opacity:0}}
 .orb .core{width:24%;aspect-ratio:1;border-radius:22px;background:var(--glass);display:grid;place-items:center;box-shadow:0 20px 40px rgba(20,10,40,.35);position:relative;z-index:1}
 .orb .core svg{width:46%;height:46%}
-.orbit{position:absolute;inset:0;animation:spin 60s linear infinite}
-.orbit .pt{position:absolute;translate:-50% -50%;width:max-content;animation:spin 60s linear infinite reverse}
+.orbit{position:absolute;inset:0}
+.spokes{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.spokes line{stroke:var(--line-2);stroke-width:.35;stroke-dasharray:1.2 1.6;animation:flow 2.4s linear infinite}
+.spokes circle{fill:var(--brand)}
+@keyframes flow{to{stroke-dashoffset:-5.6}}
+@keyframes float{50%{transform:translateY(-6px)}}
+.orbit .pt{position:absolute;translate:-50% -50%;width:max-content;animation:float 5s ease-in-out infinite}
+.orbit .pt:nth-child(2){animation-delay:-1s}.orbit .pt:nth-child(3){animation-delay:-2s}.orbit .pt:nth-child(4){animation-delay:-3s}.orbit .pt:nth-child(5){animation-delay:-4s}
+.orbit .chip{transition:border-color .25s,transform .25s}
+.orbit .chip:hover{border-color:var(--brand)}
 .orbit .chip{display:flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:12px;background:var(--panel);border:1px solid var(--line-2);box-shadow:0 12px 24px -16px rgba(20,10,40,.4);white-space:nowrap;font-weight:600;font-size:15px;letter-spacing:-.02em}
 .orbit .chip img{height:22px;width:auto;flex:none;max-width:none}
 .orbit .chip.code{font-family:var(--f-mono);font-weight:500;font-size:12.5px;letter-spacing:.02em}
@@ -310,9 +365,9 @@ table.cmp{width:100%;border-collapse:collapse;min-width:720px;font-size:14.5px}
 .cell:hover::before{opacity:1}
 .cell>*{position:relative}
 .cell .k{display:flex;justify-content:space-between;align-items:center}
-.cell .ic{width:44px;height:44px;border-radius:12px;border:1px solid var(--line-2);background:var(--panel);display:grid;place-items:center;color:var(--accent);transition:transform .5s var(--ease),border-color .3s}
-.cell:hover .ic{transform:rotate(-8deg) scale(1.06);border-color:var(--brand)}
-.cell .ic svg{width:21px;height:21px}
+.cell .ic{width:54px;height:54px;border-radius:15px;border:1px solid rgba(157,97,255,.28);background:linear-gradient(150deg,var(--accent-soft),transparent 75%),var(--panel);display:grid;place-items:center;color:var(--accent);box-shadow:inset 0 1px 0 var(--ic-hi),0 6px 14px -8px rgba(110,50,220,.35);transition:transform .35s var(--ease),box-shadow .35s,border-color .3s}
+.cell:hover .ic{transform:translateY(-3px);border-color:var(--brand);box-shadow:inset 0 1px 0 var(--ic-hi),0 14px 26px -10px rgba(110,50,220,.5)}
+.cell .ic svg{width:26px;height:26px}
 .cell .k span:last-child{font-family:var(--f-mono);font-size:11px;letter-spacing:.07em;color:var(--ink-3);text-transform:uppercase}
 .cell h3{font-size:22px;letter-spacing:-.03em;margin-top:34px}
 .cell p{font-size:15px;color:var(--ink-2);margin-top:10px}
@@ -377,12 +432,12 @@ details[open] p{animation:pop .4s var(--ease) both}
 .fcta .sub{color:rgba(243,240,249,.7);margin-top:16px}
 .fcta .cta .obtn{background:transparent;color:#F3F0F9;border-color:rgba(255,255,255,.22)}
 .fcta .cta .obtn:hover{border-color:#fff}
-.dial{border-left:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;justify-content:center;gap:14px}
-.dial .lcd{font-family:var(--f-dot);font-weight:800;font-size:clamp(24px,2.6vw,34px);color:#CDB0FF;text-shadow:0 0 14px rgba(180,140,255,.45);letter-spacing:.03em;white-space:nowrap}
-.dial .stt{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:rgba(243,240,249,.55);display:flex;align-items:center;gap:8px}
-.dial .stt::before{content:"";width:7px;height:7px;border-radius:50%;background:#59E07A;box-shadow:0 0 0 4px rgba(89,224,122,.15);animation:blink 1.6s infinite}
-.dial .bars{display:flex;align-items:center;gap:3px;height:34px}
-.dial .bars i{width:4px;border-radius:2px;background:rgba(205,176,255,.85);animation:wv 1.1s ease-in-out infinite}
+.fdial{border-left:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;justify-content:center;gap:14px}
+.fdial .lcd{font-family:var(--f-dot);font-weight:800;font-size:clamp(24px,2.6vw,34px);color:#CDB0FF;text-shadow:0 0 14px rgba(180,140,255,.45);letter-spacing:.03em;white-space:nowrap}
+.fdial .stt{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:rgba(243,240,249,.55);display:flex;align-items:center;gap:8px}
+.fdial .stt::before{content:"";width:7px;height:7px;border-radius:50%;background:#59E07A;box-shadow:0 0 0 4px rgba(89,224,122,.15);animation:blink 1.6s infinite}
+.fdial .bars{display:flex;align-items:center;gap:3px;height:34px}
+.fdial .bars i{width:4px;border-radius:2px;background:rgba(205,176,255,.85);animation:wv 1.1s ease-in-out infinite}
 @keyframes wv{0%,100%{height:20%}50%{height:100%}}
 footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
 .ft{display:grid;grid-template-columns:1.4fr repeat(4,minmax(0,1fr));gap:28px;margin-top:64px}
@@ -415,8 +470,11 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
   .hdr-in{grid-template-columns:1fr auto}
   .burger{display:grid}
   .hdr-r .kbtn{display:none}
-  .hero-grid,.ind-card,.story,.devgrid,.faq,.fcta{grid-template-columns:minmax(0,1fr)}
-  .dial{border-left:0;border-top:1px solid rgba(255,255,255,.1)}
+  .rig,.ind-card,.story,.devgrid,.faq,.fcta{grid-template-columns:minmax(0,1fr)}
+  .hero-top h1,.hero-side{grid-column:1/-1}
+  .hero-side{padding-top:20px}
+  .pad{min-height:340px}
+  .fdial{border-left:0;border-top:1px solid rgba(255,255,255,.1)}
   .acc{min-height:260px}
   .lstage{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
   .lleft{border-right:0;border-bottom:1px solid var(--line-2);padding:20px}
@@ -425,7 +483,7 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
   .layers{position:static;margin-top:16px;grid-template-columns:1fr 1fr;gap:8px 14px}
   .layers li{font-size:11.5px;gap:10px}
   .layers li .rd{width:14px;height:14px}
-  .lcap{left:16px;right:16px;max-width:none;bottom:16px}
+  .lcap{left:16px;right:16px;max-width:none;top:auto;bottom:16px}
   .orb{justify-self:center;max-width:380px}
   .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
   .ft{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -441,15 +499,13 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
   .readout div:nth-child(2){border-right:0}
   .readout div:nth-child(-n+2){border-bottom:1px solid var(--line)}
   .ft{grid-template-columns:1fr 1fr}
-  .rail button .d{display:none}
-  .rail button{padding:14px 10px 16px}
+  .seg a,.seg .cnt{display:none}
+  .seg button{padding:0 10px}
   .orb{max-width:290px;margin-inline:auto}
   .story{overflow-x:clip}
   .orbit .chip{height:34px;padding:0 9px;font-size:12px}
   .orbit .chip img{height:15px}
   .ind-copy{padding:22px}
-  .board-foot{grid-template-columns:1fr auto}
-  .board-foot .ev{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
@@ -501,34 +557,34 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
 <main id="top">
 <!-- HERO -->
 <section class="hero wrap">
-  <div class="hero-grid">
-    <div>
-      <p class="tag"><i></i>Telephony infrastructure for voice AI</p>
-      <h1 class="hd h1">Give your agent a <em>phone line.</em></h1>
-      <p class="sub">Phone numbers, SIP trunking and carrier-grade calling APIs that connect any AI voice agent to real phone networks. We don't build agents, so we never compete with yours.</p>
+  <p class="tag"><i></i>Telephony infrastructure for voice AI</p>
+  <div class="hero-top">
+    <h1 class="hd h1"><span class="ln">Give your agent</span><span class="ln">a <em>phone line.</em></span></h1>
+    <div class="hero-side"><p class="sub">Phone numbers, SIP trunking and carrier-grade calling APIs that connect any AI voice agent to real phone networks. We don't build agents, so we never compete with yours.</p>
       <div class="cta"><a class="kbtn" href="https://app.tryvox.io/">Start free</a><a class="obtn" href="https://tryvox.io/contact">Book a demo</a></div>
-      <div class="micro"><span>No lock-in</span><span>Pay as you go</span><span>Live in minutes</span></div>
-    </div>
-    <div>
-      <div class="board" aria-label="Calls routed through TryVox to AI agent platforms">
-        <div class="board-top"><span>Switchboard · inbound</span><span class="live">Live routing</span></div>
-        <svg viewBox="0 0 560 420" id="sw" aria-hidden="true">
-          <g id="swLines"></g>
-          <path class="sw-hot" id="swHot" d=""/>
-          <circle class="sw-dot" id="swDot" r="5" cx="-20" cy="-20"/>
-          <g id="swCallers"></g>
-          <g class="sw-node">
-            <circle class="halo" cx="280" cy="210" r="56"/>
-            <rect x="234" y="164" width="92" height="92" rx="20" fill="#121016"/>
-            <g transform="translate(262 192) scale(1.125)"><path fill="#00B900" d="M0 0H10L0 10Z M21 0H32V11H10.5Z M21 11H31L21 21Z M11 11V21H1Z M0 21H21L10.5 32H0Z M32 21V32H21Z"/></g>
-            <text class="nm" x="280" y="282" text-anchor="middle">TryVox</text>
-            <text class="lbl" x="280" y="298" text-anchor="middle">NUMBER · SIP · STREAM</text>
-          </g>
-          <g id="swAgents"></g>
-        </svg>
-        <div class="board-foot" aria-live="polite"><span class="ev" id="swEv">call.answered</span><span class="tx" id="swTx">+91 98xxx xx210 → Vapi agent</span><span class="ms" id="swMs">142 ms</span></div>
+      <div class="micro"><span>No lock-in</span><span>Pay as you go</span><span>Live in minutes</span></div></div>
+  </div>
+  <div class="rig" id="rig">
+    <div class="glass">
+      <div class="g-status"><span id="gStatus">ready</span><small>Line 01 · <b id="gTime">00:00</b></small></div>
+      <div class="g-lcd">+91 80 4718 2290</div>
+      <div class="g-feed" id="gFeed" aria-live="polite">
+        <div class="msg ev">Number provisioned · SIP trunk attached</div>
+        <div class="msg ev ok">Agent connected · waiting for a call</div>
       </div>
-      <p class="board-note">Animated example of inbound routing. Numbers are masked samples.</p>
+      <form id="gForm" novalidate>
+        <p class="g-hint">Press <b style="color:var(--glass-ink);font-weight:500">Call</b> to hear a call flow through TryVox. Then start free with your work email.</p>
+        <div class="g-form"><input id="gEmail" type="email" placeholder="you@company.com" aria-label="Work email" autocomplete="email"><button type="submit">Continue</button></div>
+        <p class="g-fine">Used to set up your free account and test number.</p>
+      </form>
+    </div>
+    <div class="pad">
+      <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="qd q1"><span class="mark">TRYVOX</span></div>
+      <div class="qd q2"></div>
+      <div class="qd q3"><span class="led on" id="L0"><i></i>Number</span></div>
+      <div class="qd q4"><span class="led" id="L1"><i></i>SIP · Stream</span></div>
+      <button class="dial" id="dial" aria-label="Start the demo call"><span class="dial-face"><span class="dash"></span><span id="dialLbl">CALL</span></span></button>
     </div>
   </div>
 </section>
@@ -592,12 +648,7 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
       <canvas id="strands" aria-hidden="true"></canvas>
       <div class="vig" aria-hidden="true"></div>
       <div class="htitle" id="htitle"><h3 id="hT">Number.</h3><p id="hP">Search, buy and configure numbers with KYC done online.</p></div>
-      <div class="rail" id="rail">
-        <button class="on" data-go="0"><span class="bar"></span><span class="n">01</span><span class="t">Number</span><span class="d">Buy a local or toll-free number</span></button>
-        <button data-go="1"><span class="bar"></span><span class="n">02</span><span class="t">Connect</span><span class="d">Bind it to your agent in the dashboard</span></button>
-        <button data-go="2"><span class="bar"></span><span class="n">03</span><span class="t">Stream</span><span class="d">Live audio both ways</span></button>
-        <button data-go="3"><span class="bar"></span><span class="n">04</span><span class="t">Observe</span><span class="d">Webhooks, recordings, call records</span></button>
-      </div>
+      <div class="seg"><span class="cnt"><b id="hcnt">01</b> / 04</span><div class="grp" id="hseg"><button class="on" data-go="0">Number<i class="pf"></i></button><button data-go="1">Connect<i class="pf"></i></button><button data-go="2">Stream<i class="pf"></i></button><button data-go="3">Observe<i class="pf"></i></button></div><a href="https://docs.tryvox.io/">Read the docs ↗</a></div>
     </div>
   </div>
 </section>
@@ -614,12 +665,13 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
   <div class="orb rv" aria-label="Works with Vapi, Retell, LiveKit, Bolna and your own code">
     <span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span><span class="pulse"></span><span class="pulse p2"></span>
     <span class="core"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#00B900" d="M0 0H10L0 10Z M21 0H32V11H10.5Z M21 11H31L21 21Z M11 11V21H1Z M0 21H21L10.5 32H0Z M32 21V32H21Z"/></svg></span>
+<svg class="spokes" viewBox="0 0 100 100" aria-hidden="true"><line x1="50" y1="50" x2="50" y2="4"/><line x1="50" y1="50" x2="93.7" y2="35.8"/><line x1="50" y1="50" x2="77" y2="87.2"/><line x1="50" y1="50" x2="23" y2="87.2"/><line x1="50" y1="50" x2="6.3" y2="35.8"/><circle r=".9"><animateMotion dur="2.6s" repeatCount="indefinite" path="M50 4 L50 50"/></circle><circle r=".9"><animateMotion dur="2.9s" repeatCount="indefinite" path="M93.7 35.8 L50 50"/></circle><circle r=".9"><animateMotion dur="3.2s" repeatCount="indefinite" path="M77 87.2 L50 50"/></circle><circle r=".9"><animateMotion dur="3.5s" repeatCount="indefinite" path="M23 87.2 L50 50"/></circle><circle r=".9"><animateMotion dur="3.8s" repeatCount="indefinite" path="M6.3 35.8 L50 50"/></circle></svg>
     <div class="orbit">
-      <span class="pt" style="left:50%;top:0%"><span class="chip"><img class="plogo" src="assets/logos/vapi.svg" alt="Vapi" width="67" height="22"></span></span>
-      <span class="pt" style="left:97%;top:35%"><span class="chip"><img class="plogo" src="assets/logos/retell.svg" alt="Retell AI" width="79" height="22"></span></span>
-      <span class="pt" style="left:80%;top:90%"><span class="chip"><img class="plogo" src="assets/logos/livekit.svg" alt="" width="22" height="22">LiveKit</span></span>
-      <span class="pt" style="left:20%;top:90%"><span class="chip"><img class="plogo" src="assets/logos/bolna.svg" alt="Bolna" width="41" height="26" style="height:26px"></span></span>
-      <span class="pt" style="left:3%;top:35%"><span class="chip code">&lt;your code/&gt;</span></span>
+      <span class="pt" style="left:50%;top:4%"><span class="chip"><img class="plogo" src="assets/logos/vapi.svg" alt="Vapi" width="67" height="22"></span></span>
+      <span class="pt" style="left:93.7%;top:35.8%"><span class="chip"><img class="plogo" src="assets/logos/retell.svg" alt="Retell AI" width="79" height="22"></span></span>
+      <span class="pt" style="left:77%;top:87.2%"><span class="chip"><img class="plogo" src="assets/logos/livekit.svg" alt="" width="22" height="22">LiveKit</span></span>
+      <span class="pt" style="left:23%;top:87.2%"><span class="chip"><img class="plogo" src="assets/logos/bolna.svg" alt="Bolna" width="41" height="26" style="height:26px"></span></span>
+      <span class="pt" style="left:6.3%;top:35.8%"><span class="chip code">&lt;your code/&gt;</span></span>
     </div>
   </div>
 </section>
@@ -644,12 +696,12 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
 <section class="wrap sect" id="stack">
   <div class="rv"><p class="tag"><i></i>The stack</p><h2 class="hd h2" style="margin-top:20px">Everything your agent needs to <em>reach a phone.</em></h2><p class="sub">Six building blocks on one account and one bill.</p></div>
   <div class="grid3">
-    <a class="cell rv" href="https://docs.tryvox.io/numbers"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2"/></svg></span><span>Numbers</span></span><h3>Phone numbers callers pick up</h3><p>Search, buy and configure local, national and toll-free numbers. Verified caller IDs for every campaign.</p><span class="go">Get a number <span>→</span></span></a>
-    <a class="cell rv" href="https://docs.tryvox.io/sip-trunking"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01"/></svg></span><span>SIP</span></span><h3>SIP trunking, set up for you</h3><p>Create trunks, manage credentials and IP ACLs, and set channel limits. Or bring your own carrier.</p><span class="go">Create a trunk <span>→</span></span></a>
-    <a class="cell rv" href="https://docs.tryvox.io/voice"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 12h2l2-6 3 12 3-9 2 3h4"/></svg></span><span>Voice API</span></span><h3>Voice API & VoxML</h3><p>Place calls, run conferences and build call flows with Say, Gather, Dial and Stream.</p><span class="go">Read the docs <span>→</span></span></a>
-    <a class="cell rv" href="https://docs.tryvox.io/ai-agents"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="7" width="14" height="12" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5"/></svg></span><span>AI Agents</span></span><h3>Connect any AI agent</h3><p>Bind a number to a Vapi, Retell, ElevenLabs, LiveKit or Bolna agent. No SIP setup needed.</p><span class="go">Connect an agent <span>→</span></span></a>
-    <a class="cell rv" href="https://docs.tryvox.io/messaging"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M4 20l1.5-4A8 8 0 1112 20a8 8 0 01-4-1z"/></svg></span><span>Messaging</span></span><h3>WhatsApp and SMS</h3><p>Follow up every AI call with a confirmation, summary or payment link, including WhatsApp calling.</p><span class="go">Explore messaging <span>→</span></span></a>
-    <a class="cell rv" href="https://docs.tryvox.io/compliance"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span><span>Compliance</span></span><h3>Consent and DLT, built in</h3><p>Consent records, DLT registration and verified caller IDs, so India's rules are handled.</p><span class="go">See compliance <span>→</span></span></a>
+    <a class="cell rv" href="https://docs.tryvox.io/numbers"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M5 3.5h3.6l1.9 4.8-2.4 1.5a11 11 0 005.6 5.6l1.5-2.4 4.8 1.9V18a2.5 2.5 0 01-2.5 2.5A16.5 16.5 0 012.5 6 2.5 2.5 0 015 3.5z" fill="currentColor" fill-opacity=".14"/><path d="M15 3.5a5.5 5.5 0 015.5 5.5M15 7a2 2 0 012 2"/></svg></span><span>Numbers</span></span><h3>Phone numbers callers pick up</h3><p>Search, buy and configure local, national and toll-free numbers. Verified caller IDs for every campaign.</p><span class="go">Get a number <span>→</span></span></a>
+    <a class="cell rv" href="https://docs.tryvox.io/sip-trunking"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="3.5" width="18" height="7" rx="2.2" fill="currentColor" fill-opacity=".14"/><rect x="3" y="13.5" width="18" height="7" rx="2.2" fill="currentColor" fill-opacity=".14"/><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="17" r="1" fill="currentColor" stroke="none"/><path d="M11 7h6M11 17h6"/></svg></span><span>SIP</span></span><h3>SIP trunking, set up for you</h3><p>Create trunks, manage credentials and IP ACLs, and set channel limits. Or bring your own carrier.</p><span class="go">Create a trunk <span>→</span></span></a>
+    <a class="cell rv" href="https://docs.tryvox.io/voice"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="2.5" y="10" width="2.6" height="4" rx="1.3" opacity=".45"/><rect x="6.6" y="6.5" width="2.6" height="11" rx="1.3" opacity=".75"/><rect x="10.7" y="3" width="2.6" height="18" rx="1.3"/><rect x="14.8" y="7.5" width="2.6" height="9" rx="1.3" opacity=".75"/><rect x="18.9" y="10" width="2.6" height="4" rx="1.3" opacity=".45"/></svg></span><span>Voice API</span></span><h3>Voice API & VoxML</h3><p>Place calls, run conferences and build call flows with Say, Gather, Dial and Stream.</p><span class="go">Read the docs <span>→</span></span></a>
+    <a class="cell rv" href="https://docs.tryvox.io/ai-agents"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12.5" rx="3.5" fill="currentColor" fill-opacity=".14"/><path d="M12 3.5V7M2 12v3M22 12v3"/><circle cx="9" cy="12.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="15" cy="12.5" r="1.3" fill="currentColor" stroke="none"/><path d="M9.5 16h5"/><circle cx="12" cy="3" r="1" fill="currentColor" stroke="none"/></svg></span><span>AI Agents</span></span><h3>Connect any AI agent</h3><p>Bind a number to a Vapi, Retell, ElevenLabs, LiveKit or Bolna agent. No SIP setup needed.</p><span class="go">Connect an agent <span>→</span></span></a>
+    <a class="cell rv" href="https://docs.tryvox.io/messaging"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 19.5l1.4-3.6A8 8 0 1112 20a8 8 0 01-3.9-1z" fill="currentColor" fill-opacity=".14"/><circle cx="8.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg></span><span>Messaging</span></span><h3>WhatsApp and SMS</h3><p>Follow up every AI call with a confirmation, summary or payment link, including WhatsApp calling.</p><span class="go">Explore messaging <span>→</span></span></a>
+    <a class="cell rv" href="https://docs.tryvox.io/compliance"><span class="k"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8l7.5 3v5.4c0 4.9-3.2 8.6-7.5 10-4.3-1.4-7.5-5.1-7.5-10V5.8z" fill="currentColor" fill-opacity=".14"/><path d="M8.6 12l2.4 2.4 4.4-4.6"/></svg></span><span>Compliance</span></span><h3>Consent and DLT, built in</h3><p>Consent records, DLT registration and verified caller IDs, so India's rules are handled.</p><span class="go">See compliance <span>→</span></span></a>
   </div>
 </section>
 
@@ -718,7 +770,7 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
       <p class="sub">Get a number, connect your agent and take your first call today.</p>
       <div class="cta"><a class="kbtn" href="https://app.tryvox.io/">Start free</a><a class="obtn" href="https://tryvox.io/contact">Talk to us</a></div>
     </div>
-    <div class="dial" aria-hidden="true">
+    <div class="fdial" aria-hidden="true">
       <span class="stt" id="fStt">Ringing your agent</span>
       <span class="lcd" id="fNum">+91 80 4718 2290</span>
       <span class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
@@ -776,31 +828,37 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
   const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{rootMargin:'0px 0px -6% 0px'});
   $$('.rv').forEach(n=>{if(n.getBoundingClientRect().top<innerHeight)n.classList.add('in');else io.observe(n)});
 
-  /* ---------- hero switchboard ---------- */
-  const CALLERS=[{n:'+91 98xxx xx210',c:'MUMBAI'},{n:'+91 90xxx xx847',c:'BENGALURU'},{n:'+91 70xxx xx392',c:'DELHI'}];
-  const AGENTS=[{k:'vapi',logo:'assets/logos/vapi.svg',w:62,h:20,name:'Vapi agent'},{k:'retell',logo:'assets/logos/retell.svg',w:72,h:20,name:'Retell agent'},{k:'livekit',logo:'assets/logos/livekit.svg',w:20,h:20,name:'LiveKit agent',txt:'LiveKit'},{k:'bolna',logo:'assets/logos/bolna.svg',w:52,h:33,name:'Bolna agent'}];
-  const cY=[100,210,320],aY=[66,166,256,346];
-  const gL=$('#swLines'),gC=$('#swCallers'),gA=$('#swAgents');
-  const cPath=y=>`M168 ${y} C 205 ${y}, 205 210, 234 210`,aPath=y=>`M326 210 C 356 210, 356 ${y}, 388 ${y}`;
-  const callerEls=CALLERS.map((c,i)=>{el('path',{class:'sw-line',d:cPath(cY[i])},gL);const g=el('g',{class:'sw-chip'},gC);el('rect',{x:20,y:cY[i]-28,width:148,height:56,rx:12},g);
-    const t=el('text',{x:36,y:cY[i]-3,'font-size':13},g);t.textContent=c.n;const s=el('text',{class:'s',x:36,y:cY[i]+15},g);s.textContent=c.c+' · INBOUND';return g});
-  const agentEls=AGENTS.map((a,i)=>{el('path',{class:'sw-line',d:aPath(aY[i])},gL);const g=el('g',{class:'sw-chip'},gA);el('rect',{x:388,y:aY[i]-26,width:152,height:52,rx:12},g);
-    const w=a.txt?a.w:a.w,x=a.txt?408:464-a.w/2;el('image',{class:'sw-logo',href:a.logo,x:x,y:aY[i]-a.h/2,width:a.w,height:a.h},g);
-    if(a.txt){const t=el('text',{x:434,y:aY[i]+5,'font-size':14,'font-weight':600,style:'font-family:var(--f-head);letter-spacing:-.02em'},g);t.textContent=a.txt}return g});
-  const hot=$('#swHot'),dot=$('#swDot'),evE=$('#swEv'),txE=$('#swTx'),msE=$('#swMs');
-  const tmp=el('path',{d:'',fill:'none',stroke:'none'},$('#sw'));
-  let ci=0,ai=0,phase=0,pt0=0;
-  function routeD(){return cPath(cY[ci])+' '+aPath(aY[ai]).replace('M326 210','L326 210')}
-  function pick(){ci=(ci+1)%3;ai=(ai+1+Math.floor(Math.random()*2))%4;callerEls.forEach((g,k)=>g.classList.toggle('on',k===ci));agentEls.forEach((g,k)=>g.classList.toggle('on',k===ai));
-    const d=routeD();hot.setAttribute('d',d);tmp.setAttribute('d',d);evE.textContent='call.ringing';txE.textContent=CALLERS[ci].n+' → '+AGENTS[ai].name;msE.textContent='—';pt0=performance.now()}
-  pick();
-  function swTick(now){const len=tmp.getTotalLength(),dur=1800,p=clamp((now-pt0)/dur,0,1),e=1-Math.pow(1-p,3);
-    const q=tmp.getPointAtLength(len*e);dot.setAttribute('cx',q.x);dot.setAttribute('cy',q.y);
-    hot.style.strokeDasharray=len;hot.style.strokeDashoffset=len*(1-e);
-    if(p>=1&&evE.textContent==='call.ringing'){evE.textContent='call.answered';msE.textContent=(128+Math.round(Math.random()*40))+' ms'}
-    if(now-pt0>3400)pick();
-    if(!reduce)requestAnimationFrame(swTick)}
-  if(reduce){const len=tmp.getTotalLength();const q=tmp.getPointAtLength(len);dot.setAttribute('cx',q.x);dot.setAttribute('cy',q.y)}else requestAnimationFrame(swTick);
+  /* helpers */
+  function add(feed,cls,text,max){const d=document.createElement('div');d.className='msg '+cls;d.textContent=text;feed.append(d);while(feed.children.length>max)feed.firstElementChild.remove()}
+  let ac=null;
+  function tone(fs,dur,vol){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const g=ac.createGain();g.connect(ac.destination);const n=ac.currentTime;g.gain.setValueAtTime(0,n);g.gain.linearRampToValueAtTime(vol,n+.03);g.gain.setValueAtTime(vol,n+dur-.05);g.gain.linearRampToValueAtTime(0,n+dur);fs.forEach(f=>{const o=ac.createOscillator();o.frequency.value=f;o.connect(g);o.start(n);o.stop(n+dur+.02)})}catch(e){}}
+
+  /* ---------- hero call rig ---------- */
+  const gS=$('#gStatus'),gT=$('#gTime'),gF=$('#gFeed'),dial=$('#dial'),dl=$('#dialLbl'),L0=$('#L0'),L1=$('#L1');
+  let live=false,tms=[],clock=null,secs=0,typer=null;
+  const later=(f,ms)=>tms.push(setTimeout(f,ms));
+  const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  function typeStatus(word){clearInterval(typer);if(reduce){gS.textContent=word;return}let i=0;gS.textContent='';typer=setInterval(()=>{gS.textContent=word.slice(0,++i);if(i>=word.length)clearInterval(typer)},45)}
+  const script=[['a','Hi, this is Riya calling from Acme Finance. Is this a good time?'],['c','Yes, go ahead.'],['a','Your EMI of ₹4,250 is due on Friday. Shall I send a payment link on WhatsApp?'],['c','Yes please.'],['ev ok','Call completed · 6 events sent to your webhook']];
+  function start(){
+    live=true;tms.forEach(clearTimeout);tms=[];clearInterval(clock);gF.innerHTML='';
+    dial.classList.add('live');dl.textContent='END';L0.classList.remove('on');L1.classList.remove('on');secs=0;gT.textContent='00:00';
+    typeStatus('dialing');tone([350,440],.25,.03);
+    later(()=>{L0.classList.add('on');add(gF,'ev','Outbound from +91 80 4718 2290',6)},400);
+    later(()=>{typeStatus('ringing');add(gF,'ev','Routed · carrier primary · in-south',6);tone([440,480],1,.025)},1000);
+    later(()=>{L1.classList.add('on');typeStatus('connected');add(gF,'ev ok','Answered · audio streaming to your agent',6);
+      clock=setInterval(()=>{secs++;gT.textContent=fmt(secs)},1000);
+      script.forEach((s,i)=>later(()=>add(gF,s[0],s[1],6),900+i*1700));
+      later(()=>end(true),900+script.length*1700);
+    },2600);
+  }
+  function end(done){live=false;tms.forEach(clearTimeout);tms=[];clearInterval(clock);dial.classList.remove('live');dl.textContent='CALL';typeStatus(done?'call ended':'ready')}
+  dial.addEventListener('click',()=>{dial.classList.add('down');setTimeout(()=>dial.classList.remove('down'),150);live?end(false):start()});
+  $('#gForm').addEventListener('submit',e=>{e.preventDefault();const em=$('#gEmail'),f=$('#gForm');
+    if(!em.value||!em.checkValidity()){em.focus();em.placeholder='Enter a valid work email';em.value='';return}
+    f.innerHTML='';const p=document.createElement('p');p.className='g-done';p.append('Next, create your account. ');const a=document.createElement('a');a.href='https://app.tryvox.io/';a.textContent='Continue to sign-up ↗';p.append(a);f.append(p)});
+  const rig=$('#rig');
+  if(!reduce&&matchMedia('(hover:hover)').matches){rig.style.transition='transform .6s cubic-bezier(.22,1,.36,1)';rig.addEventListener('mousemove',e=>{const r=rig.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;rig.style.transform=`perspective(1600px) rotateY(${x*2.4}deg) rotateX(${-y*2.4}deg)`});rig.addEventListener('mouseleave',()=>rig.style.transform='')}
 
   /* ---------- partner marquee ---------- */
   const MQ=[['img','assets/logos/vapi.svg','Vapi'],['img','assets/logos/retell.svg','Retell AI'],['imgt','assets/logos/livekit.svg','LiveKit'],['img','assets/logos/bolna.svg','Bolna'],['t','','ElevenLabs'],['t','','Deepgram'],['t','','Amazon Polly'],['t','','WhatsApp'],['t','','Webhooks']];
@@ -834,8 +892,8 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
 
   /* ---------- isometric layer stack ---------- */
   const iso=$('#iso');
-  const S=230,cx0=300; // half-diagonal of a layer face
-  const P=(x,y)=>[cx0+(x-y)*0.866*S/1,(x+y)*0.5*S]; // flat (0..1) to iso offset
+  const S=200,cx0=290,TH=10;
+  const P=(x,y)=>[cx0+(x-y)*0.866*S,(x+y)*0.5*S];
   const pts=a=>a.map(p=>p.join(',')).join(' ');
   const quad=(x0,y0,x1,y1)=>[P(x0,y0),P(x1,y0),P(x1,y1),P(x0,y1)];
   const LAYERS=[
@@ -858,21 +916,34 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
       for(let r=0;r<3;r++)for(let k=0;k<6;k++){const a=P(.12+k*.13,.12+r*.14);el('path',{class:'ln',d:`M${a[0]-5} ${a[1]} l10 0 M${a[0]} ${a[1]-3} l0 6`},g)}
       const c=P(.1,.52);const t=el('text',{class:'tx',transform:`translate(${c[0]} ${c[1]}) rotate(30)`},g);t.textContent='PSTN · +91 · DLT'}}
   ];
-  const lyG=[];for(let i=LAYERS.length-1;i>=0;i--){const L=LAYERS[i];const g=el('g',{class:'ly'},iso);
-    const base=quad(0,0,1,1),th=12;
-    const sideA=[base[1],base[2],[base[2][0],base[2][1]+th],[base[1][0],base[1][1]+th]],sideB=[base[2],base[3],[base[3][0],base[3][1]+th],[base[2][0],base[2][1]+th]];
-    el('polygon',{class:'side',points:pts(sideA)},g);el('polygon',{class:'side',points:pts(sideB)},g);
-    el('polygon',{class:'face',points:pts(base)},g);L.draw(g);lyG[i]=g}
-  const ltrack=$('#ltrack'),lstage=$('#lstage'),lis=$$('#layers li'),capK=$('#lcapK'),capP=$('#lcapP');let lcur=-1;
-  function layout(p){const spread=clamp(p*2.2,0,1),gap=34+spread*86,total=gap*3+S,top=(640-total)/2-8;
-    lyG.forEach((g,i)=>{g.style.transform=`translateY(${top+i*gap}px)`});
-    const a=Math.min(3,Math.floor(p*4));if(a!==lcur){lcur=a;lyG.forEach((g,i)=>{g.classList.toggle('on',i===a);g.classList.toggle('dim',p>.05&&i!==a)});lis.forEach((li,i)=>li.classList.toggle('on',i===a));capK.textContent=LAYERS[a].k;capP.textContent=LAYERS[a].p}}
+  const guides=el('g',{},iso);
+  const gds=[[0,0],[1,0],[1,1],[0,1]].map(c=>({c:P(c[0],c[1]),l:el('line',{class:'gd'},guides)}));
+  const lyG=[];
+  for(let i=LAYERS.length-1;i>=0;i--){const g=el('g',{class:'ly'},iso);const b=el('g',{class:'bob',style:`animation-delay:${-i*1.3}s`},g);
+    const base=quad(0,0,1,1);
+    el('polygon',{class:'side',points:pts([base[1],base[2],[base[2][0],base[2][1]+TH],[base[1][0],base[1][1]+TH]])},b);
+    el('polygon',{class:'side',points:pts([base[2],base[3],[base[3][0],base[3][1]+TH],[base[2][0],base[2][1]+TH]])},b);
+    el('polygon',{class:'face',points:pts(base)},b);LAYERS[i].draw(b);
+    const rc=P(1,0);el('line',{class:'lead',x1:rc[0]+6,y1:rc[1],x2:rc[0]+34,y2:rc[1]},b);
+    const n=el('text',{class:'num',x:rc[0]+40,y:rc[1]+4},b);n.textContent='0'+(i+1);
+    lyG[i]=g}
+  const pkts=[0,1,2].map(k=>el('circle',{class:'pk'+(k===1?' g':''),r:4,cx:cx0,cy:-20},iso));
+  const ltrack=$('#ltrack'),lstage=$('#lstage'),lis=$$('#layers li'),capK=$('#lcapK'),capP=$('#lcapP');
+  let lcur=-1,lTop=0,lGap=80,lVis=false;
+  function layout(p){const spread=clamp(p*2.4,0,1);lGap=74+spread*46;const total=lGap*3+S+TH;lTop=(640-total)/2;
+    const a=Math.min(3,Math.floor(p*4));
+    lyG.forEach((g,i)=>{g.style.transform=`translateY(${lTop+i*lGap-(i===a?18:0)}px)`});
+    gds.forEach(({c,l})=>{l.setAttribute('x1',c[0]);l.setAttribute('x2',c[0]);l.setAttribute('y1',lTop+c[1]);l.setAttribute('y2',lTop+3*lGap+c[1])});
+    if(a!==lcur){lcur=a;lyG.forEach((g,i)=>{g.classList.toggle('on',i===a);g.classList.toggle('dim',i!==a)});lis.forEach((li,i)=>li.classList.toggle('on',i===a));capK.textContent=LAYERS[a].k;capP.textContent=LAYERS[a].p}}
   function onLayers(){const r=ltrack.getBoundingClientRect(),stick=parseFloat(getComputedStyle(lstage).top)||0,range=ltrack.offsetHeight-lstage.offsetHeight;layout(clamp((stick-r.top)/Math.max(1,range),0,1))}
   layout(0);
+  function pkTick(now){const y0=lTop+S/2,y1=lTop+3*lGap+S/2;pkts.forEach((c,k)=>{const u=((now/2600)+k/3)%1;c.setAttribute('cy',y0+(y1-y0)*u);c.setAttribute('opacity',Math.sin(u*Math.PI).toFixed(2))});if(lVis&&!reduce)requestAnimationFrame(pkTick)}
+  new IntersectionObserver(es=>{const was=lVis;lVis=es[0].isIntersecting;if(lVis&&!was&&!reduce)requestAnimationFrame(pkTick)}).observe(ltrack);
+  if(reduce)pkts.forEach(c=>c.setAttribute('opacity',0));
   lis.forEach(li=>li.addEventListener('click',()=>{const range=ltrack.offsetHeight-lstage.offsetHeight,stick=parseFloat(getComputedStyle(lstage).top)||0;scrollTo({top:ltrack.getBoundingClientRect().top+scrollY-stick+range*((+li.dataset.i+.55)/4),behavior:reduce?'auto':'smooth'})}));
 
   /* ---------- strands (purple band) ---------- */
-  const cv=$('#strands'),cx=cv.getContext('2d'),ht=$('#htrack'),hs=$('#hstage'),hT=$('#hT'),hP=$('#hP'),htl=$('#htitle'),railB=$$('#rail button');
+  const cv=$('#strands'),cx=cv.getContext('2d'),ht=$('#htrack'),hs=$('#hstage'),hT=$('#hT'),hP=$('#hP'),htl=$('#htitle'),railB=$$('#hseg button'),hcnt=$('#hcnt');
   const HT=[['Number.','Search, buy and configure numbers with KYC done online.'],['Connect.','Bind the number to your Vapi, Retell, LiveKit or Bolna agent in the dashboard.'],['Stream.','Live audio flows both ways while your agent talks.'],['Observe.','Webhooks, recordings and call records for every call.']];
   let hp=0,hstep=0,W=0,H=0,t0=performance.now(),visible=false;
   function size(){const d=Math.min(2,devicePixelRatio||1);W=hs.clientWidth;H=hs.clientHeight;cv.width=Math.max(1,W*d);cv.height=Math.max(1,H*d);cx.setTransform(d,0,0,d,0,0)}
@@ -902,8 +973,8 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
   requestAnimationFrame(draw);
   function onHow(){const r=ht.getBoundingClientRect(),stick=parseFloat(getComputedStyle(hs).top)||0,range=ht.offsetHeight-hs.offsetHeight;
     hp=clamp((stick-r.top)/Math.max(1,range),0,1);const s=Math.min(3,Math.floor(hp*4));
-    railB.forEach((b,k)=>{b.querySelector('.bar').style.width=(clamp(hp*4-k,0,1)*100)+'%'});
-    if(s!==hstep){hstep=s;htl.classList.add('swap');setTimeout(()=>{hT.textContent=HT[s][0];hP.textContent=HT[s][1];htl.classList.remove('swap')},reduce?0:260);railB.forEach((b,k)=>b.classList.toggle('on',k===s))}
+    railB.forEach((b,k)=>{b.querySelector('.pf').style.transform=`scaleX(${clamp(hp*4-k,0,1)})`});
+    if(s!==hstep){hstep=s;htl.classList.add('swap');setTimeout(()=>{hT.textContent=HT[s][0];hP.textContent=HT[s][1];htl.classList.remove('swap')},reduce?0:260);railB.forEach((b,k)=>b.classList.toggle('on',k===s));hcnt.textContent='0'+(s+1)}
     if(reduce)requestAnimationFrame(draw)}
   railB.forEach(b=>b.addEventListener('click',()=>{const range=ht.offsetHeight-hs.offsetHeight,stick=parseFloat(getComputedStyle(hs).top)||0;scrollTo({top:ht.getBoundingClientRect().top+scrollY-stick+range*((+b.dataset.go+.55)/4),behavior:reduce?'auto':'smooth'})}));
 
@@ -986,7 +1057,7 @@ X-TryVox-To:           <E.164 TryVox number>`};
   /* ---------- footer ---------- */
   const fStt=$('#fStt'),states=['Ringing your agent','Connected · streaming','Call completed · events sent'];let fi=0;
   if(!reduce)setInterval(()=>{fi=(fi+1)%states.length;fStt.textContent=states[fi]},2600);
-  $$('.dial .bars i').forEach((b,i)=>b.style.animationDelay=(i*.07)+'s');
+  $$('.fdial .bars i').forEach((b,i)=>b.style.animationDelay=(i*.07)+'s');
   const giant=$('#giant .w');
   function onGiant(){const r=giant.getBoundingClientRect(),p=clamp((innerHeight-r.top)/(r.height+40),0,1);giant.style.setProperty('--fill',(p*100).toFixed(1)+'%')}
 
