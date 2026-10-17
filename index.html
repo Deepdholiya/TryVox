@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="TryVox: telephony infrastructure for voice AI">
+<meta property="og:description" content="Phone numbers, SIP trunking and real-time calling APIs for AI voice agents. India-ready compliance built in.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#7444CF">
+<title>TryVox: Telephony Infrastructure for Voice AI</title>
+<meta name="description" content="Phone numbers, SIP trunking and real-time calling APIs for AI voice agents. Works with Vapi, Retell, LiveKit and Bolna. India-ready compliance built in.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Workbench:BLED,SCAN@0..100,-53..100&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Doto:wght@700;800&display=swap">
+<style>
+/* Layout: one fixed sky behind a six-column blueprint grid. The sky runs dusk → night as you scroll (dawn → day in light mode);
+   tactile hardware objects (call panel, keypad, phone) sit on top. Purple is TryVox's brand key colour. */
+:root{
+  --sky:linear-gradient(180deg,#ECEAF1 0%,#E2D6FA 18%,#D7C2FF 34%,#E8CBEF 56%,#ECE2FA 78%,#F5F2FB 100%);
+  --end:#F5F2FB; --vig:rgba(255,255,255,.6);
+  --ink:#17131F; --ink-2:rgba(23,19,31,.68); --ink-3:rgba(23,19,31,.46); --hi:#17131F;
+  --line:rgba(23,19,31,.09); --line-2:rgba(23,19,31,.16);
+  --panel:rgba(255,255,255,.42); --panel-2:rgba(255,255,255,.66);
+  --hdr-bg:rgba(250,248,253,.72); --hdr-ink:#17131F; --hdr-ink-2:rgba(23,19,31,.62);
+  --accent:#6D2EE6; --accent-soft:rgba(157,97,255,.16);
+  --strand:23,19,31;
+  /* hardware: same in both themes */
+  --glass:linear-gradient(162deg,#17151C 4%,#040306 96%); --glass-edge:rgba(255,255,255,.08); --glass-ink:#ECE8F4; --glass-ink-2:rgba(236,232,244,.55); --glass-ink-3:rgba(236,232,244,.32);
+  --pad:#D9D6DE; --pad-ink:#3C3846; --pad-line:rgba(40,36,48,.18);
+  --key:linear-gradient(155deg,#B583FF 12%,#8B4CF6 88%); --key-edge:rgba(230,210,255,.7); --key-ink:#FFFFFF;
+  --key-cast:8px 12px 18px rgba(30,10,60,.35),4px 6px 8px rgba(30,10,60,.4),inset 1px 1px 0 rgba(255,255,255,.35);
+  --key-cast-down:1px 2px 3px rgba(30,10,60,.45),inset 1px 1px 0 rgba(255,255,255,.2);
+  --ok:#59E07A; --brand-green:#00B900;
+  --f-px:"Workbench","Geist Mono",ui-monospace,monospace;
+  --f-sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --f-dot:"Doto","Geist Mono",ui-monospace,monospace;
+  --maxw:1104px; --hdr:56px; --ease:cubic-bezier(.22,1,.36,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --sky:linear-gradient(180deg,#56525E 0%,#5F4A92 16%,#7444CF 32%,#6E2F95 52%,#3E2B6C 74%,#1B1630 100%);
+  --end:#08070C; --vig:rgba(8,4,18,.6);
+  --ink:#F4F0FB; --ink-2:rgba(244,240,251,.7); --ink-3:rgba(244,240,251,.46); --hi:#FFFFFF;
+  --line:rgba(255,255,255,.12); --line-2:rgba(255,255,255,.2);
+  --panel:rgba(255,255,255,.04); --panel-2:rgba(255,255,255,.07);
+  --hdr-bg:rgba(32,29,40,.72); --hdr-ink:#F4F0FB; --hdr-ink-2:rgba(244,240,251,.66);
+  --accent:#CDB0FF; --accent-soft:rgba(157,97,255,.22);
+  --strand:244,240,251;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --sky:linear-gradient(180deg,#56525E 0%,#5F4A92 16%,#7444CF 32%,#6E2F95 52%,#3E2B6C 74%,#1B1630 100%);
+  --end:#08070C; --vig:rgba(8,4,18,.6);
+  --ink:#F4F0FB; --ink-2:rgba(244,240,251,.7); --ink-3:rgba(244,240,251,.46); --hi:#FFFFFF;
+  --line:rgba(255,255,255,.12); --line-2:rgba(255,255,255,.2);
+  --panel:rgba(255,255,255,.04); --panel-2:rgba(255,255,255,.07);
+  --hdr-bg:rgba(32,29,40,.72); --hdr-ink:#F4F0FB; --hdr-ink-2:rgba(244,240,251,.66);
+  --accent:#CDB0FF; --accent-soft:rgba(157,97,255,.22);
+  --strand:244,240,251;
+  color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--end);color:var(--ink);font-family:var(--f-sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;padding:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+p{margin:0}
+
+/* ---------- atmosphere ---------- */
+.sky{position:fixed;inset:0;z-index:-3;background:var(--sky);background-size:100% 150%;background-position:0 var(--sy,0%)}
+.dusk{position:fixed;inset:0;z-index:-2;background:var(--end);opacity:var(--dk,0);pointer-events:none}
+.gridlines{position:fixed;inset:0;z-index:-1;pointer-events:none;display:flex;justify-content:center;opacity:calc(1 - var(--dk,0) * .6)}
+.gridlines div{width:min(var(--maxw),calc(100% - 40px));height:100%;display:grid;grid-template-columns:repeat(6,1fr);border-left:1px solid var(--line)}
+.gridlines i{border-right:1px solid var(--line)}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));box-sizing:content-box}
+@media (max-width:1144px){.wrap{max-width:none}}
+
+/* ---------- type ---------- */
+.px,.g-status>span,.ph-top .st,.slab .big,.sheet a{font-variation-settings:"SCAN" -28,"BLED" 0}
+.px{font-family:var(--f-px);font-weight:400;letter-spacing:-.01em;line-height:1.02;color:var(--hi)}
+.h1{font-size:clamp(46px,6.4vw,88px)}
+.h2{font-size:clamp(38px,4.8vw,68px)}
+.tag{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.tag i{width:7px;height:7px;background:#9D61FF;display:inline-block}
+.sub{font-size:clamp(17px,1.5vw,19px);color:var(--ink-2);max-width:42ch;line-height:1.45}
+
+/* ---------- buttons ---------- */
+.kbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 20px;border-radius:9px;background:var(--key);color:var(--key-ink);font-family:var(--f-mono);font-size:12px;letter-spacing:.07em;text-transform:uppercase;border:1px solid var(--key-edge);box-shadow:var(--key-cast);transition:transform .15s cubic-bezier(.16,.84,.32,1),box-shadow .15s,filter .2s;white-space:nowrap}
+.kbtn:hover{filter:brightness(1.07)}
+.kbtn:active,.kbtn.down{transform:translate(2px,3px);box-shadow:var(--key-cast-down)}
+.dbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 20px;border-radius:9px;background:linear-gradient(160deg,#3B3843,#25222C);color:#ECE8F4;font-family:var(--f-mono);font-size:12px;letter-spacing:.07em;text-transform:uppercase;border:1px solid rgba(255,255,255,.12);box-shadow:4px 6px 10px rgba(0,0,0,.35),inset 1px 1px 0 rgba(255,255,255,.08);transition:transform .15s,box-shadow .15s}
+.dbtn:active,.dbtn.down{transform:translate(2px,3px);box-shadow:1px 1px 2px rgba(0,0,0,.4)}
+
+/* ---------- header ---------- */
+.hdr{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:var(--hdr-bg);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);border-bottom:1px solid var(--line);color:var(--hdr-ink)}
+.hdr-in{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:var(--hdr);padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.logo{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:19px;letter-spacing:-.03em}
+.logo svg{width:22px;height:22px}
+.nav{display:flex;gap:2px;list-style:none;margin:0;padding:0}
+.nav>li{position:relative}
+.nav .nl{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:14px;color:var(--hdr-ink-2);border-radius:8px;transition:color .2s}
+.nav .nl:hover,.nav li.open>.nl{color:var(--hdr-ink)}
+.nav .chev{width:9px;height:9px;opacity:.6;transition:transform .3s var(--ease)}
+.nav li.open .chev{transform:rotate(180deg)}
+.mega{position:absolute;top:calc(100% + 12px);left:50%;width:560px;translate:-50% 0;background:#16141B;color:#ECE8F4;border:1px solid rgba(255,255,255,.1);border-radius:14px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);padding:8px;display:grid;grid-template-columns:1fr 1fr;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .2s,transform .35s var(--ease),visibility .2s}
+.nav li.open .mega{opacity:1;visibility:visible;transform:none}
+.mega p{grid-column:1/-1;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(236,232,244,.45);padding:10px 12px 6px}
+.mega a{display:block;padding:10px 12px;border-radius:9px;transition:background-color .2s}
+.mega a:hover{background:rgba(255,255,255,.06)}
+.mega .mt{display:block;font-size:14px}
+.mega .md{display:block;font-size:12.5px;color:rgba(236,232,244,.55);line-height:1.4;margin-top:2px}
+.hdr-r{display:flex;justify-content:flex-end;align-items:center;gap:14px}
+.signin{font-size:14px;color:var(--hdr-ink-2)}
+.signin:hover{color:var(--hdr-ink)}
+.theme-t{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--hdr-ink-2);border:1px solid var(--line-2);transition:color .2s}
+.theme-t:hover{color:var(--hdr-ink)}
+.theme-t svg{width:15px;height:15px}
+.theme-t .moon{display:none}
+:root[data-theme="dark"] .theme-t .sun{display:none}:root[data-theme="dark"] .theme-t .moon{display:block}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .theme-t .sun{display:none}:root:not([data-theme="light"]) .theme-t .moon{display:block}}
+.burger{display:none;width:38px;height:38px;border-radius:9px;border:1px solid var(--line-2);place-items:center}
+.burger span,.burger span::before,.burger span::after{display:block;width:16px;height:1.5px;background:var(--hdr-ink);position:relative;transition:transform .3s var(--ease),background-color .2s}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0}
+.burger span::before{top:-5px}.burger span::after{top:5px}
+.menu-open .burger span{background:transparent}.menu-open .burger span::before{top:0;transform:rotate(45deg)}.menu-open .burger span::after{top:0;transform:rotate(-45deg)}
+.sheet{position:fixed;inset:calc(var(--hdr) + env(safe-area-inset-top,0px)) 0 0;z-index:59;background:var(--end);padding:12px max(20px,env(safe-area-inset-right,0px)) 24px max(20px,env(safe-area-inset-left,0px));opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;overflow:auto}
+.menu-open .sheet{opacity:1;visibility:visible}
+.sheet a{display:block;padding:14px 0;border-bottom:1px solid var(--line);font-size:22px;font-family:var(--f-px)}
+.sheet .kbtn{margin-top:24px;width:100%;display:flex}
+
+/* ---------- hero ---------- */
+.hero{padding-top:clamp(56px,8vw,92px)}
+.hero-top{display:grid;grid-template-columns:repeat(6,1fr);align-items:start;margin-top:22px}
+.hero-top h1{grid-column:1/5}
+.hero-top .sub{grid-column:5/7;padding-top:14px;color:var(--ink)}
+.hero h1 .ln{display:block}
+.typed::after{content:"";display:inline-block;width:.08em;height:.85em;background:currentColor;margin-left:.06em;vertical-align:-.05em;animation:caret 1s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+.rig{margin-top:clamp(40px,6vw,72px);display:grid;grid-template-columns:1fr 1fr;border-radius:14px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(20,8,40,.55),0 0 0 1px rgba(255,255,255,.08);min-height:440px}
+.glass{background:var(--glass);color:var(--glass-ink);padding:26px 26px 22px;display:flex;flex-direction:column;position:relative;min-width:0}
+.glass::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 60% at 20% 0%,rgba(255,255,255,.06),transparent 60%);pointer-events:none}
+.g-status{font-family:var(--f-px);font-size:28px;color:var(--glass-ink-2);display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--glass-edge);padding-bottom:14px;gap:12px;min-height:56px}
+.g-status small{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--glass-ink-3);text-transform:uppercase;white-space:nowrap}
+.g-status small b{color:var(--glass-ink);font-weight:400}
+.g-lcd{font-family:var(--f-dot);font-weight:800;font-size:clamp(22px,2.6vw,30px);letter-spacing:.03em;color:#CDB0FF;text-shadow:0 0 14px rgba(180,140,255,.45);margin-top:18px}
+.g-feed{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;margin:18px 0;min-height:150px;overflow:hidden}
+.msg{max-width:84%;font-size:14px;line-height:1.45;animation:pop .45s var(--ease) both}
+.msg.c{align-self:flex-end;background:#F1EEF6;color:#17131F;padding:10px 14px;border-radius:10px}
+.msg.a{align-self:flex-start;color:var(--glass-ink)}
+.msg.ev{font-family:var(--f-mono);font-size:12px;color:var(--glass-ink-2);border-left:1px solid var(--glass-ink-3);padding-left:10px}
+.msg.ev.ok{color:var(--ok);border-left-color:var(--ok)}
+@keyframes pop{from{transform:translateY(8px)}to{transform:none}}
+.g-hint{font-size:15px;color:var(--glass-ink-2);max-width:36ch}
+.g-form{display:flex;gap:6px;margin-top:16px;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:5px;background:rgba(255,255,255,.03)}
+.g-form input{flex:1;min-width:0;background:transparent;border:0;outline:0;padding:0 10px;font-size:14px;color:var(--glass-ink)}
+.g-form input::placeholder{color:var(--glass-ink-3)}
+.g-form button{height:36px;padding:0 14px;border-radius:7px;background:#F1EEF6;color:#17131F;font-size:13.5px;font-weight:500}
+.g-fine{font-size:11.5px;color:var(--glass-ink-3);margin-top:10px}
+.g-done{margin-top:4px;font-size:14px;color:var(--glass-ink)}
+.g-done a{color:#CDB0FF;text-decoration:underline;text-underline-offset:3px}
+
+.pad{position:relative;background:var(--pad);color:var(--pad-ink);display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;min-width:0}
+.pad::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.55;pointer-events:none;mix-blend-mode:multiply}
+.pad::after{content:"";position:absolute;inset:0;background:linear-gradient(140deg,rgba(255,255,255,.5),transparent 45%,rgba(0,0,0,.06));pointer-events:none}
+.qd{position:relative;border-color:var(--pad-line);border-style:solid;border-width:0;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;z-index:1}
+.q1{border-right-width:1px;border-bottom-width:1px}
+.q2{border-bottom-width:1px}
+.q3{border-right-width:1px}
+.qd .led{display:inline-flex;align-items:center;gap:8px}
+.qd .led i{width:7px;height:7px;border-radius:50%;border:1px solid var(--pad-ink);opacity:.6;transition:all .3s}
+.qd .led.on i{background:#8B4CF6;border-color:#8B4CF6;opacity:1;box-shadow:0 0 8px 2px rgba(139,76,246,.55)}
+.mark{font-size:9.5px;opacity:.5}
+.grille{position:absolute;right:20px;top:18px;display:grid;grid-template-columns:repeat(7,4px);gap:7px 8px;z-index:1}
+.grille i{width:3px;height:3px;border-radius:50%;background:rgba(40,36,48,.5)}
+.dial{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:2;width:clamp(150px,15vw,210px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#EDEBF0,#C9C5CF 70%);box-shadow:0 18px 30px rgba(40,30,60,.28),inset 0 1px 0 rgba(255,255,255,.9),0 0 0 1px rgba(40,36,48,.12);display:grid;place-items:center;transition:transform .15s}
+.dial-face{width:84%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 32%,#FBFAFC,#E4E1E8 75%);box-shadow:0 6px 14px rgba(40,30,60,.22),inset 0 -3px 6px rgba(0,0,0,.06),inset 0 2px 2px #fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--pad-ink);transition:box-shadow .15s}
+.dial-face .dash{width:22px;height:3px;border-radius:2px;background:#8D8896;transition:background-color .3s,box-shadow .3s}
+.dial.live .dash{background:#8B4CF6;box-shadow:0 0 10px 2px rgba(139,76,246,.6)}
+.dial:hover .dial-face{box-shadow:0 8px 18px rgba(40,30,60,.26),inset 0 -3px 6px rgba(0,0,0,.06),inset 0 2px 2px #fff}
+.dial.down{transform:scale(.97)}
+.dial.down .dial-face{box-shadow:0 2px 4px rgba(40,30,60,.2),inset 0 2px 6px rgba(0,0,0,.08)}
+.dial::after{content:"";position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(139,76,246,.5);opacity:0;pointer-events:none}
+.dial.live::after{animation:ring 1.6s var(--ease) infinite}
+@keyframes ring{0%{opacity:.8;transform:scale(.9)}100%{opacity:0;transform:scale(1.35)}}
+
+/* ---------- logos ---------- */
+.logos{padding-block:clamp(56px,8vw,96px) 20px;overflow:hidden}
+.logos>p{text-align:center;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.marquee{margin-top:26px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.mq{display:flex;gap:88px;width:max-content;animation:mq 42s linear infinite}
+.marquee:hover .mq{animation-play-state:paused}
+.mq span{font-size:24px;font-weight:600;letter-spacing:-.035em;color:var(--hi);opacity:.82;white-space:nowrap}
+.mq span.ser{font-family:Georgia,serif;font-style:italic;font-weight:400}
+.mq span.mono{font-family:var(--f-mono);font-weight:500;font-size:20px;letter-spacing:.04em;text-transform:uppercase}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ---------- industries ---------- */
+.ind{padding-block:clamp(72px,10vw,128px)}
+.ind-head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap}
+.ind-head .sub{margin-top:16px;max-width:52ch}
+.arrows{display:flex;gap:8px}
+.arrows button{width:44px;height:40px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(160deg,#3B3843,#25222C);color:#ECE8F4;box-shadow:4px 6px 10px rgba(0,0,0,.3),inset 1px 1px 0 rgba(255,255,255,.08);transition:transform .15s}
+.arrows button:active{transform:translate(1px,2px)}
+.arrows svg{width:16px;height:16px}
+.ind-card{margin-top:36px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-radius:12px;overflow:hidden;border:4px solid #0B0A0F;box-shadow:0 40px 70px -30px rgba(10,5,25,.6);min-height:430px}
+.ind-copy{background:#2A2830;color:#ECE8F4;padding:30px;position:relative;display:flex;flex-direction:column;min-width:0}
+.ind-copy::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none}
+.ind-copy>*{position:relative}
+.ind-copy h3{font-size:clamp(24px,2.5vw,32px);line-height:1.2;letter-spacing:-.02em}
+.ind-copy h3 span{color:rgba(236,232,244,.5)}
+.ind-flow{margin-top:24px;display:grid;gap:6px;background:#0B0A0F;border-radius:10px;padding:14px 16px;box-shadow:inset 0 2px 8px rgba(0,0,0,.6);font-family:var(--f-mono);font-size:12.5px}
+.ind-flow div{display:grid;grid-template-columns:86px 1fr;gap:10px;animation:pop .45s var(--ease) both}
+.ind-flow div:nth-child(2){animation-delay:.06s}.ind-flow div:nth-child(3){animation-delay:.12s}.ind-flow div:nth-child(4){animation-delay:.18s}
+.ind-flow b{font-weight:400;color:rgba(236,232,244,.45);text-transform:uppercase;letter-spacing:.05em;font-size:11px;padding-top:1px}
+.ind-copy .row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:auto;padding-top:24px;flex-wrap:wrap}
+.ind-copy .row span{font-family:var(--f-mono);font-size:11.5px;color:rgba(236,232,244,.45);letter-spacing:.05em;text-transform:uppercase}
+.acc{display:flex;gap:2px;background:#0B0A0F;min-width:0}
+.slab{position:relative;flex:1;min-width:0;overflow:hidden;cursor:pointer;transition:flex .7s var(--ease);background:var(--bgc);color:#fff}
+.slab.on{flex:5.5}
+.slab .art{position:absolute;inset:0;width:100%;height:100%}
+.slab .lbl{position:absolute;left:16px;bottom:14px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;opacity:0;transition:opacity .4s}
+.slab.on .lbl{opacity:.8}
+.slab .vert{position:absolute;left:50%;top:16px;writing-mode:vertical-rl;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.7;translate:-50% 0;transition:opacity .3s;white-space:nowrap}
+.slab.on .vert{opacity:0}
+.slab .big{position:absolute;left:18px;top:18px;right:18px;font-family:var(--f-px);font-size:clamp(28px,3vw,44px);line-height:1;opacity:0;transform:translateY(10px);transition:opacity .5s .15s,transform .6s .15s var(--ease)}
+.slab.on .big{opacity:1;transform:none}
+
+/* ---------- pinned call ---------- */
+.ctrack{height:420vh;position:relative}
+.cstage{box-sizing:border-box;grid-template-rows:minmax(0,1fr);position:sticky;top:calc(var(--hdr) + env(safe-area-inset-top,0px));height:calc(100vh - var(--hdr));height:calc(100svh - var(--hdr));display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,5vw,80px);padding-block:clamp(24px,4vh,48px);align-items:stretch}
+.cleft{display:flex;flex-direction:column;min-width:0}
+.cleft .sub{margin-top:20px}
+.steps{list-style:none;margin:auto 0 0;padding:0;max-width:420px}
+.steps li{display:grid;grid-template-columns:30px 1fr;align-items:center;height:42px;border-top:1px solid var(--line);font-size:14.5px;color:var(--ink-3);position:relative;transition:color .3s}
+.steps li:last-child{border-bottom:1px solid var(--line)}
+.steps li b{font-family:var(--f-mono);font-weight:400;font-size:10.5px}
+.steps li.on{color:var(--hi)}
+.steps li .bar{position:absolute;left:0;bottom:-1px;height:1px;background:var(--hi);width:0}
+.phone{align-self:center;justify-self:end;width:min(420px,100%);height:min(100%,690px);min-height:0;display:flex;flex-direction:column;border-radius:12px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(10,5,25,.7),0 0 0 1px rgba(255,255,255,.08)}
+.ph-scr{flex:1;background:var(--glass);color:var(--glass-ink);padding:22px 24px;display:flex;flex-direction:column;min-height:0}
+.ph-top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--glass-edge);padding-bottom:14px;gap:10px}
+.ph-top .st{font-family:var(--f-px);font-size:28px;color:var(--glass-ink-2);white-space:nowrap}
+.ph-top small{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;color:var(--glass-ink-3);text-transform:uppercase;white-space:nowrap}
+.ph-top small b{color:var(--glass-ink);font-weight:400}
+.ph-feed{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;padding:16px 0;overflow:hidden;min-height:0;-webkit-mask-image:linear-gradient(transparent,#000 18%);mask-image:linear-gradient(transparent,#000 18%)}
+.ph-in{display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,.14);border-radius:9px;height:42px;padding:0 14px;font-size:14px;color:var(--glass-ink-3);flex:none}
+.ph-in .wv{display:flex;gap:3px;align-items:center;height:16px}
+.ph-in .wv i{width:3px;border-radius:2px;background:#CDB0FF;height:30%;animation:wv 1s ease-in-out infinite}
+.ph-in .wv i:nth-child(2){animation-delay:.15s}.ph-in .wv i:nth-child(3){animation-delay:.3s}.ph-in .wv i:nth-child(4){animation-delay:.45s}.ph-in .wv i:nth-child(5){animation-delay:.6s}
+@keyframes wv{50%{height:100%}}
+.ph-base{height:62px;flex:none;background:linear-gradient(180deg,#2E2B34,#1C1A21);display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;color:rgba(236,232,244,.5);text-transform:uppercase;border-top:1px solid rgba(255,255,255,.06)}
+.ph-base .scr{width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#5a5663,#1d1b22)}
+.ph-base .led{display:inline-flex;gap:8px;align-items:center;color:#ECE8F4}
+.ph-base .led i{width:7px;height:7px;border-radius:50%;background:#9D61FF;box-shadow:0 0 8px 2px rgba(157,97,255,.6)}
+.ph-base .gr{display:grid;grid-template-columns:repeat(6,3px);gap:5px 7px}
+.ph-base .gr i{width:2.5px;height:2.5px;border-radius:50%;background:rgba(236,232,244,.3)}
+.ph-base .l{display:flex;align-items:center;gap:10px}
+
+/* ---------- how it works (strands) ---------- */
+.how-intro{padding-top:clamp(72px,10vw,120px)}
+.how-intro .sub{margin-top:20px}
+.htrack{height:440vh;position:relative;margin-top:40px}
+.hstage{position:sticky;top:calc(var(--hdr) + env(safe-area-inset-top,0px));height:calc(100vh - var(--hdr));height:calc(100svh - var(--hdr));overflow:hidden}
+.hstage canvas{position:absolute;inset:0;width:100%;height:100%}
+.hstage .vig{position:absolute;left:50%;top:36%;width:min(1100px,120vw);height:62%;translate:-50% -50%;background:radial-gradient(closest-side,var(--vig),transparent);pointer-events:none}
+.htitle{position:absolute;left:0;right:0;top:18%;text-align:center;pointer-events:none;padding-inline:20px}
+.htitle h3{font-size:clamp(48px,7vw,96px);font-weight:500;letter-spacing:-.05em;color:var(--hi);line-height:1;transition:opacity .45s,transform .6s var(--ease)}
+.htitle p{margin:18px auto 0;font-size:clamp(16px,1.5vw,19px);color:var(--ink-2);max-width:44ch;transition:opacity .45s .05s}
+.htitle.swap h3{opacity:0;transform:translateY(10px)}.htitle.swap p{opacity:0}
+.seg{position:absolute;left:50%;bottom:28px;translate:-50% 0;display:flex;gap:6px;padding:5px;border-radius:12px;background:#121016;box-shadow:0 16px 30px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.08);z-index:2;max-width:calc(100% - 32px)}
+.seg .grp{display:flex;background:#1C1A21;border-radius:9px;padding:3px;box-shadow:inset 0 1px 3px rgba(0,0,0,.5)}
+.seg button{height:30px;padding:0 14px;border-radius:7px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(236,232,244,.45);transition:color .2s,background-color .2s}
+.seg button.on{background:#3A3741;color:#ECE8F4;box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 2px 4px rgba(0,0,0,.4)}
+.seg a{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:9px;background:#2A2830;color:#ECE8F4;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.seg a i{width:10px;height:3px;background:#9D61FF;border-radius:2px}
+
+/* ---------- night ---------- */
+.story{padding-block:clamp(80px,12vw,150px) clamp(60px,8vw,100px);display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(32px,5vw,64px);align-items:center}
+.quote{font-size:clamp(17px,1.6vw,20px);color:var(--ink-3);margin-top:28px;line-height:1.55}
+.quote b{color:var(--hi);font-weight:400}
+.stats{display:flex;gap:22px;align-items:center;margin-top:28px;flex-wrap:wrap}
+.stats div{display:flex;flex-direction:column}
+.stats strong{font-weight:500;font-size:16px;color:var(--hi)}
+.stats span{font-size:14px;color:var(--ink-3)}
+.stats hr{width:1px;height:36px;border:0;background:var(--line-2);margin:0}
+.story .dbtn{margin-top:30px}
+.orb{position:relative;aspect-ratio:1;max-width:460px;width:100%;justify-self:end;display:grid;place-items:center}
+.orb i{position:absolute;inset:0;border-radius:50%;border:1px solid var(--line-2)}
+.orb i:nth-child(2){inset:12%}.orb i:nth-child(3){inset:24%}.orb i:nth-child(4){inset:36%;border-color:rgba(157,97,255,.55)}
+.orb .pulse{position:absolute;inset:36%;border-radius:50%;border:1px solid #9D61FF;animation:orb 3.2s var(--ease) infinite}
+.orb .pulse.p2{animation-delay:1.6s}
+@keyframes orb{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.7);opacity:0}}
+.orb .core{width:28%;aspect-ratio:1;border-radius:22px;background:var(--glass);display:grid;place-items:center;box-shadow:0 20px 40px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.1);position:relative}
+.orb .core svg{width:46%;height:46%}
+.orb .node{position:absolute;font-family:var(--f-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.orb .node::before{content:"";width:9px;height:9px;border-radius:3px;background:var(--ink-2)}
+.cmpw{overflow-x:auto;border-top:1px solid var(--line-2)}
+table.cmp{width:100%;border-collapse:collapse;min-width:720px;font-size:14.5px}
+.cmp th,.cmp td{padding:15px 16px;text-align:left;border-bottom:1px solid var(--line)}
+.cmp th{font-family:var(--f-mono);font-size:11.5px;font-weight:400;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+.cmp th.us,.cmp td.us{background:var(--accent-soft);color:var(--hi)}
+.cmp td{color:var(--ink-2)}
+.cy{color:var(--hi)}.cy::before{content:"● ";color:#9D61FF}
+.cn::before{content:"—";color:var(--ink-3)}
+
+.sect{padding-block:clamp(80px,11vw,140px)}
+.sect .sub{margin-top:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line-2);border-left:1px solid var(--line);margin-top:48px}
+.cell{--x:50%;--y:50%;padding:28px 26px 30px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;overflow:hidden;min-height:240px;display:flex;flex-direction:column}
+.cell::before{content:"";position:absolute;inset:0;background:radial-gradient(320px circle at var(--x) var(--y),var(--accent-soft),transparent 65%);opacity:0;transition:opacity .4s;pointer-events:none}
+.cell:hover::before{opacity:1}
+.cell>*{position:relative}
+.cell .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--ink-3);text-transform:uppercase;display:flex;justify-content:space-between}
+.cell h3{font-size:22px;letter-spacing:-.03em;color:var(--hi);margin-top:44px;font-weight:500}
+.cell p{font-size:15px;color:var(--ink-2);margin-top:10px}
+.cell .go{margin-top:auto;padding-top:20px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);display:inline-flex;gap:8px}
+.cell .go span{transition:transform .3s var(--ease)}
+.cell:hover .go span{transform:translateX(4px)}
+
+.devgrid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(32px,5vw,72px);align-items:center}
+.devlinks{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;column-gap:20px;border-top:1px solid var(--line)}
+.devlinks a{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line);font-size:14.5px;color:var(--ink-2);transition:color .2s}
+.devlinks a:hover{color:var(--hi)}
+.code{border-radius:12px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08);min-width:0}
+.code-top{display:flex;align-items:center;gap:4px;padding:8px;background:#1C1A21;border-bottom:1px solid rgba(255,255,255,.06)}
+.code-top button{height:30px;padding:0 12px;border-radius:7px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.04em;color:rgba(236,232,244,.45)}
+.code-top button[aria-selected="true"]{background:#3A3741;color:#ECE8F4}
+.code-top .copy{margin-left:auto}
+.code pre{margin:0;background:var(--glass);color:#E6E1F0;padding:22px;font-family:var(--f-mono);font-size:13px;line-height:1.7;overflow-x:auto;min-height:320px}
+.code .c{color:#6E6880}.code .s{color:#C9F2D1}.code .k{color:#CDB0FF}
+.note{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3);margin-top:12px}
+
+.est{text-align:center}
+.est .tag{justify-content:center}
+.est h2{margin-top:22px}
+.est .sub{margin:18px auto 0}
+.sliders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;max-width:860px;margin:48px auto 0;text-align:left}
+.sl label{display:flex;justify-content:space-between;font-size:14px;color:var(--ink-2);gap:8px}
+.sl output{font-family:var(--f-mono);color:var(--hi);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;margin-top:14px;-webkit-appearance:none;appearance:none;height:4px;border-radius:9px;background:linear-gradient(90deg,#9D61FF var(--p,50%),var(--line-2) var(--p,50%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:5px;background:linear-gradient(155deg,#F4F2F7,#CFCBD6);border:1px solid rgba(0,0,0,.2);box-shadow:2px 3px 5px rgba(0,0,0,.35);cursor:grab}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:5px;background:#E5E2EA;border:1px solid rgba(0,0,0,.2);cursor:grab}
+.readout{max-width:860px;margin:44px auto 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
+.readout div{padding:22px 16px;border-right:1px solid var(--line);text-align:left}
+.readout div:last-child{border-right:0}
+.readout b{display:block;font-family:var(--f-dot);font-weight:800;font-size:clamp(26px,3vw,36px);color:var(--hi);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.readout span{font-size:13px;color:var(--ink-3)}
+.est-cta{display:flex;gap:6px;max-width:500px;margin:40px auto 0;background:#121016;border-radius:12px;padding:6px;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 30px 60px -20px rgba(157,97,255,.5)}
+.est-cta input{flex:1;min-width:0;background:transparent;border:0;outline:0;padding:0 12px;font-family:var(--f-mono);font-size:13px;color:#ECE8F4}
+.est-cta input::placeholder{color:rgba(236,232,244,.4)}
+.est-msg{margin-top:14px;font-size:14px;color:var(--ink-2);min-height:22px}
+.est-msg a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.fine{font-size:12px;color:var(--ink-3);margin-top:10px}
+
+.faq{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:clamp(32px,5vw,72px)}
+details{border-bottom:1px solid var(--line)}
+details:first-of-type{border-top:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:20px 0;font-size:17px;color:var(--hi)}
+summary::-webkit-details-marker{display:none}
+summary i{font-style:normal;font-family:var(--f-mono);color:var(--ink-3);transition:transform .35s var(--ease)}
+details[open] summary i{transform:rotate(45deg)}
+details p{padding:0 40px 22px 0;color:var(--ink-2);max-width:62ch}
+details[open] p{animation:pop .4s var(--ease) both}
+
+footer{border-top:1px solid var(--line);padding-top:64px}
+.ft{display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:28px}
+.ft h4{margin:0 0 12px;font-family:var(--f-mono);font-size:11px;font-weight:400;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.ft ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.ft li a{font-size:15px;color:var(--ink-2)}
+.ft li a:hover{color:var(--hi)}
+.badges{display:flex;gap:8px;margin-top:14px}
+.badges span{width:44px;height:44px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.04em;color:var(--ink-2)}
+.ft .mail{font-family:var(--f-mono);font-size:13px;margin-top:18px;color:var(--ink-2);user-select:all}
+.legal{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:56px;padding-block:20px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3)}
+.legal nav{display:flex;gap:18px}
+
+/* reveal: visible at rest */
+.rv{transition:transform .9s var(--ease),opacity .9s var(--ease)}
+.js .rv:not(.in){transform:translateY(26px);opacity:.4}
+
+@media (max-width:980px){
+  .nav,.signin{display:none}
+  .hdr-in{grid-template-columns:1fr auto}
+  .burger{display:grid}
+  .hdr-r .kbtn{display:none}
+  .hero-top h1,.hero-top .sub{grid-column:1/-1}
+  .rig,.ind-card,.story,.devgrid,.faq{grid-template-columns:minmax(0,1fr)}
+  .pad{min-height:340px}
+  .acc{min-height:260px}
+  .cstage{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:16px}
+  .cleft .sub{display:none}
+  .cleft .h2{font-size:clamp(30px,7vw,44px)}
+  .steps{display:flex;margin-top:16px;max-width:none;gap:6px}
+  .steps li{flex:1;height:3px;border:0;display:block;font-size:0;background:var(--line-2);border-radius:2px}
+  .steps li:last-child{border:0}
+  .steps li b{display:none}
+  .steps li .bar{bottom:0;height:3px;border-radius:2px}
+  .phone{justify-self:center;height:100%;align-self:stretch}
+  .orb{justify-self:center;max-width:340px}
+  .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ft{grid-template-columns:1fr 1fr 1fr}
+  .ft>div:first-child{grid-column:1/-1}
+}
+@media (max-width:640px){
+  .gridlines div{grid-template-columns:repeat(3,1fr)}
+  .grid3,.sliders{grid-template-columns:minmax(0,1fr)}
+  .readout{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .readout div:nth-child(2){border-right:0}
+  .readout div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .ft{grid-template-columns:1fr 1fr}
+  .devlinks{grid-template-columns:minmax(0,1fr)}
+  .seg .grp button{padding:0 9px}
+  .seg a{display:none}
+  .orb .node{font-size:9.5px}
+  .ind-copy{padding:22px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .js .rv:not(.in){transform:none;opacity:1}
+}
+</style>
+</head>
+<body>
+<div class="sky" id="sky" aria-hidden="true"></div>
+<div class="dusk" id="dusk" aria-hidden="true"></div>
+<div class="gridlines" aria-hidden="true"><div><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+
+<header class="hdr" id="hdr">
+  <div class="hdr-in">
+    <a class="logo" href="#top" aria-label="TryVox home"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#00B900" d="M0 0H10L0 10Z M21 0H32V11H10.5Z M21 11H31L21 21Z M11 11V21H1Z M0 21H21L10.5 32H0Z M32 21V32H21Z"/></svg>TryVox</a>
+    <ul class="nav">
+      <li class="has-mega"><button class="nl" aria-expanded="false">Products <svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></button>
+        <div class="mega"><p>Telephony for voice AI</p>
+          <a href="#stack"><span class="mt">Phone Numbers</span><span class="md">Local, national and toll-free numbers with KYC.</span></a>
+          <a href="#stack"><span class="mt">SIP Trunking</span><span class="md">One trunk for inbound and outbound calls.</span></a>
+          <a href="#stack"><span class="mt">Voice API</span><span class="md">Live audio and call control from your code.</span></a>
+          <a href="#stack"><span class="mt">Call Events</span><span class="md">Webhooks for every ring, answer and hang-up.</span></a>
+          <a href="#stack"><span class="mt">WhatsApp</span><span class="md">Messaging on the same account.</span></a>
+          <a href="#stack"><span class="mt">SMS</span><span class="md">DLT-ready SMS for OTPs and alerts.</span></a>
+        </div></li>
+      <li class="has-mega"><button class="nl" aria-expanded="false">Solutions <svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></button>
+        <div class="mega"><p>By industry</p>
+          <a href="#industries" data-ind="0"><span class="mt">Financial services</span><span class="md">Collections, reminders, KYC follow-ups.</span></a>
+          <a href="#industries" data-ind="1"><span class="mt">Healthcare</span><span class="md">Appointments and patient reminders.</span></a>
+          <a href="#industries" data-ind="2"><span class="mt">E-commerce</span><span class="md">COD confirmation and order support.</span></a>
+          <a href="#industries" data-ind="3"><span class="mt">Logistics</span><span class="md">Delivery slots and masked calling.</span></a>
+          <a href="#industries" data-ind="4"><span class="mt">Real estate</span><span class="md">Instant callbacks on new leads.</span></a>
+          <a href="#industries" data-ind="5"><span class="mt">Travel & hospitality</span><span class="md">24/7 booking lines.</span></a>
+        </div></li>
+      <li><a class="nl" href="#developers">Developers</a></li>
+      <li><a class="nl" href="#estimate">Pricing</a></li>
+    </ul>
+    <div class="hdr-r">
+      <button class="theme-t" id="themeT" aria-label="Switch light or dark theme"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></svg></button>
+      <a class="signin" href="https://app.tryvox.io/">Sign in</a>
+      <a class="kbtn" href="https://app.tryvox.io/">Start free</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+<nav class="sheet" aria-label="Mobile">
+  <a href="#stack">Products</a><a href="#industries">Solutions</a><a href="#developers">Developers</a><a href="#estimate">Pricing</a><a href="https://app.tryvox.io/">Sign in</a>
+  <a class="kbtn" href="https://app.tryvox.io/">Start free</a>
+</nav>
+
+<main id="top">
+<!-- HERO -->
+<section class="hero wrap">
+  <p class="tag"><i></i>Telephony infrastructure for voice AI</p>
+  <div class="hero-top">
+    <h1 class="px h1"><span class="ln">Give your agent</span><span class="ln typed" id="heroType">a phone line.</span></h1>
+    <p class="sub">Phone numbers, SIP trunking and carrier-grade calling APIs that connect any AI voice agent to real phone networks. We don't build agents, so we never compete with yours.</p>
+  </div>
+  <div class="rig" id="rig">
+    <div class="glass">
+      <div class="g-status"><span id="gStatus">ready</span><small>Line 01 · <b id="gTime">00:00</b></small></div>
+      <div class="g-lcd">+91 80 4718 2290</div>
+      <div class="g-feed" id="gFeed" aria-live="polite">
+        <div class="msg ev">Number provisioned · SIP trunk attached</div>
+        <div class="msg ev ok">Agent connected · waiting for a call</div>
+      </div>
+      <form id="gForm" novalidate>
+        <p class="g-hint">Press <b style="color:var(--glass-ink);font-weight:500">Call</b> to hear a call flow through TryVox. Then start free with your work email.</p>
+        <div class="g-form"><input id="gEmail" type="email" placeholder="you@company.com" aria-label="Work email" autocomplete="email"><button type="submit">Continue</button></div>
+        <p class="g-fine">Used to set up your free account and test number.</p>
+      </form>
+    </div>
+    <div class="pad">
+      <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="qd q1"><span class="mark">TRYVOX</span></div>
+      <div class="qd q2"></div>
+      <div class="qd q3"><span class="led on" id="L0"><i></i>Number</span></div>
+      <div class="qd q4"><span class="led" id="L1"><i></i>SIP · Stream</span></div>
+      <button class="dial" id="dial" aria-label="Start the demo call"><span class="dial-face"><span class="dash"></span><span id="dialLbl">CALL</span></span></button>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<section class="logos" id="works" aria-label="Integrations">
+  <p>Works with the voice stack you already trust</p>
+  <div class="marquee"><div class="mq">
+    <span>ElevenLabs</span><span class="mono">Retell AI</span><span>vapi</span><span class="ser">LiveKit</span><span>Bolna</span><span class="mono">Deepgram</span><span>Amazon Polly</span><span class="ser">WhatsApp</span><span class="mono">Webhooks</span>
+    <span aria-hidden="true">ElevenLabs</span><span class="mono" aria-hidden="true">Retell AI</span><span aria-hidden="true">vapi</span><span class="ser" aria-hidden="true">LiveKit</span><span aria-hidden="true">Bolna</span><span class="mono" aria-hidden="true">Deepgram</span><span aria-hidden="true">Amazon Polly</span><span class="ser" aria-hidden="true">WhatsApp</span><span class="mono" aria-hidden="true">Webhooks</span>
+  </div></div>
+</section>
+
+<!-- INDUSTRIES -->
+<section class="ind wrap" id="industries">
+  <div class="ind-head rv">
+    <div><p class="tag"><i></i>Use cases</p><h2 class="px h2" style="margin-top:20px">Built for AI calling<br>in every industry.</h2><p class="sub">Swap call-centre queues for agents that pick up on the first ring, in the industries where calls matter most.</p></div>
+    <div class="arrows"><button id="indPrev" aria-label="Previous industry"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 3L5 8l5 5"/></svg></button><button id="indNext" aria-label="Next industry"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3l5 5-5 5"/></svg></button></div>
+  </div>
+  <div class="ind-card rv">
+    <div class="ind-copy">
+      <h3 id="indH">Collections and reminders that connect. <span>Local caller ID, payment links on WhatsApp and a human one transfer away.</span></h3>
+      <div class="ind-flow" id="indFlow"></div>
+      <div class="row"><span id="indN">01 / 06 · Financial services</span><a class="kbtn" href="https://app.tryvox.io/">Start free</a></div>
+    </div>
+    <div class="acc" id="acc"></div>
+  </div>
+</section>
+
+<!-- PINNED CALL -->
+<section aria-label="A call through TryVox">
+  <div class="ctrack" id="ctrack">
+    <div class="cstage wrap" id="cstage">
+      <div class="cleft">
+        <h2 class="px h2">Calls that<br>keep connecting.</h2>
+        <p class="sub">Numbers, routing, live audio and events, handled while your agent talks.</p>
+        <ol class="steps" id="steps">
+          <li class="on"><b>01</b>The customer calls<span class="bar"></span></li>
+          <li><b>02</b>TryVox connects your agent<span class="bar"></span></li>
+          <li><b>03</b>Your agent answers live<span class="bar"></span></li>
+          <li><b>04</b>A human joins when needed<span class="bar"></span></li>
+          <li><b>05</b>Every event is logged<span class="bar"></span></li>
+        </ol>
+      </div>
+      <div class="phone">
+        <div class="ph-scr">
+          <div class="ph-top"><span class="st" id="phSt">ringing</span><small>Latency <b id="phLat">—</b></small></div>
+          <div class="ph-feed" id="phFeed"></div>
+          <div class="ph-in"><span id="phIn">Incoming call…</span><span class="wv" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></div>
+        </div>
+        <div class="ph-base"><span class="l"><span class="scr"></span>TryVox</span><span class="led"><i></i>Voice</span><span class="l"><span class="gr"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="scr"></span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section aria-label="How it works">
+  <div class="wrap how-intro rv">
+    <p class="tag"><i></i>How it works</p>
+    <h2 class="px h2" style="margin-top:20px">Turn any agent<br>into a phone line.</h2>
+    <p class="sub">Bring numbers, trunks and carriers together, connect your agent and watch every call it takes.</p>
+  </div>
+  <div class="htrack" id="htrack">
+    <div class="hstage" id="hstage">
+      <canvas id="strands" aria-hidden="true"></canvas>
+      <div class="vig" aria-hidden="true"></div>
+      <div class="htitle" id="htitle"><h3 id="hT">Number.</h3><p id="hP">Pick local, national or toll-free numbers with KYC done online.</p></div>
+      <div class="seg"><div class="grp" id="hseg"><button class="on" data-go="0">Number</button><button data-go="1">Connect</button><button data-go="2">Stream</button><button data-go="3">Observe</button></div><a href="#developers"><i></i>Read the docs ↗</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- NIGHT -->
+<div id="night">
+  <section class="wrap story">
+    <div class="rv">
+      <p class="tag"><i></i>Infrastructure only</p>
+      <h2 class="px h2" style="margin-top:20px">We don't build agents. We connect them.</h2>
+      <p class="quote">Some telephony providers now sell their own AI agents. TryVox is <b>only the phone layer</b>, so <b>agent platforms</b> and <b>builders</b> can run on us <b>without feeding a competitor</b>. Keep the voice stack you already trust, with <b>no lock-in</b>.</p>
+      <div class="stats"><div><strong>&lt;200ms</strong><span>Response time</span></div><hr><div><strong>99.9%</strong><span>Platform uptime</span></div><hr><div><strong>24/7</strong><span>Always available</span></div></div>
+      <a class="dbtn" href="#compare">See how we compare</a>
+    </div>
+    <div class="orb rv" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><span class="pulse"></span><span class="pulse p2"></span>
+      <span class="core"><svg viewBox="0 0 32 32"><path fill="#00B900" d="M0 0H10L0 10Z M21 0H32V11H10.5Z M21 11H31L21 21Z M11 11V21H1Z M0 21H21L10.5 32H0Z M32 21V32H21Z"/></svg></span>
+      <span class="node" style="left:2%;top:22%">Vapi</span><span class="node" style="right:0;top:16%">Retell</span><span class="node" style="left:0;bottom:22%">LiveKit</span><span class="node" style="right:4%;bottom:14%">Your code</span><span class="node" style="left:40%;top:-2%">Bolna</span>
+    </div>
+  </section>
+
+  <section class="wrap" id="compare" style="padding-bottom:20px">
+    <div class="cmpw rv">
+      <table class="cmp">
+        <thead><tr><th></th><th class="us">TryVox</th><th>Telephony + own AI agents</th><th>Global CPaaS</th><th>Local telcos</th></tr></thead>
+        <tbody>
+          <tr><td>Infrastructure only, never competes with you</td><td class="us"><span class="cy">Yes</span></td><td><span class="cn"></span></td><td><span class="cy">Yes</span></td><td><span class="cy">Yes</span></td></tr>
+          <tr><td>Bring any agent platform</td><td class="us"><span class="cy">Yes</span></td><td>Varies</td><td><span class="cy">Yes</span></td><td>SIP only</td></tr>
+          <tr><td>Indian numbers with KYC handled</td><td class="us"><span class="cy">Yes</span></td><td><span class="cy">Yes</span></td><td>Limited</td><td><span class="cy">Yes</span></td></tr>
+          <tr><td>DLT-ready messaging</td><td class="us"><span class="cy">Yes</span></td><td><span class="cy">Yes</span></td><td>Limited</td><td>Varies</td></tr>
+          <tr><td>Self-serve setup in minutes</td><td class="us"><span class="cy">Yes</span></td><td>Varies</td><td><span class="cy">Yes</span></td><td><span class="cn"></span></td></tr>
+          <tr><td>Voice, WhatsApp and SMS on one account</td><td class="us"><span class="cy">Yes</span></td><td>Varies</td><td><span class="cy">Yes</span></td><td><span class="cn"></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="wrap sect" id="stack">
+    <div class="rv"><p class="tag"><i></i>The stack</p><h2 class="px h2" style="margin-top:20px">Everything your agent<br>needs to reach a phone.</h2><p class="sub">Six building blocks on one account and one bill.</p></div>
+    <div class="grid3">
+      <a class="cell rv" href="https://app.tryvox.io/"><span class="k"><span>01</span><span>Numbers</span></span><h3>Phone numbers callers pick up</h3><p>Local, national and toll-free numbers with business KYC. Choose the caller ID for every campaign.</p><span class="go">Get a number <span>→</span></span></a>
+      <a class="cell rv" href="https://app.tryvox.io/"><span class="k"><span>02</span><span>SIP</span></span><h3>SIP trunking, set up for you</h3><p>One trunk for inbound and outbound calls, with credentials ready the moment you create it.</p><span class="go">Create a trunk <span>→</span></span></a>
+      <a class="cell rv" href="#developers"><span class="k"><span>03</span><span>API</span></span><h3>Voice API & streaming</h3><p>Place calls, stream live audio to your model and control every call from your code.</p><span class="go">Read the docs <span>→</span></span></a>
+      <a class="cell rv" href="#developers"><span class="k"><span>04</span><span>Events</span></span><h3>Real-time call events</h3><p>Webhooks for every ring, answer, keypress, transfer and hang-up.</p><span class="go">See events <span>→</span></span></a>
+      <a class="cell rv" href="https://app.tryvox.io/"><span class="k"><span>05</span><span>WhatsApp</span></span><h3>WhatsApp messaging</h3><p>Follow up every AI call with a confirmation, summary or payment link.</p><span class="go">Explore WhatsApp <span>→</span></span></a>
+      <a class="cell rv" href="https://app.tryvox.io/"><span class="k"><span>06</span><span>SMS</span></span><h3>SMS at scale</h3><p>DLT-ready SMS for OTPs, reminders and alerts, with delivery reports.</p><span class="go">Explore SMS <span>→</span></span></a>
+    </div>
+  </section>
+
+  <section class="wrap sect" id="developers" style="padding-top:0">
+    <div class="devgrid">
+      <div class="rv"><p class="tag"><i></i>Developers</p><h2 class="px h2" style="margin-top:20px">Your first call is a few lines away.</h2><p class="sub">Programmable voice, webhooks and SIP that behave the way engineers expect.</p>
+        <div class="devlinks"><a href="https://app.tryvox.io/">API reference <span>↗</span></a><a href="https://app.tryvox.io/">Quickstarts <span>↗</span></a><a href="https://app.tryvox.io/">Webhook events <span>↗</span></a><a href="https://app.tryvox.io/">SDKs <span>↗</span></a><a href="https://app.tryvox.io/">Status <span>↗</span></a><a href="https://app.tryvox.io/">llms.txt <span>↗</span></a></div></div>
+      <div class="rv" style="min-width:0">
+        <div class="code"><div class="code-top" role="tablist" aria-label="Code language"><button role="tab" aria-selected="true" data-lang="curl">cURL</button><button role="tab" aria-selected="false" data-lang="node">Node</button><button role="tab" aria-selected="false" data-lang="py">Python</button><button class="copy" id="copy">Copy</button></div><pre id="codeBox" tabindex="0"></pre></div>
+        <p class="note">Illustrative request. See the API reference for exact fields.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sect est" id="estimate" style="padding-top:20px">
+    <p class="tag rv"><i></i>Size your line</p>
+    <h2 class="px h2 rv">See what your calls need.</h2>
+    <p class="sub rv">Move the sliders to estimate minutes and peak concurrent calls, then get a rate card for your volume.</p>
+    <div class="sliders rv">
+      <div class="sl"><label for="eCalls">Calls per month <output id="oCalls">50,000</output></label><input type="range" id="eCalls" min="1000" max="1000000" step="1000" value="50000"></div>
+      <div class="sl"><label for="eMin">Average call length <output id="oMin">2.5 min</output></label><input type="range" id="eMin" min="0.5" max="10" step="0.5" value="2.5"></div>
+      <div class="sl"><label for="eHrs">Calling hours per day <output id="oHrs">9 h</output></label><input type="range" id="eHrs" min="4" max="24" step="1" value="9"></div>
+    </div>
+    <div class="readout rv" aria-live="polite">
+      <div><b id="rMin">1,25,000</b><span>Minutes per month</span></div>
+      <div><b id="rPeak">27</b><span>Peak concurrent calls</span></div>
+      <div><b id="rHr">253</b><span>Calls per hour</span></div>
+      <div><b id="rNum">3</b><span>Numbers to start</span></div>
+    </div>
+    <form class="est-cta rv" id="estForm" novalidate><input type="email" id="estEmail" placeholder="you@company.com" aria-label="Work email" autocomplete="email"><button class="kbtn" type="submit">Get rate card</button></form>
+    <p class="est-msg" id="estMsg"></p>
+    <p class="fine">Assumes 22 calling days a month, a 2.5× peak over the hourly average and about 10 concurrent calls per number.</p>
+  </section>
+
+  <section class="wrap sect" style="padding-top:20px">
+    <div class="faq">
+      <div class="rv"><p class="tag"><i></i>FAQ</p><h2 class="px h2" style="margin-top:20px">Questions teams ask first.</h2></div>
+      <div class="rv">
+        <details open><summary>What is TryVox?<i>+</i></summary><p>TryVox is telephony infrastructure for voice AI. We provide phone numbers, SIP trunking, programmable voice APIs, call routing and real-time call events that connect any AI voice agent to the phone network.</p></details>
+        <details><summary>Do you provide an AI voice agent?<i>+</i></summary><p>No. You bring your own agent, built on Vapi, Retell, LiveKit, Bolna, ElevenLabs or your own code, and we connect it to real phone calls.</p></details>
+        <details><summary>Can I get Indian phone numbers for my AI agent?<i>+</i></summary><p>Yes. Local, national and toll-free numbers, with business KYC and India's telecom requirements handled during setup.</p></details>
+        <details><summary>How do I connect TryVox to Vapi or Retell?<i>+</i></summary><p>Create a SIP trunk in the console, copy the credentials into your agent platform and assign a number. Then place a test call.</p></details>
+        <details><summary>Is TryVox only for voice AI?<i>+</i></summary><p>No. The same account covers SIP, programmable voice, WhatsApp, SMS and alerts.</p></details>
+        <details><summary>How is TryVox priced?<i>+</i></summary><p>Pay as you go, with no lock-in. Use the estimator above and ask for a rate card for your volume.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="ft">
+        <div style="display:flex;flex-direction:column;align-items:flex-start"><a class="logo" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#00B900" d="M0 0H10L0 10Z M21 0H32V11H10.5Z M21 11H31L21 21Z M11 11V21H1Z M0 21H21L10.5 32H0Z M32 21V32H21Z"/></svg>TryVox</a>
+          <p class="tag" style="margin-top:22px;font-size:11px"><i style="background:var(--ok)"></i>India-ready</p>
+          <div class="badges"><span>KYC</span><span>DLT</span><span>TRAI</span></div>
+          <p class="mail">team@tryvox.io</p></div>
+        <div><h4>Products</h4><ul><li><a href="#stack">Phone numbers</a></li><li><a href="#stack">SIP trunking</a></li><li><a href="#stack">Voice API</a></li><li><a href="#stack">WhatsApp</a></li><li><a href="#stack">SMS</a></li></ul></div>
+        <div><h4>Solutions</h4><ul><li><a href="#industries">Financial services</a></li><li><a href="#industries">Healthcare</a></li><li><a href="#industries">E-commerce</a></li><li><a href="#industries">Logistics</a></li><li><a href="#industries">Real estate</a></li></ul></div>
+        <div><h4>Developers</h4><ul><li><a href="#developers">API reference</a></li><li><a href="#developers">Quickstarts</a></li><li><a href="#developers">Webhooks</a></li><li><a href="#works">Integrations</a></li></ul></div>
+        <div><h4>Company</h4><ul><li><a href="https://tryvox.io/about">About</a></li><li><a href="https://tryvox.io/contact">Contact</a></li><li><a href="https://x.com/TryvoxTeam">X</a></li><li><a href="https://www.linkedin.com/company/tryvox">LinkedIn</a></li></ul></div>
+      </div>
+      <div class="legal"><span>© 2026 Tryjolt Solutions Pvt Ltd</span><nav><a href="https://tryvox.io/privacy">Privacy</a><a href="https://tryvox.io/terms">Terms</a></nav></div>
+    </div>
+  </footer>
+</div>
+</main>
+
+<script>
+(function(){
+  const root=document.documentElement;root.classList.add('js');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+  let col='244,240,251';
+  function readColors(){col=getComputedStyle(root).getPropertyValue('--strand').trim()||col}
+
+  /* theme */
+  try{const t=localStorage.getItem('tv-theme');if(t)root.setAttribute('data-theme',t)}catch(e){}
+  readColors();
+  const isDark=()=>root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+  $('#themeT').addEventListener('click',e=>{
+    const next=isDark()?'light':'dark';
+    const apply=()=>{root.setAttribute('data-theme',next);try{localStorage.setItem('tv-theme',next)}catch(e){};readColors()};
+    if(document.startViewTransition&&!reduce){
+      const r=e.currentTarget.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,end=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+      document.startViewTransition(apply).ready.then(()=>root.animate({clipPath:[`circle(0px at ${x}px ${y}px)`,`circle(${end}px at ${x}px ${y}px)`]},{duration:700,easing:'cubic-bezier(.22,1,.36,1)',pseudoElement:'::view-transition-new(root)'})).catch(()=>{});
+    }else apply();
+  });
+  try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',readColors)}catch(e){}
+  new MutationObserver(readColors).observe(root,{attributes:true,attributeFilter:['data-theme']});
+
+  /* menus */
+  $$('.has-mega').forEach(li=>{const b=li.querySelector('.nl');let t;const o=v=>{li.classList.toggle('open',v);b.setAttribute('aria-expanded',v)};
+    li.addEventListener('mouseenter',()=>{clearTimeout(t);o(true)});li.addEventListener('mouseleave',()=>{t=setTimeout(()=>o(false),140)});
+    b.addEventListener('click',()=>o(!li.classList.contains('open')));
+    li.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{o(false);if(a.dataset.ind)setInd(+a.dataset.ind)}));
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')o(false)})});
+  const bg=$('#burger');bg.addEventListener('click',()=>{const o=!root.classList.contains('menu-open');root.classList.toggle('menu-open',o);bg.setAttribute('aria-expanded',o)});
+  $$('.sheet a').forEach(a=>a.addEventListener('click',()=>{root.classList.remove('menu-open');bg.setAttribute('aria-expanded',false)}));
+
+  /* tactile press */
+  $$('.kbtn,.dbtn').forEach(b=>{b.addEventListener('pointerdown',()=>b.classList.add('down'));['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>b.classList.remove('down')))});
+
+  /* reveal */
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{rootMargin:'0px 0px -6% 0px'});
+  $$('.rv').forEach(el=>{if(el.getBoundingClientRect().top<innerHeight)el.classList.add('in');else io.observe(el)});
+
+  /* hero headline typing (full text present at rest) */
+  if(!reduce){const el=$('#heroType'),full=el.textContent;let i=0;el.textContent='';const tick=()=>{el.textContent=full.slice(0,++i);if(i<full.length)setTimeout(tick,55+Math.random()*50)};setTimeout(tick,350)}
+
+  /* helpers */
+  function add(feed,cls,text,max){const d=document.createElement('div');d.className='msg '+cls;d.textContent=text;feed.append(d);while(feed.children.length>max)feed.firstElementChild.remove()}
+  let ac=null;
+  function tone(fs,dur,vol){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const g=ac.createGain();g.connect(ac.destination);const n=ac.currentTime;g.gain.setValueAtTime(0,n);g.gain.linearRampToValueAtTime(vol,n+.03);g.gain.setValueAtTime(vol,n+dur-.05);g.gain.linearRampToValueAtTime(0,n+dur);fs.forEach(f=>{const o=ac.createOscillator();o.frequency.value=f;o.connect(g);o.start(n);o.stop(n+dur+.02)})}catch(e){}}
+
+  /* ---------- hero call rig ---------- */
+  const gS=$('#gStatus'),gT=$('#gTime'),gF=$('#gFeed'),dial=$('#dial'),dl=$('#dialLbl'),L0=$('#L0'),L1=$('#L1');
+  let live=false,tms=[],clock=null,secs=0,typer=null;
+  const later=(f,ms)=>tms.push(setTimeout(f,ms));
+  const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  function typeStatus(word){clearInterval(typer);if(reduce){gS.textContent=word;return}let i=0;gS.textContent='';typer=setInterval(()=>{gS.textContent=word.slice(0,++i);if(i>=word.length)clearInterval(typer)},45)}
+  const script=[['a','Hi, this is Riya calling from Acme Finance. Is this a good time?'],['c','Yes, go ahead.'],['a','Your EMI of ₹4,250 is due on Friday. Shall I send a payment link on WhatsApp?'],['c','Yes please.'],['ev ok','Call completed · 6 events sent to your webhook']];
+  function start(){
+    live=true;tms.forEach(clearTimeout);tms=[];clearInterval(clock);gF.innerHTML='';
+    dial.classList.add('live');dl.textContent='END';L0.classList.remove('on');L1.classList.remove('on');secs=0;gT.textContent='00:00';
+    typeStatus('dialing');tone([350,440],.25,.03);
+    later(()=>{L0.classList.add('on');add(gF,'ev','Outbound from +91 80 4718 2290',6)},400);
+    later(()=>{typeStatus('ringing');add(gF,'ev','Routed · carrier primary · in-south',6);tone([440,480],1,.025)},1000);
+    later(()=>{L1.classList.add('on');typeStatus('connected');add(gF,'ev ok','Answered · audio streaming to your agent',6);
+      clock=setInterval(()=>{secs++;gT.textContent=fmt(secs)},1000);
+      script.forEach((s,i)=>later(()=>add(gF,s[0],s[1],6),900+i*1700));
+      later(()=>end(true),900+script.length*1700);
+    },2600);
+  }
+  function end(done){live=false;tms.forEach(clearTimeout);tms=[];clearInterval(clock);dial.classList.remove('live');dl.textContent='CALL';typeStatus(done?'call ended':'ready')}
+  dial.addEventListener('click',()=>{dial.classList.add('down');setTimeout(()=>dial.classList.remove('down'),150);live?end(false):start()});
+  $('#gForm').addEventListener('submit',e=>{e.preventDefault();const em=$('#gEmail'),f=$('#gForm');
+    if(!em.value||!em.checkValidity()){em.focus();em.placeholder='Enter a valid work email';em.value='';return}
+    f.innerHTML='';const p=document.createElement('p');p.className='g-done';p.append('Next, create your account. ');const a=document.createElement('a');a.href='https://app.tryvox.io/';a.textContent='Continue to sign-up ↗';p.append(a);f.append(p)});
+  const rig=$('#rig');
+  if(!reduce&&matchMedia('(hover:hover)').matches){rig.style.transition='transform .6s cubic-bezier(.22,1,.36,1)';rig.addEventListener('mousemove',e=>{const r=rig.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;rig.style.transform=`perspective(1600px) rotateY(${x*2.4}deg) rotateX(${-y*2.4}deg)`});rig.addEventListener('mouseleave',()=>rig.style.transform='')}
+
+  /* ---------- industries ---------- */
+  const IND=[
+    {n:'Financial services',c:'#3B2A63',h:'Collections and reminders that connect.',s:'Local caller ID, payment links on WhatsApp and a human one transfer away.',f:[['Trigger','EMI due in 3 days'],['Call','Agent calls from a local number'],['Outcome','Promise to pay: Friday'],['Follow-up','WhatsApp payment link sent']],big:'₹4,250 due'},
+    {n:'Healthcare',c:'#24485A',h:'Appointments booked without hold music.',s:'Inbound lines per clinic, rescheduling by phone and reminders by SMS.',f:[['Inbound','Patient calls the clinic'],['Agent','Checks open slots'],['Booked','Thursday, 4 PM'],['Reminder','SMS 24 hours before']],big:'Thu · 4 PM'},
+    {n:'E-commerce',c:'#5B2B4E',h:'Order confirmations at checkout speed.',s:'COD checks, cart recovery and order-status calls at sale-day volume.',f:[['Trigger','COD order placed'],['Call','Agent confirms address'],['Keypad','Customer presses 1'],['Outcome','Order released to ship']],big:'Press 1'},
+    {n:'Logistics',c:'#4A3A22',h:'Delivery calls that reach the doorstep.',s:'Slot confirmations and rescheduling, with numbers masked on both sides.',f:[['Trigger','Out for delivery'],['Call','Agent confirms the slot'],['Change','Customer asks for 6 PM'],['Update','Driver app updated']],big:'6 PM slot'},
+    {n:'Real estate',c:'#283D33',h:'Every enquiry called back in minutes.',s:'Qualify leads the moment they land and book site visits while interest is high.',f:[['Lead','Form filled on a portal'],['Call','Agent calls in 60 seconds'],['Qualify','Budget and location'],['Booked','Site visit on Sunday']],big:'60 s callback'},
+    {n:'Travel & hospitality',c:'#2D3360',h:'Bookings and changes, around the clock.',s:'24/7 lines, toll-free numbers and confirmations by SMS.',f:[['Inbound','Guest calls the hotel'],['Agent','Finds the booking'],['Change','Late check-out added'],['Confirm','SMS sent to guest']],big:'Late check-out'}
+  ];
+  const acc=$('#acc');let cur=0;
+  IND.forEach((d,i)=>{const s=document.createElement('div');s.className='slab'+(i===0?' on':'');s.style.setProperty('--bgc',d.c);s.setAttribute('role','button');s.tabIndex=0;s.setAttribute('aria-label',d.n);
+    let paths='';for(let k=0;k<14;k++)paths+=`<path d="M${-20+k*4} ${80+k*18} C 140 ${40+k*20}, 260 ${200+k*6}, 420 ${120+k*16}" stroke="#fff" stroke-opacity="${(.05+k*.012).toFixed(3)}" fill="none"/>`;
+    s.innerHTML=`<svg class="art" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><radialGradient id="ig${i}" cx="${30+i*9}%" cy="${70-i*6}%" r="80%"><stop offset="0" stop-color="#B98BFF" stop-opacity=".55"/><stop offset=".55" stop-color="#B98BFF" stop-opacity="0"/></radialGradient></defs><rect width="400" height="400" fill="url(#ig${i})"/>${paths}</svg><span class="vert"></span><span class="big"></span><span class="lbl"></span>`;
+    s.querySelector('.vert').textContent=d.n;s.querySelector('.big').textContent=d.big;s.querySelector('.lbl').textContent=String(i+1).padStart(2,'0')+' · '+d.n;
+    s.addEventListener('click',()=>setInd(i));s.addEventListener('mouseenter',()=>{if(matchMedia('(hover:hover)').matches)setInd(i)});
+    s.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setInd(i)}});acc.append(s)});
+  function setInd(i){cur=(i+IND.length)%IND.length;const d=IND[cur];
+    $$('.slab').forEach((s,k)=>s.classList.toggle('on',k===cur));
+    const h=$('#indH');h.textContent=d.h+' ';const sp=document.createElement('span');sp.textContent=d.s;h.append(sp);
+    const fl=$('#indFlow');fl.innerHTML='';d.f.forEach(([k,v])=>{const r=document.createElement('div');const b=document.createElement('b');b.textContent=k;const t=document.createElement('span');t.textContent=v;r.append(b,t);fl.append(r)});
+    $('#indN').textContent=String(cur+1).padStart(2,'0')+' / 06 · '+d.n}
+  setInd(0);$('#indPrev').addEventListener('click',()=>setInd(cur-1));$('#indNext').addEventListener('click',()=>setInd(cur+1));
+
+  /* ---------- pinned call ---------- */
+  const STEPS=[
+    {st:'ringing',lat:'—',inp:'Incoming call…',feed:[['ev','Inbound call · +91 98xxx xx210'],['ev','To +91 80 4718 2290 · local · Bengaluru']]},
+    {st:'connected',lat:'148 ms',inp:'Listening…',feed:[['ev ok','SIP trunk answered · agent attached'],['ev','Audio stream open both ways'],['c','Hi, my order says delivered but nothing arrived.']]},
+    {st:'streaming',lat:'142 ms',inp:'Listening…',feed:[['a','Sorry about that. I can see order 48213 marked delivered at 6:12 PM. Shall I raise a missing-item claim?'],['c','Yes, please. Quickly.']]},
+    {st:'transferring',lat:'139 ms',inp:'Transferring…',feed:[['ev','Warm transfer → support queue'],['ev','Context passed in SIP headers'],['a','Connecting you to Priya from support now. She has the details.']]},
+    {st:'logged',lat:'—',inp:'Call ended',feed:[['ev ok','Call completed · 02:41'],['ev','Recording ready · claim C-2291 created'],['ev ok','7 events sent to your webhook']]}
+  ];
+  const ct=$('#ctrack'),cs=$('#cstage'),phF=$('#phFeed'),phSt=$('#phSt'),phL=$('#phLat'),phIn=$('#phIn'),stepsEl=$$('#steps li');let cstep=-1;
+  function renderCall(n){if(n===cstep)return;const grow=n>cstep;cstep=n;phF.innerHTML='';
+    for(let k=0;k<=n;k++)STEPS[k].feed.forEach(([c,t])=>{add(phF,c,t,40);if(!grow||k<n)phF.lastElementChild.style.animation='none'});
+    phSt.textContent=STEPS[n].st;phL.textContent=STEPS[n].lat;phIn.textContent=STEPS[n].inp;stepsEl.forEach((li,k)=>li.classList.toggle('on',k===n))}
+  function onCall(){const r=ct.getBoundingClientRect(),stick=parseFloat(getComputedStyle(cs).top)||0,range=ct.offsetHeight-cs.offsetHeight;
+    const p=clamp((stick-r.top)/Math.max(1,range),0,1);renderCall(Math.min(4,Math.floor(p*5)));
+    stepsEl.forEach((li,k)=>{li.querySelector('.bar').style.width=(clamp(p*5-k,0,1)*100)+'%'})}
+  renderCall(0);
+
+  /* ---------- strands ---------- */
+  const cv=$('#strands'),cx=cv.getContext('2d'),ht=$('#htrack'),hs=$('#hstage'),hT=$('#hT'),hP=$('#hP'),htl=$('#htitle'),segB=$$('#hseg button');
+  const HT=[['Number.','Pick local, national or toll-free numbers with KYC done online.'],['Connect.','Paste SIP credentials into Vapi, Retell or LiveKit, or point a webhook at your server.'],['Stream.','Live audio flows both ways while your agent talks.'],['Observe.','Events, recordings and call quality for every call.']];
+  let hp=0,hstep=0,W=0,H=0,t0=performance.now(),visible=true;
+  function size(){const d=Math.min(2,devicePixelRatio||1);W=hs.clientWidth;H=hs.clientHeight;cv.width=Math.max(1,W*d);cv.height=Math.max(1,H*d);cx.setTransform(d,0,0,d,0,0)}
+  size();addEventListener('resize',size);
+  const groups=[{label:'Phone numbers',y:.3,n:12},{label:'SIP trunks',y:.56,n:10},{label:'Carriers',y:.82,n:12}];
+  const bez=(p0,p1,p2,p3,t)=>{const u=1-t;return u*u*u*p0+3*u*u*t*p1+3*u*t*t*p2+t*t*t*p3};
+  function draw(now){
+    const t=(now-t0)/1000;cx.clearRect(0,0,W,H);
+    const mob=W<700,nx=W*(mob?.62:.62),ny=H*(mob?.62:.64);
+    groups.forEach((g,gi)=>{
+      const active=gi===0||hp>.2,reach=gi===0?clamp(.35+hp*2.2,0,1):clamp((hp-.2)*2.6,0,1);
+      const sp=H*(mob?.008:.011);
+      for(let k=0;k<g.n;k++){
+        const sx=W*.03+((k*37)%11)*W*.004,sy=H*g.y+(k-g.n/2)*sp+Math.sin(t*.6+k)*2;
+        const c1x=W*.28,c1y=sy+(k-g.n/2)*3,c2x=nx-W*.18,c2y=ny+(k-g.n/2)*1.2;
+        const steps=60,lim=Math.floor(steps*reach);
+        cx.beginPath();cx.moveTo(sx,sy);
+        for(let s=1;s<=lim;s++){const u=s/steps;cx.lineTo(bez(sx,c1x,c2x,nx,u),bez(sy,c1y,c2y,ny,u))}
+        const lead=k===Math.floor(g.n/2);
+        cx.strokeStyle=`rgba(${col},${lead?.9:active?.24:.08})`;cx.lineWidth=lead?1.4:1;cx.stroke();
+        cx.fillStyle=`rgba(${col},.7)`;cx.fillRect(sx-1,sy-1,2,2);
+        if(hp>.48&&k%3===0){for(let m=0;m<2;m++){const u=((t*.18+k*.07+m*.5)%1);cx.fillStyle=`rgba(${col},.95)`;cx.beginPath();cx.arc(bez(sx,c1x,c2x,nx,u),bez(sy,c1y,c2y,ny,u),1.7,0,7);cx.fill()}}
+      }
+      cx.fillStyle=`rgba(${col},${active?.8:.4})`;cx.font='13px Geist, system-ui, sans-serif';cx.fillText(g.label,W*.03,H*g.y-sp*g.n/2-12);
+    });
+    if(hp>.72){const r=clamp((hp-.72)*4,0,1),ex=nx+(W-nx-24)*r;cx.strokeStyle=`rgba(${col},.6)`;cx.setLineDash([2,4]);cx.beginPath();cx.moveTo(nx,ny);cx.lineTo(ex,ny);cx.stroke();cx.setLineDash([]);
+      for(let i=1;i<6;i++){const x=nx+(W-nx-24)*i/6;if(x<ex){cx.fillStyle=`rgba(${col},.85)`;cx.fillRect(x-1,ny-6,2,12)}}}
+    cx.fillStyle='#121016';cx.strokeStyle=`rgba(${col},.9)`;cx.lineWidth=1.5;cx.beginPath();if(cx.roundRect)cx.roundRect(nx-9,ny-9,18,18,4);else cx.rect(nx-9,ny-9,18,18);cx.fill();cx.stroke();
+    cx.fillStyle='#D8D4DE';cx.fillRect(nx-5,ny-5,10,10);
+    cx.fillStyle=`rgba(${col},.95)`;cx.font='15px Geist, system-ui, sans-serif';
+    const lbl=hp>.72?'Your agent, on every call':hp>.48?'Your agent, live':'Your agent';
+    if(mob)cx.fillText(lbl,Math.max(8,nx-cx.measureText(lbl).width/2),ny+32);else cx.fillText(lbl,nx+20,ny+5);
+    if(!reduce&&visible)requestAnimationFrame(draw);
+  }
+  const vio=new IntersectionObserver(es=>{const was=visible;visible=es[0].isIntersecting;if(visible&&!was&&!reduce)requestAnimationFrame(draw)});vio.observe(ht);
+  requestAnimationFrame(draw);
+  function onHow(){const r=ht.getBoundingClientRect(),stick=parseFloat(getComputedStyle(hs).top)||0,range=ht.offsetHeight-hs.offsetHeight;
+    hp=clamp((stick-r.top)/Math.max(1,range),0,1);const s=Math.min(3,Math.floor(hp*4));
+    if(s!==hstep){hstep=s;htl.classList.add('swap');setTimeout(()=>{hT.textContent=HT[s][0];hP.textContent=HT[s][1];htl.classList.remove('swap')},reduce?0:260);segB.forEach((b,k)=>b.classList.toggle('on',k===s))}
+    if(reduce)requestAnimationFrame(draw)}
+  segB.forEach(b=>b.addEventListener('click',()=>{const range=ht.offsetHeight-hs.offsetHeight,stick=parseFloat(getComputedStyle(hs).top)||0;scrollTo({top:ht.getBoundingClientRect().top+scrollY-stick+range*((+b.dataset.go+.55)/4),behavior:reduce?'auto':'smooth'})}));
+
+  /* ---------- sky + dusk ---------- */
+  const sky=$('#sky'),dusk=$('#dusk'),night=$('#night');
+  function onSky(){const p=clamp(scrollY/Math.max(1,night.offsetTop),0,1);sky.style.setProperty('--sy',(p*100).toFixed(1)+'%');
+    const nt=night.getBoundingClientRect().top;root.style.setProperty('--dk',clamp((innerHeight*.95-nt)/(innerHeight*.7),0,1).toFixed(3))}
+
+  /* ---------- cells spotlight ---------- */
+  $$('.cell').forEach(c=>c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--x',(e.clientX-r.left)+'px');c.style.setProperty('--y',(e.clientY-r.top)+'px')}));
+
+  /* ---------- code ---------- */
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const CODE={curl:`# Place an outbound call and stream it to your agent
+curl https://api.tryvox.io/v1/calls \\
+  -H "Authorization: Bearer $TRYVOX_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "from": "+918047182290",
+    "to": "+9198XXXXX210",
+    "stream_url": "wss://agent.example.com/voice",
+    "events_url": "https://example.com/tryvox/events"
+  }'`,
+  node:`// Place an outbound call and stream it to your agent
+const res = await fetch("https://api.tryvox.io/v1/calls", {
+  method: "POST",
+  headers: { Authorization: \`Bearer \${process.env.TRYVOX_API_KEY}\` },
+  body: JSON.stringify({
+    from: "+918047182290",
+    to: "+9198XXXXX210",
+    stream_url: "wss://agent.example.com/voice",
+    events_url: "https://example.com/tryvox/events",
+  }),
+});
+const call = await res.json();`,
+  py:`# Place an outbound call and stream it to your agent
+import os, requests
+
+call = requests.post(
+    "https://api.tryvox.io/v1/calls",
+    headers={"Authorization": f"Bearer {os.environ['TRYVOX_API_KEY']}"},
+    json={
+        "from": "+918047182290",
+        "to": "+9198XXXXX210",
+        "stream_url": "wss://agent.example.com/voice",
+        "events_url": "https://example.com/tryvox/events",
+    },
+).json()`};
+  const hl=src=>esc(src).split('\n').map(l=>/^\s*(#|\/\/)/.test(l)?`<span class="c">${l}</span>`:l.replace(/("[^"]*"|'[^']*'|`[^`]*`)/g,'<span class="s">$1</span>').replace(/\b(const|await|import|curl)\b/g,'<span class="k">$1</span>')).join('\n');
+  const box=$('#codeBox');let lang='curl',typing;
+  function show(l,anim){lang=l;clearInterval(typing);const raw=CODE[l];if(!anim||reduce){box.innerHTML=hl(raw);return}let n=0;typing=setInterval(()=>{n+=7;box.innerHTML=hl(raw.slice(0,n));if(n>=raw.length)clearInterval(typing)},16)}
+  show('curl');
+  $$('.code-top [data-lang]').forEach(b=>b.addEventListener('click',()=>{$$('.code-top [data-lang]').forEach(x=>x.setAttribute('aria-selected',x===b));show(b.dataset.lang,true)}));
+  $('#copy').addEventListener('click',()=>{const b=$('#copy');const sel=()=>{const r=document.createRange();r.selectNodeContents(box);const s=getSelection();s.removeAllRanges();s.addRange(r)};
+    try{navigator.clipboard.writeText(CODE[lang]).then(()=>{b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1500)},()=>{sel();b.textContent='Press ⌘C'})}catch(e){sel()}});
+
+  /* ---------- estimator ---------- */
+  const eC=$('#eCalls'),eM=$('#eMin'),eH=$('#eHrs'),nf=n=>Math.round(n).toLocaleString('en-IN');
+  function est(){[eC,eM,eH].forEach(i=>i.style.setProperty('--p',((i.value-i.min)/(i.max-i.min)*100)+'%'));
+    const c=+eC.value,m=+eM.value,h=+eH.value,perHr=c/(22*h),conc=Math.max(1,Math.ceil(perHr*m/60*2.5));
+    $('#oCalls').textContent=nf(c);$('#oMin').textContent=m+' min';$('#oHrs').textContent=h+' h';
+    $('#rMin').textContent=nf(c*m);$('#rPeak').textContent=conc;$('#rHr').textContent=nf(perHr);$('#rNum').textContent=Math.max(1,Math.ceil(conc/10))}
+  [eC,eM,eH].forEach(i=>i.addEventListener('input',est));est();
+  $('#estForm').addEventListener('submit',e=>{e.preventDefault();const em=$('#estEmail'),msg=$('#estMsg');
+    if(!em.value||!em.checkValidity()){msg.textContent='Enter a valid work email.';em.focus();return}
+    msg.textContent=`Your sizing: ${$('#rMin').textContent} min a month, ${$('#rPeak').textContent} peak calls. Send it to the team from `;const a=document.createElement('a');a.href='https://tryvox.io/contact';a.textContent='the contact page ↗';msg.append(a)});
+
+  /* ---------- scroll loop ---------- */
+  let ticking=false;
+  function onScroll(){if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;onSky();onCall();onHow()})}
+  addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);onSky();onCall();onHow();
+})();
+</script>
+</body>
+</html>
