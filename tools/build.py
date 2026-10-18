@@ -316,230 +316,448 @@ CALL_RESP = '''// 201 Created
 }'''
 NOTE_CALL = f'Based on <a href="{DOCS}/voice/make-call">Make a call</a> in the TryVox docs.'
 
-# ---------------------------------------------------------------- product pages
+# ---------------------------------------------------------------- v2 components (giga-style inner pages)
+def xhero(crumbs, tag, icon, h1, sub, stage, tint, primary=("Start free", APP), secondary=("Talk to us", "/contact/"), micro=("No lock-in", "Pay as you go", "Live in minutes")):
+    m = "".join(f"<span>{E(x)}</span>" for x in micro)
+    return f'''<section class="xhero" style="--tint:{tint}">
+  <div class="xh-aura" aria-hidden="true"><i></i><i></i></div>
+  <div class="wrap xh-in">
+    {crumb(crumbs)}
+    <p class="xh-tag">{ICON[icon]}<span>{E(tag)}</span></p>
+    <h1 class="hd">{h1}</h1>
+    <p class="sub">{E(sub)}</p>
+    <div class="cta"><a class="kbtn" href="{primary[1]}">{E(primary[0])}</a><a class="obtn" href="{secondary[1]}">{E(secondary[0])}</a></div>
+    <div class="micro">{m}</div>
+  </div>
+  <div class="wrap xh-stage rv">{stage}</div>
+</section>'''
+
+APPNAV = [("phone", "Numbers", "phone-numbers"), ("sip", "SIP trunks", "sip-trunking"), ("wave", "Calls", "voice-api"),
+          ("bot", "AI agents", "ai-agents"), ("chat", "Messaging", "messaging"), ("shield", "Compliance", "compliance")]
+def console(active, where, main, aside=""):
+    side = "".join(f'<span class="{"on" if s == active else ""}">{ICON[i]}{E(n)}</span>' for i, n, s in APPNAV)
+    a = f'<div class="app-aside">{aside}</div>' if aside else ""
+    return f'''<div class="app" aria-label="TryVox dashboard preview" role="img">
+  <div class="app-top"><span class="dots"><i></i><i></i><i></i></span><span class="app-org"><svg viewBox="0 0 32 32" aria-hidden="true">{LOGO}</svg>Acme Finance<i>/</i>{E(where)}</span><span class="app-env">Prod</span><span class="app-key">Auth ID &middot; MA&bull;&bull;&bull;&bull;7Q</span></div>
+  <div class="app-body"><nav class="app-side"><p>Workspace</p>{side}<p>Account</p><span>{ICON["key"]}API keys</span><span>{ICON["rupee"]}Billing</span></nav>
+  <div class="app-main{" has-aside" if aside else ""}"><div class="app-col">{main}</div>{a}</div></div>
+</div>'''
+
+def ap_head(title, meta, right=""):
+    return f'<div class="ap-h"><div><h4>{title}</h4><p>{meta}</p></div>{right}</div>'
+def kpis(items):
+    out = ""
+    for lbl, val, sub in items:
+        out += f'<div class="kpi"><span class="mlabel">{E(lbl)}</span><b>{val}</b>' + (f'<em>{sub}</em>' if sub else "") + '</div>'
+    return f'<div class="kpis">{out}</div>'
+def tbl(cols, rows, tmpl, hide=()):
+    def cell(i, v):
+        h = ' class="hs"' if i in hide else ""
+        return f'<span{h}>{v}</span>'
+    head = "".join(cell(i, E(c)) for i, c in enumerate(cols))
+    body = "".join('<div class="tr">' + "".join(cell(i, v) for i, v in enumerate(r)) + "</div>" for r in rows)
+    return f'<div class="tbl" style="--cols:{tmpl}"><div class="tr th">{head}</div><div class="rv-st">{body}</div></div>'
+def spark(pts, label):
+    w, h = 600, 120
+    mx = max(pts); n = len(pts) - 1
+    xy = [(round(i * w / n, 1), round(h - 10 - (v / mx) * (h - 26), 1)) for i, v in enumerate(pts)]
+    d = "M" + " L".join(f"{x},{y}" for x, y in xy)
+    area = d + f" L{w},{h} L0,{h} Z"
+    lx, ly = xy[-1]
+    return f'''<div class="spark"><span class="mlabel">{E(label)}</span><svg viewBox="0 0 {w} {h}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9D61FF" stop-opacity=".35"/><stop offset="1" stop-color="#9D61FF" stop-opacity="0"/></linearGradient></defs><path class="sa" d="{area}" fill="url(#sg)"/><path class="sl" d="{d}" fill="none" stroke="#B48AFF" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cx="{lx}" cy="{ly}" r="4" fill="#CDB0FF"/></svg></div>'''
+def bars(label, n=28):
+    import random
+    rnd = random.Random(label)
+    b = "".join(f'<i style="--h:{rnd.randint(28, 96)}%"></i>' for _ in range(n))
+    return f'<div class="vbars"><span class="mlabel">{E(label)}</span><div class="bars" data-live>{b}</div></div>'
+ON = ' class="on"'
+def chips(items, on=0):
+    return '<div class="mchips">' + "".join(f'<span{ON if i == on else ""}>{E(x)}</span>' for i, x in enumerate(items)) + "</div>"
+def mono(text): return f'<pre class="mcode">{E(text)}</pre>'
+def feed(lines): return '<div class="rv-st mfeed">' + "".join(msg(c, t) for c, t in lines) + "</div>"
+def rows(pairs):
+    return '<div class="rv-st">' + "".join(f'<div class="mrow"><span>{a}</span><span>{b}</span></div>' for a, b in pairs) + "</div>"
+def checks(pairs): return '<div class="mchk">' + "".join(f"<div>{a}<span>{b}</span></div>" for a, b in pairs) + "</div>"
+def flowv(items): return '<div class="mflow">' + "".join(f'<div><b>{i}</b>{t}<span class="pill{(" " + c) if c else ""}">{p}</span></div>' for i, (t, p, c) in enumerate(items, 1)) + "</div>"
+def pane(label, body, live=None):
+    return mock(label, body, live)
+
+def intro_row(text, trio):
+    cells = "".join(f'<div class="ir-c rv"><span class="ir-i">{ICON[i]}</span><h3>{E(t)}</h3><p>{E(d)}</p></div>' for i, _, t, d in trio)
+    return f'<section class="wrap irow"><p class="ir-lead rv">{E(text)}</p>{cells}</section>'
+
+def chapters(tag, h2, items, tint):
+    nav = "".join(f'<button type="button" role="tab" data-go="{i}"{ON if i == 0 else ""}><small>{i + 1:02d}</small>{E(it[0])}</button>' for i, it in enumerate(items))
+    arts = ""
+    for i, (label, lead, body, ticks, vis) in enumerate(items):
+        t = "".join(f"<li>{E(x)}</li>" for x in ticks)
+        arts += f'''<article class="chp" data-i="{i}"><div class="chp-copy"><p class="tag"><i></i>{i + 1:02d}</p><h3 class="hd">{E(label)}</h3><p class="lead">{lead}</p><p class="body">{E(body)}</p><ul class="ticks">{t}</ul></div><div class="chp-vis">{vis}</div></article>'''
+    return f'''<section class="chaps" style="--tint:{tint}">
+  <div class="wrap chp-head">{shead(tag, h2)}</div>
+  <div class="chp-nav"><div class="wrap"><div class="chp-tabs" role="tablist" aria-label="Steps">{nav}</div><div class="chp-line"><i></i></div></div></div>
+  <div class="wrap chp-list">{arts}</div>
+</section>'''
+
+def bento(tag, h2, big, small, tint):
+    b = "".join(f'<div class="bcard rv"><div class="bc-copy"><p class="mlab">{E(k)}</p><h3>{E(t)}</h3><p>{E(d)}</p></div><div class="bc-vis">{v}</div></div>' for k, t, d, v in big)
+    s = "".join(f'<div class="bsm rv"><span class="ir-i">{ICON[i]}</span><h3>{E(t)}</h3><p>{E(d)}</p></div>' for i, _, t, d in small)
+    return f'<section class="wrap sect tight bento" style="--tint:{tint}">{shead(tag, h2)}<div class="bgrid">{b}</div><div class="bsmall">{s}</div></section>'
+
+def bigstats(h2, items=(("<", 200, "ms", "Response time"), ("", 99.9, "%", "Platform uptime"), ("", 24, "/7", "Always available"))):
+    cells = ""
+    for pre, n, suf, lbl in items:
+        cells += f'<div><span class="mlab">{E(lbl)}</span><b class="cnt" data-to="{n}" data-pre="{E(pre)}" data-suf="{E(suf)}">{E(pre)}{n}{E(suf)}</b></div>'
+    return f'<section class="bstats wrap"><h2 class="hd h2 rv">{h2}</h2><div class="bs-row rv">{cells}</div></section>'
+
+def devband(code, note, h2="Straight from <em>the docs.</em>", sub="A REST API at api.tryvox.io with Auth ID and Auth Token. Every example here matches the documentation."):
+    return f'<section class="wrap sect tight"><div class="xdev"><div class="xdev-copy rv"><p class="tag"><i></i>Developers</p><h2 class="hd h2">{h2}</h2><p class="sub">{E(sub)}</p><div class="cta"><a class="obtn" href="/developers/">Developer hub</a><a class="obtn" href="{DOCS}/">docs.tryvox.io ↗</a></div></div><div class="rv" style="min-width:0">{code_panel(code, note)}</div></div></section>'
+
+def switcher(tag, h2, sub, items, tint):
+    lst = "".join(f'<button type="button" class="sw-i{" on" if i == 0 else ""}" data-sw="{i}"><small>{i + 1:02d}</small><span><b>{E(t)}</b><em>{E(d)}</em></span><i class="sw-p"></i></button>' for i, (ic_, t, d, v) in enumerate(items))
+    vis = "".join(f'<div class="sw-v{" on" if i == 0 else ""}" data-v="{i}">{v}</div>' for i, (ic_, t, d, v) in enumerate(items))
+    return f'<section class="wrap sect tight sw" style="--tint:{tint}"><div class="sw-grid"><div>{shead(tag, h2, sub)}<div class="sw-list">{lst}</div></div><div class="sw-stage rv">{vis}</div></div></section>'
+
+def showcase(h3, p, lines, title="Live call", number="+91 80 4718 2290"):
+    data = json.dumps([[("Caller" if c == "c" else "Agent" if c == "a" else "Event"), t, c] for c, t in lines]).replace("</", "<\\/")
+    return f'''<section class="wrap sect tight"><div class="show rv">
+  <div class="show-copy"><h3>{h3}</h3><p>{E(p)}</p></div>
+  <div class="show-mid"><canvas class="dots3d" aria-hidden="true"></canvas>
+    <div class="phone"><div class="ph-isl"></div><div class="ph-call"><span class="ph-av"><svg viewBox="0 0 32 32" aria-hidden="true">{LOGO}</svg></span><span><b>{E(title)}</b><small>{E(number)}</small></span><span class="ph-t mlcd">00:00</span></div><div class="ph-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>
+  <div class="show-cap" aria-live="polite"><span class="mlab">Caller</span><q>{E(lines[0][1])}</q></div>
+  <script type="application/json" class="show-data">{data}</script>
+</div></section>'''
+
+def flowrail(tag, h2, items):
+    nodes = "".join(f'<div class="fr-n"><span class="fr-d"></span><small>{i + 1:02d} · {E(k)}</small><b>{E(v)}</b></div>' for i, (k, v) in enumerate(items))
+    return f'<section class="wrap sect tight">{shead(tag, h2)}<div class="frail" style="--n:{len(items)}"><div class="fr-line"><i></i><b class="fr-pk"></b></div>{nodes}</div></section>'
+
+def tilegrid(tag, h2, tiles):
+    t = "".join(f'<a class="tile rv" href="{h}"><span class="tl-i">{v}</span><b>{E(n)}</b><small>{E(d)}</small><span class="go">↗</span></a>' for v, n, d, h in tiles)
+    return f'<section class="wrap sect tight">{shead(tag, h2)}<div class="tiles">{t}</div></section>'
+
+def manifesto(text):
+    words = " ".join(f"<span>{w}</span>" for w in text.split())
+    return f'<section class="wrap mani"><p class="hd" id="mani">{words}</p></section>'
+
+LOGOIMG = {"vapi": ('Vapi', 55), "retell": ('Retell AI', 65), "livekit": ('LiveKit', 18), "bolna": ('Bolna', 28)}
+def provgrid(on="vapi"):
+    out = ""
+    for k in ["vapi", "retell", "elevenlabs", "livekit", "bolna", "more"]:
+        cls = ' class="on"' if k == on else ""
+        if k in LOGOIMG:
+            n, w = LOGOIMG[k]
+            out += f'<span{cls}><img src="/assets/logos/{k}.svg" alt="{n}" width="{w}" height="18"></span>'
+        else:
+            out += f'<span{cls}><em>{"ElevenLabs" if k == "elevenlabs" else "+ more"}</em></span>'
+    return f'<div class="mprov">{out}</div>'
+
+def page_wrap_faq(items): return faq(items)
+
+# ---------------------------------------------------------------- product content
+PROD = {}
+PROD["phone-numbers"] = dict(tint="#19B35A", title="Phone Numbers for AI Voice Agents | TryVox",
+  desc="Search, buy and configure local, national and toll-free numbers with business KYC, and bind them to your AI agent.",
+  h1="Numbers your callers <em>actually pick up.</em>",
+  sub="Search, buy and configure local, national and toll-free numbers with business KYC handled online. Point any number at your agent, your SIP trunk or your own code.",
+  app=("Numbers", ap_head("Numbers", "4 numbers · 3 cities", '<span class="mbtn">+ Buy number</span>')
+        + f'<div class="msearch">{ICON["search"]}<span>Search <b>Bengaluru</b></span>{chips(["Local", "National", "Toll-free"])}</div>'
+        + tbl(["Number", "City", "Type", "Routed to", "Status"],
+              [['<b class="mono">+91 80 4718 2290</b>', "Bengaluru", "Local", "Vapi · Riya", '<span class="pill">Active</span>'],
+               ['<b class="mono">+91 22 6120 4471</b>', "Mumbai", "Local", "SIP · trunk-prod", '<span class="pill">Active</span>'],
+               ['<b class="mono">+91 11 4910 0732</b>', "Delhi", "National", "VoxML flow", '<span class="pill">Active</span>'],
+               ['<b class="mono">1800 xxx xxxx</b>', "India", "Toll-free", "Retell · Support", '<span class="pill w">KYC review</span>']],
+              "1.5fr 1fr .9fr 1.3fr .9fr", hide=(1, 2)),
+       '<p class="mlabel">Bind to agent</p><div class="bind"><span class="mlcd">+91 80 4718 2290</span><span class="arrow">↓</span>' + provgrid() + '<span class="mbtn wide">Confirm binding</span></div>'),
+  intro="Every number lives in one dashboard and one API. Buy it, verify it, route it, and see every call it takes.",
+  chap=[("Search", "Find the number <em>that fits.</em>", "Search by city or number type in the dashboard or through the Numbers API, then buy it in a click.", ["Local, national and toll-free", "Search from the dashboard or API", "Release numbers you no longer need"],
+         pane("Numbers · search", f'<div class="msearch">{ICON["search"]}<span>Search <b>Mumbai · local</b></span></div>' + rows([('<span class="mlcd" style="font-size:22px">+91 22 6120 4471</span>', '<span class="mbtn">Buy</span>'), ("+91 22 6120 5180", '<span class="pill w">Local</span>'), ("+91 22 6120 7702", '<span class="pill w">Local</span>')]))),
+        ("Verify", "Business KYC, <em>done online.</em>", "Verification happens before numbers go live, as India's telecom rules require. No paperwork back-and-forth.", ["Verify your business once", "Track status in the dashboard", "Numbers go live when verified"],
+         pane("KYC · Acme Finance", checks([("Business details", "submitted"), ("Documents", "uploaded"), ("Review", "complete"), ("Numbers", "live")]), "Verified")),
+        ("Route", "Point it <em>anywhere.</em>", "Send a number to an AI agent, a SIP trunk or a VoxML call flow, and change it whenever you like.", ["Bind to Vapi, Retell, ElevenLabs, LiveKit or Bolna", "Or a SIP trunk, or your own code", "Re-route any time"],
+         pane("+91 80 4718 2290 · routing", flowv([("AI agent · Vapi", "Selected", "p"), ("SIP trunk · trunk-prod", "Option", "w"), ("VoxML · answer_url", "Option", "w")]), None))],
+  big=[("Local presence", "A local caller ID in every city", "Callers are more likely to answer a number they recognise. Give each region or campaign its own number.",
+        pane("Caller IDs", checks([("+91 80 4718 2290", "Bengaluru"), ("+91 22 6120 4471", "Mumbai"), ("+91 11 4910 0732", "Delhi"), ("+91 44 6631 0925", "Chennai")]), None)),
+       ("Call records", "Every call becomes an event", "Status callbacks and call records for each number, ready for your own dashboards.",
+        pane("+91 80 4718 2290 · today", spark([3, 5, 4, 8, 7, 11, 9, 14, 12, 17, 15, 19], "Calls per hour") + rows([("Answered", '<span class="pill">94%</span>')]), "Live"))],
+  feat=[("search", "Search", "Search and buy in minutes", "Find numbers by city or type and buy them from the dashboard or the API."),
+        ("id", "KYC", "Business KYC, online", "Verification happens before numbers go live."),
+        ("route", "Routing", "Route anywhere", "AI agent, SIP trunk or VoxML call flow."),
+        ("phone", "Caller ID", "Verified caller IDs", "Verify the numbers you call from."),
+        ("bot", "Agents", "Bind to an agent", "Vapi, Retell, ElevenLabs, LiveKit or Bolna in a few clicks."),
+        ("eye", "Records", "Call records", "Status callbacks and records for every number.")],
+  code={"curl": ("List numbers", AUTH_CURL)}, note=f'Based on <a href="{DOCS}/getting-started/authentication">Authentication</a> in the TryVox docs.',
+  faq=[("What kinds of numbers can I get?", "Local, national and toll-free numbers. Search by city or type in the dashboard or through the Numbers API."),
+       ("Do I need KYC?", "Yes. Business KYC is completed online before numbers go live, as India's telecom rules require."),
+       ("Can I move a number between agents?", "Yes. Re-point a number to a different agent, SIP trunk or call flow at any time. A number can be bound to one agent at a time."),
+       ("Can I release a number?", "Yes. Release numbers you no longer need from the dashboard or the API.")])
+
+PROD["sip-trunking"] = dict(tint="#3D7BFF", title="SIP Trunking for AI Voice Agents | TryVox",
+  desc="Create SIP trunks, manage credentials and IP ACLs, set channel limits or bring your own carrier.",
+  h1="SIP trunking, <em>set up for you.</em>",
+  sub="Create trunks for inbound and outbound calls, manage credentials and IP access lists, and set channel limits. Or bring your own carrier and keep your existing routes.",
+  app=("SIP trunks", ap_head("trunk-prod", "trunk.tryvox.io · inbound + outbound", '<span class="pill">Active</span>')
+        + kpis([("Channels in use", '<span class="mlcd">12</span><small>/ 30</small>', "limit set by you"), ("Credentials", "2", "rotated 4 days ago"), ("IP ACL", "2 ranges", "allow-list on")])
+        + bars("Concurrent channels · last hour"),
+       '<p class="mlabel">IP access list</p>' + rows([("203.0.113.0/28", '<span class="pill">Allow</span>'), ("198.51.100.4", '<span class="pill">Allow</span>'), ("Everything else", '<span class="pill w">Deny</span>')]) + '<p class="mlabel" style="margin-top:18px">Carrier</p>' + rows([("TryVox", '<span class="pill p">Primary</span>'), ("BYOC", '<span class="pill w">Optional</span>')])),
+  intro="Trunks carry calls between the phone network and your stack. TryVox gives you the trunk, the controls and the events in one place.",
+  chap=[("Create", "A trunk in <em>one form.</em>", "Name it, choose inbound, outbound or both, and it is ready for your PBX, LiveKit or any SIP client.", ["Inbound and outbound on one trunk", "Dashboard or API", "Works with any SIP stack"],
+         pane("New trunk", rows([("Name", "trunk-prod"), ("Direction", '<span class="pill p">Inbound + outbound</span>'), ("Domain", "trunk.tryvox.io")]))),
+        ("Secure", "Lock it to <em>who you trust.</em>", "Use SIP credentials, IP access lists, or both. Rotate credentials whenever you need to.", ["Credentials per trunk", "IP allow-lists", "Rotate without downtime"],
+         pane("Credentials · IP ACL", checks([("agent-prod", "credential"), ("agent-staging", "credential"), ("203.0.113.0/28", "allowed"), ("198.51.100.4", "allowed")]), "Secured")),
+        ("Scale", "Set the channels. <em>Keep your carrier.</em>", "Choose how many concurrent calls a trunk carries. Bring Your Own Carrier keeps your routes and rates, with TryVox routing and events on top.", ["Channel limits per trunk", "BYOC for existing contracts", "Same events on every route"],
+         pane("BYOC", flowv([("Your carrier", "SIP", "w"), ("TryVox routing", "Events", "p"), ("Your agent", "Live", "")]), None))],
+  big=[("Capacity", "Concurrency you can see", "Channels in use against the limit you set, per trunk.", pane("trunk-prod", bars("Channels · now", 22), "Live")),
+       ("Bring your own carrier", "Keep the routes you have", "BYOC keeps your carrier contracts while TryVox handles numbers, routing and call events.", pane("Routes", rows([("Carrier A · BYOC", '<span class="pill">Healthy</span>'), ("TryVox", '<span class="pill p">Primary</span>'), ("Failover", '<span class="pill w">Standby</span>')]), None))],
+  feat=[("sip", "Trunks", "Create a trunk", "Inbound and outbound on one trunk."),
+        ("key", "Credentials", "Credentials you control", "Generate and rotate SIP credentials per trunk."),
+        ("shield", "IP ACL", "IP access lists", "Allow calls only from ranges you trust."),
+        ("flow", "Channels", "Channel limits", "Set how many concurrent calls a trunk may carry."),
+        ("globe", "BYOC", "Bring your own carrier", "Keep an existing carrier and still use TryVox."),
+        ("bot", "Agents", "Works with any SIP stack", "LiveKit, your PBX or any standards-based client.")],
+  code=None,
+  faq=[("What is a SIP trunk?", "A SIP trunk carries phone calls over the internet between the phone network and your systems, such as a voice agent or PBX."),
+       ("Can I restrict who uses my trunk?", "Yes. Use SIP credentials, IP access lists, or both."),
+       ("How many calls can a trunk carry?", "You set a channel limit per trunk. Talk to us if you need more capacity."),
+       ("Can I use my own carrier?", "Yes. Bring Your Own Carrier (BYOC) keeps your carrier while using TryVox on top.")])
+
+PROD["voice-api"] = dict(tint="#9D61FF", title="Programmable Voice API and VoxML | TryVox",
+  desc="Place calls, run conferences, record and build call flows with VoxML. REST API at api.tryvox.io.",
+  h1="Every call, <em>under your control.</em>",
+  sub="Place calls, receive webhooks at every stage, run conferences, record and hang up from your code. Build call flows with VoxML verbs like Say, Gather, Dial and Stream.",
+  app=("Calls", ap_head("Calls", "Today · all numbers", chips(["1H", "24H", "7D"], 1))
+        + spark([12, 18, 15, 22, 30, 26, 34, 41, 38, 47, 44, 52, 58, 55, 63], "Calls per minute")
+        + tbl(["Call", "To", "Status", "Duration"],
+              [['<b class="mono">call_8f2a19</b>', "+91 98•• ••5678", '<span class="pill">In progress</span>', '<span class="mono">01:42</span>'],
+               ['<b class="mono">call_7c11e0</b>', "+91 99•• ••0412", '<span class="pill p">Ringing</span>', '<span class="mono">00:00</span>'],
+               ['<b class="mono">call_6b90d4</b>', "+91 97•• ••2231", '<span class="pill w">Completed</span>', '<span class="mono">03:08</span>'],
+               ['<b class="mono">call_5a07f3</b>', "+91 90•• ••8840", '<span class="pill w">Queued</span>', '<span class="mono">00:00</span>']],
+              "1.2fr 1.3fr 1fr .8fr", hide=(1,)),
+       '<p class="mlabel">call_8f2a19 · events</p>' + feed([("ev", "201 · status: queued"), ("ev", "ring_url · ringing"), ("ev ok", "answer_url · VoxML returned"), ("ev", "Stream · audio to agent"), ("ev", "status_callback_url · in-progress")])),
+  intro="One REST API at api.tryvox.io, HTTP Basic auth, and a webhook for every stage of every call.",
+  chap=[("Authenticate", "Two keys. <em>That's it.</em>", "Your Auth ID is the username and your Auth Token is the password. Both come from the dashboard.", ["HTTP Basic auth", "Keys per account", "Same keys for every endpoint"],
+         pane("auth.sh", mono("curl -u $TRYVOX_AUTH_ID:$TRYVOX_AUTH_TOKEN \\\n  https://api.tryvox.io/v1/account/$TRYVOX_AUTH_ID/numbers"), None)),
+        ("Place a call", "One request <em>starts the call.</em>", "POST from, to and answer_url. TryVox replies 201 with status queued, then calls your webhooks as the call moves.", ["ring_url, hangup_url, status_callback_url", "ring_timeout and time_limit", "Webhooks signed with your secret"],
+         pane("call_8f2a19 · events", feed([("ev", "POST /v1/voice/accounts/{auth_id}/calls"), ("ev ok", "201 · status: queued"), ("ev", "ring_url · ringing"), ("ev ok", "answer_url · VoxML returned"), ("a", "Hi, this is Riya from Acme Finance."), ("ev", "hangup_url · final call record")]))),
+        ("Return VoxML", "Build the flow <em>with VoxML.</em>", "When a call is answered, TryVox asks your answer_url what to do. Reply with VoxML verbs and TryVox runs them on the call.", ["Say, Play and Gather for menus and input", "Dial and Conference to bring people in", "Stream to send live audio to your agent"],
+         pane("VoxML verbs", flowv([("Say a greeting", "Say", "w"), ("Collect a keypress", "Gather", "w"), ("Stream audio to the agent", "Stream", "p"), ("Transfer to a person", "Dial", "w")]), None))],
+  big=[("Conferences", "Everyone on one call", "Bring callers, agents and humans into the same conference.", pane("conf_room_12", checks([("Caller · +91 98•• ••5678", "joined"), ("AI agent · Riya", "joined"), ("Supervisor · Neha", "joined")]), "Live")),
+       ("Recordings", "Record and fetch later", "Record calls and pull recordings through the API.", pane("Recordings", rows([('<span class="mono">rec_31a8</span>', "03:08"), ('<span class="mono">rec_30f2</span>', "01:57"), ('<span class="mono">rec_2fd9</span>', "04:21")]), None))],
+  feat=[("wave", "Calls", "Make and list calls", "Outbound calls one by one or in bulk."),
+        ("hook", "Webhooks", "Callbacks for every stage", "Ring, answer, status and hangup URLs."),
+        ("flow", "VoxML", "Call flows in VoxML", "Say, Play, Gather, Dial, Record, Stream and more."),
+        ("users", "Conferences", "Conferences", "Callers, agents and humans in one call."),
+        ("rec", "Recordings", "Recordings", "Record calls and fetch them through the API."),
+        ("bolt", "Control", "Live call actions", "Act on calls in progress, or hang them up.")],
+  code={"curl": ("cURL", CALL_CURL), "node": ("Node", CALL_NODE), "py": ("Python", CALL_PY), "resp": ("Response", CALL_RESP)}, note=NOTE_CALL,
+  faq=[("How do I authenticate?", "HTTP Basic auth: your Auth ID is the username and your Auth Token is the password. Both come from the dashboard."),
+       ("What does answer_url need to return?", "VoxML. TryVox POSTs to answer_url when the call is answered and runs the VoxML you return."),
+       ("Can I place calls in bulk?", "Yes. The same endpoint accepts a list of calls."),
+       ("Is answering machine detection available?", "Not yet. The parameter is accepted but has no effect today, so don't rely on it.")])
+
+PROD["ai-agents"] = dict(tint="#C257F0", title="Connect AI Voice Agents to Phone Numbers | TryVox",
+  desc="Bind a TryVox number to a Vapi, Retell, ElevenLabs, LiveKit or Bolna agent. No deployment or SIP configuration needed.",
+  h1="Your agent, <em>on a real number.</em>",
+  sub="Pick your provider, choose a TryVox number and an agent, and confirm. The agent answers calls on that number straight away, with no deployment or SIP configuration.",
+  app=("AI agents", ap_head("AI agents", "3 bindings · 3 providers", '<span class="mbtn">+ Connect number</span>') + provgrid()
+        + tbl(["Number", "Provider", "Agent", "Direction"],
+              [['<b class="mono">+91 80 4718 2290</b>', "Vapi", "Collections · Riya", '<span class="pill">Inbound</span>'],
+               ['<b class="mono">+91 22 6120 4471</b>', "Retell", "Support · Arjun", '<span class="pill">Inbound</span>'],
+               ['<b class="mono">1800 xxx xxxx</b>', "Bolna", "Bookings · Meera", '<span class="pill">Inbound</span>']],
+              "1.4fr .9fr 1.3fr .9fr", hide=(2,)),
+       '<p class="mlabel">Incoming · SIP headers</p>' + feed([("ev", "X-TryVox-Direction: inbound"), ("ev", "X-TryVox-Route: ai-agent"), ("ev", "X-TryVox-AI-Provider: vapi"), ("ev", "X-TryVox-From: +91 98•• ••5678"), ("ev ok", "Agent answered")])),
+  intro="TryVox is the phone layer only. Bring the agent you built anywhere and give it a real number in a few clicks.",
+  chap=[("Choose a provider", "Bring the agent <em>you already built.</em>", "Open AI Agents and pick your integration: Vapi, Retell, ElevenLabs, LiveKit or Bolna.", ["Five providers today, more on the way", "Keep your agent platform", "No lock-in"],
+         pane("AI agents · providers", provgrid("retell"), None)),
+        ("Pick number and agent", "One number, <em>one agent.</em>", "Choose an active TryVox number and an agent from your provider, so routing stays predictable.", ["Each number binds to one agent", "Switch agents without changing numbers", "Remove a binding to fall back"],
+         pane("Connect number", rows([("Number", '<span class="mlcd" style="font-size:20px">+91 80 4718 2290</span>'), ("Provider", "Retell"), ("Agent", "Support · Arjun"), ("Status", '<span class="pill">Connected</span>')]))),
+        ("Answer", "Calls arrive <em>with context.</em>", "Inbound calls to the number go straight to the agent, with direction, provider, caller and number in SIP headers.", ["No deployment or SIP configuration", "Context in X-TryVox headers", "Same events and recordings"],
+         pane("Incoming call", feed([("ev", "X-TryVox-Direction: inbound"), ("ev", "X-TryVox-AI-Provider: retell"), ("ev ok", "Agent answered · streaming"), ("a", "Hi, you've reached Acme support. How can I help?")]), "Live"))],
+  big=[("We don't build agents", "Infrastructure only", "Agent platforms and builders can run on TryVox without feeding a competitor.", pane("Bindings", checks([("+91 80 4718 2290 → Vapi", "inbound"), ("+91 22 6120 4471 → Retell", "inbound"), ("1800 xxx xxxx → Bolna", "inbound")]), None)),
+       ("Switch freely", "Change providers, keep numbers", "Move a number to a different agent at any time. Your callers never notice.", pane("Re-bind", flowv([("Vapi · Riya", "Before", "w"), ("Retell · Arjun", "After", "p")]), None))],
+  feat=[("bot", "Providers", "Bring any agent", "Vapi, Retell, ElevenLabs, LiveKit and Bolna."),
+        ("bolt", "Setup", "No SIP to configure", "Binding a number is a few clicks."),
+        ("route", "Routing", "One number, one agent", "Predictable routing for every number."),
+        ("code", "Headers", "Context in SIP headers", "Direction, provider, caller and number."),
+        ("flow", "Fallback", "Clean fallback", "Remove a binding and other routing takes over."),
+        ("eye", "Observe", "Same call records", "Agent calls get the same events and recordings.")],
+  code={"sip": ("Agent SIP headers", SIP_HEADERS)}, note=f'From <a href="{DOCS}/ai-agents/connect-number">Connect a number</a> in the TryVox docs.',
+  faq=[("Which providers are supported?", "Vapi, Retell, ElevenLabs, LiveKit and Bolna."),
+       ("Do agents make outbound calls through TryVox?", "Inbound calls to a bound number go straight to the agent. Outbound calls from the agent are still in progress, so don't rely on them for production yet."),
+       ("Can one number go to two agents?", "No. A number binds to one agent at a time."),
+       ("Should I also set the number as inbound in my provider?", "No. Doing both can make calls conflict. Let TryVox route the number to the agent.")])
+
+PROD["messaging"] = dict(tint="#14B3A0", title="WhatsApp and SMS for Voice AI Teams | TryVox",
+  desc="Send WhatsApp and DLT-ready SMS from the same account as your phone numbers, including WhatsApp calling and templates.",
+  h1="Follow up on <em>the channel they read.</em>",
+  sub="Send WhatsApp messages and DLT-ready SMS from the same account as your numbers. Confirm, remind and share links right after the call.",
+  app=("Messaging", ap_head("Messaging", "WhatsApp · SMS · this week", chips(["WhatsApp", "SMS"]))
+        + '<div class="funnel"><div style="--w:100%"><span>Sent</span><b>12,480</b></div><div style="--w:97%"><span>Delivered</span><b>12,102</b></div><div style="--w:79%"><span>Read</span><b>9,860</b></div></div>'
+        + tbl(["Template", "Channel", "Status"],
+              [['<b class="mono">payment_reminder</b>', "WhatsApp", '<span class="pill">Approved</span>'],
+               ['<b class="mono">otp_login</b>', "SMS · DLT", '<span class="pill">Approved</span>'],
+               ['<b class="mono">delivery_slot</b>', "WhatsApp", '<span class="pill w">Pending</span>']],
+              "1.6fr 1fr .9fr"),
+       '<p class="mlabel">After the call</p>' + feed([("ev ok", "call.completed · 02:41"), ("a", "Here is your payment link for the EMI due on Friday."), ("c", "Paid. Thank you!"), ("ev", "template: payment_reminder · read")])),
+  intro="Voice and messaging on one account and one bill, so the follow-up goes out the moment the call ends.",
+  chap=[("Add a channel", "WhatsApp and SMS, <em>side by side.</em>", "Connect WhatsApp and DLT-ready SMS to the same account as your numbers.", ["WhatsApp messaging and calling", "DLT-ready SMS for India", "One account"],
+         pane("Channels", checks([("WhatsApp Business", "connected"), ("WhatsApp calling", "enabled"), ("SMS · DLT entity", "linked")]), "Ready")),
+        ("Set up templates", "Templates <em>ready to send.</em>", "Manage the templates your campaigns use, and see which are approved.", ["Template management", "Approval status at a glance", "Reuse across campaigns"],
+         pane("Templates", rows([('<span class="mono">payment_reminder</span>', '<span class="pill">Approved</span>'), ('<span class="mono">appointment_confirm</span>', '<span class="pill">Approved</span>'), ('<span class="mono">delivery_slot</span>', '<span class="pill w">Pending</span>')]))),
+        ("Send", "Follow up <em>the moment it ends.</em>", "Send from the API or right after each call, and track sent, delivered and read.", ["Send from the API", "Delivery and read events", "Pay as you go"],
+         pane("WhatsApp · after the call", feed([("ev ok", "call.completed · 02:41"), ("a", "Thanks for your time today. Here is your payment link."), ("c", "Paid. Thank you!"), ("ev", "delivered · read")])))],
+  big=[("Delivery events", "Know what was read", "Sent, delivered and read events for every message.", '<div class="mock"><div class="mock-body"><div class="funnel"><div style="--w:100%"><span>Sent</span><b>4,210</b></div><div style="--w:96%"><span>Delivered</span><b>4,047</b></div><div style="--w:81%"><span>Read</span><b>3,402</b></div></div></div></div>'),
+       ("WhatsApp calling", "Calls on WhatsApp too", "Take calls on WhatsApp alongside your phone numbers.", pane("WhatsApp call", rows([("Caller", "+91 98•• ••5678"), ("Status", '<span class="pill">Connected</span>'), ("Duration", '<span class="mono">00:47</span>')]), "Live"))],
+  feat=[("chat", "WhatsApp", "WhatsApp messaging", "Send and receive messages in one place."),
+        ("phone", "Calling", "WhatsApp calling", "Take calls on WhatsApp alongside your numbers."),
+        ("doc", "Templates", "Templates", "Manage the templates your campaigns use."),
+        ("mail", "SMS", "DLT-ready SMS", "OTPs, reminders and alerts under DLT rules."),
+        ("hook", "Events", "Delivery events", "Sent, delivered and read."),
+        ("rupee", "Billing", "One account, one bill", "Voice and messaging, pay as you go.")],
+  code=None,
+  faq=[("Can I send WhatsApp messages after an AI call?", "Yes. Messaging runs on the same account, so you can follow up when a call ends."),
+       ("Is SMS DLT-ready?", "Yes. DLT registration is part of compliance in TryVox."),
+       ("Is WhatsApp calling supported?", "Yes. See WhatsApp calling in the docs.")])
+
+PROD["compliance"] = dict(tint="#E8932A", title="Telecom Compliance for AI Calling in India | TryVox",
+  desc="Business KYC, consent records, DLT registration and verified caller IDs, built into TryVox.",
+  h1="India's telecom rules, <em>handled.</em>",
+  sub="Business KYC, consent records, DLT registration and verified caller IDs are part of the product, not a project you run on the side.",
+  app=("Compliance", ap_head("Compliance", "Account readiness", '<span class="pill">Ready</span>')
+        + '<div class="ready"><div class="ring" style="--p:100"><b>4/4</b><small>checks</small></div>' + checks([("Business KYC", "verified"), ("Consent records", "per contact"), ("DLT entity", "linked"), ("Caller IDs", "2 verified")]) + '</div>',
+       '<p class="mlabel">Consent log</p>' + rows([("+91 98•• ••5678", '<span class="pill">Consented</span>'), ("+91 99•• ••0412", '<span class="pill">Consented</span>'), ("+91 97•• ••2231", '<span class="pill w">Withdrawn</span>')])),
+  intro="Compliance in India is a product requirement. TryVox builds it into numbers, calling and messaging from day one.",
+  chap=[("Complete KYC", "Verify <em>once.</em>", "Business verification happens online, before numbers are issued.", ["Online, no paperwork loop", "Status in the dashboard", "Required for every number"],
+         pane("KYC", checks([("Business details", "submitted"), ("Documents", "uploaded"), ("Verified", "complete")]), "Verified")),
+        ("Record consent", "Consent, <em>on record.</em>", "Store consent for the people you call, and respect it when they withdraw.", ["Consent per contact", "Withdrawals respected", "Exportable records"],
+         pane("Consent", rows([("+91 98•• ••5678", '<span class="pill">Consented</span>'), ("+91 99•• ••0412", '<span class="pill">Consented</span>'), ("+91 97•• ••2231", '<span class="pill w">Withdrawn</span>')]))),
+        ("DLT and caller IDs", "Register, verify, <em>send.</em>", "Link your DLT entity for SMS and verify the numbers you call from.", ["DLT entity and templates", "Verified caller IDs", "Signed webhooks"],
+         pane("DLT · caller IDs", checks([("DLT entity", "linked"), ("otp_login", "template"), ("+91 80 4718 2290", "caller ID"), ("+91 22 6120 4471", "caller ID")]), "Ready"))],
+  big=[("Audit trail", "Every call leaves a record", "An event trail for every call and message, for your audits.", pane("Events", feed([("ev", "call.initiated · consent checked"), ("ev ok", "call.answered"), ("ev", "call.completed · record stored")]), None)),
+       ("Security", "Signed webhooks", "Callbacks are signed with your webhook secret so you can trust what arrives.", pane("Webhook", rows([("Secret", '<span class="mono">whsec_••••••••</span>'), ("Signature", '<span class="pill">Valid</span>')]), None))],
+  feat=[("id", "KYC", "Business KYC", "Verification before numbers go live."),
+        ("users", "Consent", "Consent records", "Record consent for the people you call."),
+        ("mail", "DLT", "DLT registration", "Entity and template workflows for SMS."),
+        ("phone", "Caller ID", "Verified caller IDs", "Verify the numbers you call from."),
+        ("eye", "Audit", "Call records", "An event trail for every call and message."),
+        ("shield", "Security", "Signed webhooks", "Callbacks signed with your secret.")],
+  code=None,
+  faq=[("Why does TryVox need KYC?", "India's telecom rules require business verification before numbers are issued."),
+       ("What is DLT?", "Distributed Ledger Technology registration, required in India for commercial SMS."),
+       ("How do verified caller IDs work?", "You verify ownership of a number, then use it as the caller ID on outbound calls.")])
+
 def page_product(slug):
-    P = {}
-    if slug == "phone-numbers":
-        vis = mock("Numbers · search", f'''<div class="msearch">{ICON["search"]}<span>Search <b>Bengaluru · local</b></span></div>
-<div class="rv-st"><div class="mrow"><span class="mlcd">+91 80 4718 2290</span><span class="mbtn">Buy</span></div>
-<div class="mrow"><span>+91 80 4718 3301</span><span class="pill w">Local</span></div>
-<div class="mrow"><span>+91 80 4718 5528</span><span class="pill w">Local</span></div>
-<div class="mrow"><span>1800 xxx xxxx</span><span class="pill p">Toll-free</span></div>
-<div class="mrow"><span>Business KYC</span><span class="pill">Verified</span></div></div>''')
-        P = dict(title="Phone Numbers for AI Voice Agents | TryVox", desc="Search, buy and configure local, national and toll-free numbers with business KYC, and bind them to your AI agent.",
-            tag="Phone numbers", h1="Numbers your callers <em>actually pick up.</em>",
-            sub="Search, buy and configure local, national and toll-free numbers with business KYC handled online. Point any number at your agent, your SIP trunk or your own code.",
-            vis=vis,
-            feat=[("search","Search","Search and buy in minutes","Find numbers by city or type and buy them from the dashboard or the API."),
-                  ("id","KYC","Business KYC, online","Verification happens before numbers go live, without paperwork back-and-forth."),
-                  ("route","Routing","Route anywhere","Send a number to an AI agent, a SIP trunk or a VoxML call flow, and change it any time."),
-                  ("phone","Caller ID","Verified caller IDs","Verify the numbers you call from so your outbound calls show a number people trust."),
-                  ("bot","Agents","Bind to an agent","Connect a number to a Vapi, Retell, ElevenLabs, LiveKit or Bolna agent in a few clicks."),
-                  ("eye","Records","Every call recorded as events","Status callbacks and call records for each number, ready for your dashboards.")],
-            steps=[("Search","Pick a city or number type and choose from available numbers.",f"{DOCS}/numbers/search"),
-                   ("Purchase","Buy the number once your business KYC is verified.",f"{DOCS}/numbers/purchase"),
-                   ("Configure","Route it to an agent, a SIP trunk or a call flow.",f"{DOCS}/numbers/configure")],
-            code={"curl":("List numbers",AUTH_CURL)}, note=f'Based on <a href="{DOCS}/getting-started/authentication">Authentication</a> in the TryVox docs.',
-            frows=[("Local presence in <em>every city</em> you call.","Callers are more likely to answer a local number. Give each region or campaign its own caller ID and keep it consistent.",["Local, national and toll-free numbers","Assign numbers per campaign or team","Release numbers you no longer need"], mock("Caller IDs", '<div class="mchk"><div>+91 80 4718 2290<span>Bengaluru</span></div><div>+91 22 6120 4471<span>Mumbai</span></div><div>+91 11 4910 0732<span>Delhi</span></div></div>', None))],
-            faq=[("What kinds of numbers can I get?","Local, national and toll-free numbers. Search by city or type in the dashboard or through the Numbers API."),
-                 ("Do I need KYC?","Yes. Business KYC is completed online before numbers go live, as India's telecom rules require."),
-                 ("Can I move a number between agents?","Yes. Re-point a number to a different agent, SIP trunk or call flow at any time. A number can be bound to one agent at a time."),
-                 ("Can I release a number?","Yes. Release numbers you no longer need from the dashboard or the API.")])
-    elif slug == "sip-trunking":
-        vis = mock("SIP trunk · production", '''<div class="rv-st"><div class="mrow"><span>Domain</span><span>trunk.tryvox.io</span></div>
-<div class="mrow"><span>Credentials</span><span class="pill">Active</span></div>
-<div class="mrow"><span>IP ACL</span><span>2 ranges allowed</span></div>
-<div class="mrow"><span>Channels</span><span>30 concurrent</span></div>
-<div class="mrow"><span>Carrier</span><span class="pill p">TryVox · or BYOC</span></div></div>''')
-        P = dict(title="SIP Trunking for AI Voice Agents | TryVox", desc="Create SIP trunks, manage credentials and IP ACLs, set channel limits or bring your own carrier.",
-            tag="SIP trunking", h1="SIP trunking, <em>set up for you.</em>",
-            sub="Create trunks for inbound and outbound calls, manage credentials and IP access lists, and set channel limits. Or bring your own carrier and keep your existing routes.",
-            vis=vis,
-            feat=[("sip","Trunks","Create a trunk","Inbound and outbound on one trunk, created from the dashboard or the API."),
-                  ("key","Credentials","Credentials you control","Generate and rotate SIP credentials per trunk."),
-                  ("shield","IP ACL","IP access lists","Allow calls only from the IP ranges you trust."),
-                  ("flow","Channels","Channel limits","Set how many concurrent calls a trunk may carry."),
-                  ("globe","BYOC","Bring your own carrier","Keep an existing carrier and still use TryVox routing and events."),
-                  ("bot","Agents","Works with any SIP stack","Connect LiveKit, your PBX or any standards-based SIP client.")],
-            steps=[("Create the trunk","Name it and choose inbound, outbound or both.",f"{DOCS}/sip-trunking/create-trunk"),
-                   ("Add credentials or IP ACL","Lock the trunk to your credentials and IP ranges.",f"{DOCS}/sip-trunking/credentials"),
-                   ("Set channels","Choose the concurrency your agents need.",f"{DOCS}/sip-trunking/channels")],
-            code=None,
-            frows=[("Already have a carrier? <em>Bring it.</em>","Bring Your Own Carrier lets you keep the routes and rates you already have, while TryVox handles numbers, routing and call events on top.",["Keep existing carrier contracts","One dashboard for every trunk","Same events and recordings as TryVox routes"], mock("BYOC", '<div class="mflow"><div><b>01</b>Your carrier<span class="pill w">SIP</span></div><div><b>02</b>TryVox routing<span class="pill p">Events</span></div><div><b>03</b>Your agent<span class="pill">Live</span></div></div>', None))],
-            faq=[("What is a SIP trunk?","A SIP trunk carries phone calls over the internet between the phone network and your systems, such as a voice agent or PBX."),
-                 ("Can I restrict who uses my trunk?","Yes. Use SIP credentials, IP access lists, or both."),
-                 ("How many calls can a trunk carry?","You set a channel limit per trunk. Talk to us if you need more capacity."),
-                 ("Can I use my own carrier?","Yes. Bring Your Own Carrier (BYOC) keeps your carrier while using TryVox on top.")])
-    elif slug == "voice-api":
-        vis = mock("call_8f2a19 · events", f'''<div class="rv-st">{msg("ev","POST /v1/voice/accounts/{auth_id}/calls")}{msg("ev ok","201 · status: queued")}{msg("ev","ring_url · ringing")}{msg("ev ok","answer_url · VoxML returned")}{msg("a","Hi, this is Riya from Acme Finance.")}{msg("ev","hangup_url · final call record")}</div>''')
-        P = dict(title="Programmable Voice API and VoxML | TryVox", desc="Place calls, run conferences, record and build call flows with VoxML. REST API at api.tryvox.io.",
-            tag="Voice API", h1="Every call, <em>under your control.</em>",
-            sub="Place calls, receive webhooks at every stage, run conferences, record and hang up from your code. Build call flows with VoxML verbs like Say, Gather, Dial and Stream.",
-            vis=vis,
-            feat=[("wave","Calls","Make and list calls","Create outbound calls in one request, one by one or in bulk, and look them up later."),
-                  ("hook","Webhooks","Callbacks for every stage","Ring, answer, status and hangup URLs, signed with your webhook secret."),
-                  ("flow","VoxML","Call flows in VoxML","Say, Play, Gather, IVR, Dial, Record, Stream, Conference and more."),
-                  ("users","Conferences","Conferences","Bring callers, agents and humans into the same call."),
-                  ("rec","Recordings","Recordings","Record calls and fetch recordings through the API."),
-                  ("bolt","Control","Live call actions","Act on calls that are in progress, or hang them up.")],
-            steps=[("Authenticate","Use your Auth ID and Auth Token from the dashboard.",f"{DOCS}/getting-started/authentication"),
-                   ("Place a call","POST to the calls endpoint with from, to and answer_url.",f"{DOCS}/voice/make-call"),
-                   ("Return VoxML","Answer with VoxML to say, gather, dial or stream.",f"{DOCS}/voxml")],
-            code={"curl":("cURL",CALL_CURL),"node":("Node",CALL_NODE),"py":("Python",CALL_PY),"resp":("Response",CALL_RESP)}, note=NOTE_CALL,
-            frows=[("Build the flow with <em>VoxML.</em>","When a call is answered, TryVox asks your answer_url what to do. Reply with VoxML verbs and TryVox runs them on the call.",["Say, Play and Gather for menus and input","Dial and Conference to bring people in","Stream to send live audio to your agent"], mock("VoxML verbs", '<div class="mflow"><div><b>1</b>Say a greeting<span class="pill w">Say</span></div><div><b>2</b>Collect a keypress<span class="pill w">Gather</span></div><div><b>3</b>Stream audio to the agent<span class="pill p">Stream</span></div><div><b>4</b>Transfer to a person<span class="pill w">Dial</span></div></div>', None))],
-            faq=[("How do I authenticate?","HTTP Basic auth: your Auth ID is the username and your Auth Token is the password. Both come from the dashboard."),
-                 ("What does answer_url need to return?","VoxML. TryVox POSTs to answer_url when the call is answered and runs the VoxML you return."),
-                 ("Can I place calls in bulk?","Yes. The same endpoint accepts a list of calls."),
-                 ("Is answering machine detection available?","Not yet. The parameter is accepted but has no effect today, so don't rely on it.")])
-    elif slug == "ai-agents":
-        vis = mock("AI agents · connect number", '''<div class="mprov"><span class="on"><img src="/assets/logos/vapi.svg" alt="Vapi" width="55" height="18"></span><span><img src="/assets/logos/retell.svg" alt="Retell AI" width="65" height="18"></span><span><em>ElevenLabs</em></span><span><img src="/assets/logos/livekit.svg" alt="LiveKit" width="18" height="18"></span><span><img src="/assets/logos/bolna.svg" alt="Bolna" width="28" height="18"></span><span><em>+ more</em></span></div>
-<div class="rv-st"><div class="mrow"><span>Number</span><span class="mlcd" style="font-size:20px">+91 80 4718 2290</span></div><div class="mrow"><span>Agent</span><span>Collections · Riya</span></div><div class="mrow"><span>Status</span><span class="pill">Connected</span></div></div>''')
-        P = dict(title="Connect AI Voice Agents to Phone Numbers | TryVox", desc="Bind a TryVox number to a Vapi, Retell, ElevenLabs, LiveKit or Bolna agent. No deployment or SIP configuration needed.",
-            tag="AI agents", h1="Your agent, <em>on a real number.</em>",
-            sub="Pick your provider, choose a TryVox number and an agent, and confirm. The agent answers calls on that number straight away, with no deployment or SIP configuration.",
-            vis=vis,
-            feat=[("bot","Providers","Bring any agent","Vapi, Retell, ElevenLabs, LiveKit and Bolna, with more on the way."),
-                  ("bolt","Setup","No SIP to configure","Binding a number is a few clicks in the dashboard."),
-                  ("route","Routing","One number, one agent","Each number binds to one agent, so routing stays predictable."),
-                  ("code","Headers","Context in SIP headers","Your agent receives direction, provider, caller and number on every call."),
-                  ("flow","Fallback","Clean fallback","Remove a binding and calls fall back to your other routing settings."),
-                  ("eye","Observe","Same call records","Agent calls get the same events and recordings as every other call.")],
-            steps=[("Choose a provider","Open AI Agents and pick your integration.",f"{DOCS}/ai-agents/connect-provider"),
-                   ("Pick number and agent","Choose an active TryVox number and an agent from your provider.",f"{DOCS}/ai-agents/connect-number"),
-                   ("Confirm","The agent is reachable on that number right away.",None)],
-            code={"sip":("Agent SIP headers",SIP_HEADERS)}, note=f'From <a href="{DOCS}/ai-agents/connect-number">Connect a number</a> in the TryVox docs.',
-            frows=[("We don't build agents. <em>We connect them.</em>","TryVox is only the phone layer, so agent platforms and builders can run on us without feeding a competitor.",["Keep the agent platform you chose","Switch providers without changing numbers","No lock-in"], mock("Bindings", '<div class="mchk"><div>+91 80 4718 2290 → Vapi<span>inbound</span></div><div>+91 22 6120 4471 → Retell<span>inbound</span></div><div>1800 xxx xxxx → Bolna<span>inbound</span></div></div>', None))],
-            faq=[("Which providers are supported?","Vapi, Retell, ElevenLabs, LiveKit and Bolna."),
-                 ("Do agents make outbound calls through TryVox?","Inbound calls to a bound number go straight to the agent. Outbound calls from the agent are still in progress, so don't rely on them for production yet."),
-                 ("Can one number go to two agents?","No. A number binds to one agent at a time."),
-                 ("Should I also set the number as inbound in my provider?","No. Doing both can make calls conflict. Let TryVox route the number to the agent.")])
-    elif slug == "messaging":
-        vis = mock("WhatsApp · after the call", f'''<div class="rv-st">{msg("ev ok","call.completed · 02:41")}{msg("a","Thanks for your time today. Here is your payment link for the EMI due on Friday.")}{msg("c","Paid. Thank you!")}{msg("ev","template: payment_reminder · delivered")}</div>''')
-        P = dict(title="WhatsApp and SMS for Voice AI Teams | TryVox", desc="Send WhatsApp and DLT-ready SMS from the same account as your phone numbers, including WhatsApp calling and templates.",
-            tag="Messaging", h1="Follow up on <em>the channel they read.</em>",
-            sub="Send WhatsApp messages and DLT-ready SMS from the same account as your numbers. Confirm, remind and share links right after the call.",
-            vis=vis,
-            feat=[("chat","WhatsApp","WhatsApp messaging","Send and receive messages, and keep conversations in one place."),
-                  ("phone","Calling","WhatsApp calling","Take calls on WhatsApp alongside your phone numbers."),
-                  ("doc","Templates","Templates","Manage the message templates your campaigns use."),
-                  ("mail","SMS","DLT-ready SMS","OTPs, reminders and alerts that follow India's DLT rules."),
-                  ("hook","Events","Delivery events","Know when messages are sent, delivered and read."),
-                  ("rupee","Billing","One account, one bill","Voice and messaging together, pay as you go.")],
-            steps=[("Add a channel","Connect WhatsApp or SMS to your account.",f"{DOCS}/messaging/channels"),
-                   ("Set up templates","Prepare the templates you'll send.",f"{DOCS}/messaging/templates"),
-                   ("Send","Send from the API or after each call.",f"{DOCS}/messaging/send")],
-            code=None, frows=[],
-            faq=[("Can I send WhatsApp messages after an AI call?","Yes. Messaging runs on the same account, so you can follow up when a call ends."),
-                 ("Is SMS DLT-ready?","Yes. DLT registration is part of compliance in TryVox."),
-                 ("Is WhatsApp calling supported?","Yes. See WhatsApp calling in the docs.")])
-    else:  # compliance
-        vis = mock("Compliance checks", '''<div class="mchk"><div>Business KYC<span>verified</span></div><div>Consent recorded<span>per contact</span></div><div>DLT entity linked<span>SMS</span></div><div>Caller ID verified<span>outbound</span></div></div>''', "Ready")
-        P = dict(title="Telecom Compliance for AI Calling in India | TryVox", desc="Business KYC, consent records, DLT registration and verified caller IDs, built into TryVox.",
-            tag="Compliance", h1="India's telecom rules, <em>handled.</em>",
-            sub="Business KYC, consent records, DLT registration and verified caller IDs are part of the product, not a project you run on the side.",
-            vis=vis,
-            feat=[("id","KYC","Business KYC","Verification before numbers go live."),
-                  ("users","Consent","Consent records","Record consent for the people you call."),
-                  ("mail","DLT","DLT registration","Entity and template workflows for SMS in India."),
-                  ("phone","Caller ID","Verified caller IDs","Verify the numbers you call from."),
-                  ("eye","Audit","Call records","An event trail for every call and message."),
-                  ("shield","Security","Signed webhooks","Callbacks signed with your webhook secret.")],
-            steps=[("Complete KYC","Verify your business once, online.",None),
-                   ("Record consent","Store consent for the contacts you call.",f"{DOCS}/compliance/consent"),
-                   ("Register for DLT","Link your DLT entity for SMS.",f"{DOCS}/compliance/dlt")],
-            code=None, frows=[],
-            faq=[("Why does TryVox need KYC?","India's telecom rules require business verification before numbers are issued."),
-                 ("What is DLT?","Distributed Ledger Technology registration, required in India for commercial SMS."),
-                 ("How do verified caller IDs work?","You verify ownership of a number, then use it as the caller ID on outbound calls.")])
-    name = next(n for s, n, _, _ in PRODUCTS if s == slug)
-    body = phero([("Products", None), (name, None)], P["tag"], P["h1"], P["sub"], P["vis"])
+    P = PROD[slug]
+    name, icon = next((n, i) for s, n, i, _ in PRODUCTS if s == slug)
+    where, main, aside = P["app"]
+    body = xhero([("Products", None), (name, None)], name, icon, P["h1"], P["sub"], console(slug, where, main, aside), P["tint"])
+    body += intro_row(P["intro"], P["feat"][:3])
     body += partners()
-    body += f'<section class="wrap sect tight">{shead("What you get", "Everything in <em>" + E(name) + "</em>", None)}{features(P["feat"])}</section>'
-    if P["frows"]:
-        body += '<section class="wrap sect tight">' + "".join(frow(*f[:4], flip=bool(i % 2)) for i, f in enumerate(P["frows"])) + "</section>"
-    body += f'<section class="wrap sect tight">{shead("How it works", "Live in <em>three steps.</em>")}{steps(P["steps"])}</section>'
+    body += chapters("How it works", "Live in <em>three steps.</em>", P["chap"], P["tint"])
+    body += bento("What you get", "Everything in <em>" + E(name) + ".</em>", P["big"], P["feat"][3:], P["tint"])
     if P.get("code"):
-        body += f'<section class="wrap sect tight"><div class="devgrid"><div class="rv"><p class="tag"><i></i>Developers</p><h2 class="hd h2" style="margin-top:20px">Straight from <em>the docs.</em></h2><p class="sub">A REST API at api.tryvox.io with Auth ID and Auth Token. Every example here matches the documentation.</p><div class="cta"><a class="obtn" href="/developers/">Developer hub</a></div></div><div class="rv" style="min-width:0">{code_panel(P["code"], P["note"])}</div></div></section>'
-    body += stats()
+        body += devband(P["code"], P["note"])
+    body += bigstats("Built for <em>production.</em>")
     body += faq(P["faq"])
     body += related_products(slug)
     return P["title"], P["desc"], body
 
 # ---------------------------------------------------------------- solution pages
 SOL = {
- "financial-services": dict(h1="Collections and reminders <em>that connect.</em>", sub="Run EMI reminders, KYC follow-ups and loan servicing calls with your AI agent on local numbers, then follow up on WhatsApp.",
-   script=[("ev","Outbound · +91 80 4718 2290"),("a","Hi, this is Riya calling from Acme Finance. Is this a good time?"),("c","Yes, go ahead."),("a","Your EMI of ₹4,250 is due on Friday. Shall I send a payment link on WhatsApp?"),("ev ok","Promise to pay · Friday · link sent")],
-   uses=[("rupee","EMI reminders","Remind borrowers before due dates and log promises to pay."),("id","KYC follow-ups","Call customers to complete or update KYC."),("users","Loan servicing","Answer balance and schedule questions, with a human one transfer away.")],
-   flow=[("Trigger","EMI due in 3 days"),("Call","Agent calls from a local number"),("Outcome","Promise to pay: Friday"),("Follow-up","WhatsApp payment link sent")],
-   prods=["phone-numbers","ai-agents","messaging"],
-   faq=[("Can calls come from a local number?","Yes. Buy local numbers per region and use verified caller IDs."),("Can a person take over?","Yes. Bring a human into the call with Dial or a conference."),("How do I keep records?","Every call produces events, a call record and optional recordings.")]),
- "healthcare": dict(h1="Appointments booked <em>without hold music.</em>", sub="Let your agent answer patient calls on clinic numbers, confirm slots and send reminders, while staff handle the cases that need a person.",
-   script=[("ev","Inbound · clinic line"),("c","Hi, I'd like to move my appointment."),("a","Sure. I have Thursday at 4 PM or Friday at 11 AM."),("c","Thursday works."),("ev ok","Booked · Thursday 4 PM · SMS reminder set")],
-   uses=[("phone","Inbound booking","Answer every call on each clinic's own number."),("rec","Rescheduling","Move appointments by phone, any hour."),("mail","Reminders","SMS reminders before every visit.")],
-   flow=[("Inbound","Patient calls the clinic"),("Agent","Checks open slots"),("Booked","Thursday, 4 PM"),("Reminder","SMS 24 hours before")],
-   prods=["phone-numbers","ai-agents","messaging"],
-   faq=[("Can each clinic have its own number?","Yes. Buy a local number per clinic and bind each to an agent."),("Can staff take over a call?","Yes. Transfer to a person with Dial."),("Can I send reminders?","Yes. Send SMS or WhatsApp from the same account.")]),
- "ecommerce": dict(h1="Order confirmations <em>at checkout speed.</em>", sub="Confirm cash-on-delivery orders, recover carts and answer where-is-my-order calls, even on sale days.",
-   script=[("ev","Outbound · COD order 48213"),("a","Hi! Calling to confirm your order of ₹1,899. Press 1 to confirm."),("ev","dtmf · 1"),("a","Thanks, your order is confirmed for delivery tomorrow."),("ev ok","Order released to ship")],
-   uses=[("cart","COD confirmation","Confirm orders before they ship."),("bolt","Cart recovery","Call shoppers who left items behind."),("truck","Order status","Answer where-is-my-order calls instantly.")],
-   flow=[("Trigger","COD order placed"),("Call","Agent confirms address"),("Keypad","Customer presses 1"),("Outcome","Order released to ship")],
-   prods=["voice-api","ai-agents","messaging"],
-   faq=[("Can customers confirm with a keypress?","Yes. Collect input with VoxML Gather."),("Can I call in bulk?","Yes. The calls endpoint accepts a list of calls."),("Can I follow up on WhatsApp?","Yes, from the same account.")]),
- "logistics": dict(h1="Delivery calls that <em>reach the doorstep.</em>", sub="Coordinate pickups and delivery slots with customers and drivers, and keep everyone informed as plans change.",
-   script=[("ev","Outbound · out for delivery"),("a","Hi, your package arrives today. Is 2 to 4 PM okay?"),("c","Can you come after 6?"),("a","Done. I've moved it to 6 PM and told the driver."),("ev ok","Slot updated · driver app synced")],
-   uses=[("truck","Slot confirmation","Confirm delivery windows before dispatch."),("route","Rescheduling","Move deliveries in one call."),("hook","Status updates","Push call outcomes to your systems with webhooks.")],
-   flow=[("Trigger","Out for delivery"),("Call","Agent confirms the slot"),("Change","Customer asks for 6 PM"),("Update","Driver app updated")],
-   prods=["voice-api","phone-numbers","ai-agents"],
-   faq=[("Can call outcomes update my systems?","Yes. Use status and hangup callbacks to update orders."),("Can drivers be connected?","Yes. Bring a driver into the call with Dial or a conference."),("Can I use toll-free numbers?","Yes, for inbound support lines.")]),
- "real-estate": dict(h1="Every enquiry <em>called back in minutes.</em>", sub="Call new leads the moment they land, qualify budget and location, and book site visits while interest is high.",
-   script=[("ev","Outbound · new lead"),("a","Hi, you asked about 2BHK homes in Whitefield. What's your budget?"),("c","Around 90 lakh."),("a","I can book a site visit on Sunday at 11. Works?"),("ev ok","Site visit booked · Sunday 11 AM")],
-   uses=[("bolt","Instant callback","Call leads within moments of the enquiry."),("users","Qualification","Capture budget, location and timeline."),("home","Site visits","Book visits and send confirmations.")],
-   flow=[("Lead","Form filled on a portal"),("Call","Agent calls back quickly"),("Qualify","Budget and location"),("Booked","Site visit on Sunday")],
-   prods=["phone-numbers","ai-agents","messaging"],
-   faq=[("Can calls come from a local number?","Yes. Use a local number per city."),("Can sales take over?","Yes. Transfer to a person when the lead is ready."),("Can I send a confirmation?","Yes. Send WhatsApp or SMS after the call.")]),
- "travel-hospitality": dict(h1="Bookings and changes, <em>around the clock.</em>", sub="Handle booking changes, check-in questions and confirmations at any hour, on local or toll-free lines.",
-   script=[("ev","Inbound · toll-free"),("c","Can I get a late check-out tomorrow?"),("a","Yes, I can extend it to 1 PM for your room."),("c","Perfect."),("ev ok","Late check-out added · SMS sent")],
-   uses=[("plane","24/7 lines","Answer every call, any hour."),("phone","Toll-free numbers","Give guests a free number to call."),("mail","Confirmations","Send SMS or WhatsApp confirmations.")],
-   flow=[("Inbound","Guest calls the hotel"),("Agent","Finds the booking"),("Change","Late check-out added"),("Confirm","SMS sent to guest")],
-   prods=["phone-numbers","ai-agents","messaging"],
-   faq=[("Can I offer a toll-free number?","Yes. Buy toll-free numbers for inbound lines."),("Can staff take over?","Yes. Transfer to a person when needed."),("Can I confirm by message?","Yes, by SMS or WhatsApp.")]),
+ "financial-services": dict(tint="#5B6CFF", h1="Collections and reminders <em>that connect.</em>", sub="Run EMI reminders, KYC follow-ups and loan servicing calls with your AI agent on local numbers, then follow up on WhatsApp.",
+   script=[("c", "Hi, who is this?"), ("a", "Hi, this is Riya calling from Acme Finance. Is this a good time?"), ("c", "Yes, go ahead."), ("a", "Your EMI of ₹4,250 is due on Friday. Shall I send a payment link on WhatsApp?"), ("c", "Yes please, send it."), ("ev ok", "Promise to pay · Friday · link sent")],
+   uses=[("rupee", "EMI reminders", "Remind borrowers before due dates and log promises to pay.", [("ev", "Outbound · EMI due in 3 days"), ("a", "Your EMI of ₹4,250 is due on Friday."), ("c", "I'll pay on Friday."), ("ev ok", "Promise to pay logged")]),
+         ("id", "KYC follow-ups", "Call customers to complete or update KYC.", [("ev", "Outbound · KYC pending"), ("a", "We still need your address proof to finish KYC."), ("c", "Can you send me the link?"), ("ev ok", "Upload link sent on WhatsApp")]),
+         ("users", "Loan servicing", "Answer balance and schedule questions, with a human one transfer away.", [("ev", "Inbound · servicing line"), ("c", "What's my outstanding balance?"), ("a", "It's ₹1,12,400 with 26 EMIs left."), ("ev", "Transfer offered · Dial")])],
+   flow=[("Trigger", "EMI due in 3 days"), ("Call", "Agent calls from a local number"), ("Outcome", "Promise to pay: Friday"), ("Follow-up", "WhatsApp payment link sent")],
+   prods=["phone-numbers", "ai-agents", "messaging"],
+   faq=[("Can calls come from a local number?", "Yes. Buy local numbers per region and use verified caller IDs."), ("Can a person take over?", "Yes. Bring a human into the call with Dial or a conference."), ("How do I keep records?", "Every call produces events, a call record and optional recordings.")]),
+ "healthcare": dict(tint="#EF5B7B", h1="Appointments booked <em>without hold music.</em>", sub="Let your agent answer patient calls on clinic numbers, confirm slots and send reminders, while staff handle the cases that need a person.",
+   script=[("c", "Hi, I'd like to move my appointment."), ("a", "Sure. I have Thursday at 4 PM or Friday at 11 AM."), ("c", "Thursday works."), ("a", "Done. You'll get an SMS reminder the day before."), ("ev ok", "Booked · Thursday 4 PM · SMS reminder set")],
+   uses=[("phone", "Inbound booking", "Answer every call on each clinic's own number.", [("ev", "Inbound · Indiranagar clinic"), ("c", "Do you have a slot tomorrow?"), ("a", "Yes, 10:30 AM with Dr. Rao."), ("ev ok", "Booked · 10:30 AM")]),
+         ("rec", "Rescheduling", "Move appointments by phone, any hour.", [("ev", "Inbound · 9:40 PM"), ("c", "I need to move Monday's visit."), ("a", "I can do Wednesday at 5 PM."), ("ev ok", "Rescheduled · Wednesday 5 PM")]),
+         ("mail", "Reminders", "SMS reminders before every visit.", [("ev", "24 hours before visit"), ("ev ok", "SMS · appointment_confirm · delivered"), ("c", "Reply: CONFIRM"), ("ev ok", "Visit confirmed")])],
+   flow=[("Inbound", "Patient calls the clinic"), ("Agent", "Checks open slots"), ("Booked", "Thursday, 4 PM"), ("Reminder", "SMS 24 hours before")],
+   prods=["phone-numbers", "ai-agents", "messaging"],
+   faq=[("Can each clinic have its own number?", "Yes. Buy a local number per clinic and bind each to an agent."), ("Can staff take over a call?", "Yes. Transfer to a person with Dial."), ("Can I send reminders?", "Yes. Send SMS or WhatsApp from the same account.")]),
+ "ecommerce": dict(tint="#FF7A3D", h1="Order confirmations <em>at checkout speed.</em>", sub="Confirm cash-on-delivery orders, recover carts and answer where-is-my-order calls, even on sale days.",
+   script=[("a", "Hi! Calling to confirm your order of ₹1,899."), ("c", "Yes, that's mine."), ("a", "Great. Press 1 to confirm delivery tomorrow."), ("ev", "dtmf · 1"), ("ev ok", "Order released to ship")],
+   uses=[("cart", "COD confirmation", "Confirm orders before they ship.", [("ev", "Outbound · COD order 48213"), ("a", "Press 1 to confirm your ₹1,899 order."), ("ev", "dtmf · 1"), ("ev ok", "Released to ship")]),
+         ("bolt", "Cart recovery", "Call shoppers who left items behind.", [("ev", "Outbound · cart left 2h ago"), ("a", "Your sneakers are still in your cart."), ("c", "Is there a size 9?"), ("ev ok", "Size 9 reserved · link sent")]),
+         ("truck", "Order status", "Answer where-is-my-order calls instantly.", [("ev", "Inbound · support line"), ("c", "Where is my order?"), ("a", "It's out for delivery and arrives by 6 PM."), ("ev ok", "Resolved on the call")])],
+   flow=[("Trigger", "COD order placed"), ("Call", "Agent confirms address"), ("Keypad", "Customer presses 1"), ("Outcome", "Order released to ship")],
+   prods=["voice-api", "ai-agents", "messaging"],
+   faq=[("Can customers confirm with a keypress?", "Yes. Collect input with VoxML Gather."), ("Can I call in bulk?", "Yes. The calls endpoint accepts a list of calls."), ("Can I follow up on WhatsApp?", "Yes, from the same account.")]),
+ "logistics": dict(tint="#2BA2E0", h1="Delivery calls that <em>reach the doorstep.</em>", sub="Coordinate pickups and delivery slots with customers and drivers, and keep everyone informed as plans change.",
+   script=[("a", "Hi, your package arrives today. Is 2 to 4 PM okay?"), ("c", "Can you come after 6?"), ("a", "Done. I've moved it to 6 PM and told the driver."), ("c", "Perfect, thanks."), ("ev ok", "Slot updated · driver app synced")],
+   uses=[("truck", "Slot confirmation", "Confirm delivery windows before dispatch.", [("ev", "Outbound · before dispatch"), ("a", "Is 2 to 4 PM okay for delivery?"), ("c", "Yes, that works."), ("ev ok", "Slot confirmed")]),
+         ("route", "Rescheduling", "Move deliveries in one call.", [("ev", "Outbound · out for delivery"), ("c", "I won't be home until 6."), ("a", "Moved to 6 PM."), ("ev ok", "Driver app updated")]),
+         ("hook", "Status updates", "Push call outcomes to your systems with webhooks.", [("ev", "hangup_url · call record"), ("ev ok", "Order 7731 · slot 18:00"), ("ev", "status_callback_url · completed"), ("ev ok", "TMS updated")])],
+   flow=[("Trigger", "Out for delivery"), ("Call", "Agent confirms the slot"), ("Change", "Customer asks for 6 PM"), ("Update", "Driver app updated")],
+   prods=["voice-api", "phone-numbers", "ai-agents"],
+   faq=[("Can call outcomes update my systems?", "Yes. Use status and hangup callbacks to update orders."), ("Can drivers be connected?", "Yes. Bring a driver into the call with Dial or a conference."), ("Can I use toll-free numbers?", "Yes, for inbound support lines.")]),
+ "real-estate": dict(tint="#26B07A", h1="Every enquiry <em>called back in minutes.</em>", sub="Call new leads the moment they land, qualify budget and location, and book site visits while interest is high.",
+   script=[("a", "Hi, you asked about 2BHK homes in Whitefield. What's your budget?"), ("c", "Around 90 lakh."), ("a", "I can book a site visit on Sunday at 11. Works?"), ("c", "Yes, Sunday is good."), ("ev ok", "Site visit booked · Sunday 11 AM")],
+   uses=[("bolt", "Instant callback", "Call leads within moments of the enquiry.", [("ev", "Lead · portal form · 10:02"), ("ev ok", "Outbound call · 10:03"), ("a", "Thanks for your enquiry about Whitefield."), ("c", "Yes, I'm interested.")]),
+         ("users", "Qualification", "Capture budget, location and timeline.", [("a", "What budget are you looking at?"), ("c", "Around 90 lakh."), ("a", "And when do you plan to move?"), ("ev ok", "Qualified · 90L · 3 months")]),
+         ("home", "Site visits", "Book visits and send confirmations.", [("a", "Sunday at 11 for a site visit?"), ("c", "Yes."), ("ev ok", "Visit booked · Sunday 11 AM"), ("ev", "WhatsApp · location pin sent")])],
+   flow=[("Lead", "Form filled on a portal"), ("Call", "Agent calls back quickly"), ("Qualify", "Budget and location"), ("Booked", "Site visit on Sunday")],
+   prods=["phone-numbers", "ai-agents", "messaging"],
+   faq=[("Can calls come from a local number?", "Yes. Use a local number per city."), ("Can sales take over?", "Yes. Transfer to a person when the lead is ready."), ("Can I send a confirmation?", "Yes. Send WhatsApp or SMS after the call.")]),
+ "travel-hospitality": dict(tint="#D9A022", h1="Bookings and changes, <em>around the clock.</em>", sub="Handle booking changes, check-in questions and confirmations at any hour, on local or toll-free lines.",
+   script=[("c", "Can I get a late check-out tomorrow?"), ("a", "Yes, I can extend it to 1 PM for your room."), ("c", "Perfect."), ("a", "Done. I've sent the details by SMS."), ("ev ok", "Late check-out added · SMS sent")],
+   uses=[("plane", "24/7 lines", "Answer every call, any hour.", [("ev", "Inbound · 2:14 AM"), ("c", "Is the airport shuttle running?"), ("a", "Yes, every 30 minutes from 5 AM."), ("ev ok", "Resolved")]),
+         ("phone", "Toll-free numbers", "Give guests a free number to call.", [("ev", "Inbound · 1800 line"), ("c", "I need to change my booking dates."), ("a", "Moved to the 14th to the 16th."), ("ev ok", "Booking updated")]),
+         ("mail", "Confirmations", "Send SMS or WhatsApp confirmations.", [("ev ok", "Booking updated"), ("ev", "WhatsApp · booking_confirm"), ("ev ok", "Delivered · read"), ("c", "Got it, thanks!")])],
+   flow=[("Inbound", "Guest calls the hotel"), ("Agent", "Finds the booking"), ("Change", "Late check-out added"), ("Confirm", "SMS sent to guest")],
+   prods=["phone-numbers", "ai-agents", "messaging"],
+   faq=[("Can I offer a toll-free number?", "Yes. Buy toll-free numbers for inbound lines."), ("Can staff take over?", "Yes. Transfer to a person when needed."), ("Can I confirm by message?", "Yes, by SMS or WhatsApp.")]),
 }
+def devices(name, D):
+    f = D["flow"]
+    first = [l for l in D["script"] if l[0] != "ev"][:3]
+    talk = "".join(msg(c, t) for c, t in first)
+    return f'''<div class="devs">
+  <div class="dev d-l"><p class="mlabel">01 · {E(f[0][0])}</p><div class="dev-ev"><span class="pill p">{E(f[0][0])}</span><b>{E(f[0][1])}</b></div><p class="mlabel" style="margin-top:16px">02 · {E(f[1][0])}</p><div class="dev-ev"><span class="pill">{E(f[1][0])}</span><b>{E(f[1][1])}</b></div></div>
+  <div class="dev d-c"><div class="dev-top"><span class="dots"><i></i><i></i><i></i></span><span>{E(name)} · live call</span><span class="live">Live</span></div><div class="dev-body mfeed rv-st">{talk}</div><div class="dev-bar"><span class="mlcd dclock">00:00</span><span class="wv"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div></div>
+  <div class="dev d-r"><p class="mlabel">03 · {E(f[2][0])}</p><div class="dev-ev"><span class="pill">{E(f[2][0])}</span><b>{E(f[2][1])}</b></div><p class="mlabel" style="margin-top:16px">04 · {E(f[3][0])}</p><div class="dev-ev"><span class="pill w">{E(f[3][0])}</span><b>{E(f[3][1])}</b></div></div>
+</div>'''
+
 def page_solution(slug):
     D = SOL[slug]
-    name = next(n for s, n, _, _ in SOLUTIONS if s == slug)
-    icon = next(i for s, _, i, _ in SOLUTIONS if s == slug)
-    vis = mock(f"{name} · call", '<div class="rv-st">' + "".join(msg(c, t) for c, t in D["script"]) + "</div>")
-    body = phero([("Solutions", None), (name, None)], name, D["h1"], D["sub"], vis)
+    name, icon = next((n, i) for s, n, i, _ in SOLUTIONS if s == slug)
+    body = xhero([("Solutions", None), (name, None)], name, icon, D["h1"], D["sub"], devices(name, D), D["tint"])
     body += partners()
-    body += f'<section class="wrap sect tight">{shead("Use cases", "Calls you can put on <em>autopilot.</em>")}{features([(i, name, t, d) for i, t, d in D["uses"]])}</section>'
-    body += f'<section class="wrap sect tight">{shead("Call flow", "One call, <em>start to finish.</em>")}{steps([(k, v) for k, v in D["flow"]], 4)}</section>'
-    prods = [(next(p for p in PRODUCTS if p[0] == ps)) for ps in D["prods"]]
-    body += stats()
+    items = [(i, t, d, mock(f"{name} · {t}", feed(lines))) for i, t, d, lines in D["uses"]]
+    body += switcher("Use cases", "Calls you can put on <em>autopilot.</em>", "Pick a use case to see the call.", items, D["tint"])
+    body += showcase("Every call sounds like your best agent.", "Your AI agent handles the conversation. TryVox carries the call on a real number, streams the audio and reports every event back to you.", D["script"])
+    body += flowrail("Call flow", "One call, <em>start to finish.</em>", D["flow"])
+    body += bigstats("Built for <em>real call volume.</em>")
+    prods = [next(p for p in PRODUCTS if p[0] == ps) for ps in D["prods"]]
     body += faq(D["faq"])
     body += related("What you'll <em>use.</em>", [(i, n, d, f"/products/{s}/") for s, n, i, d in prods])
-    title = f"AI Calling for {name} | TryVox"
-    desc = D["sub"]
-    return title, desc, body
+    return f"AI Calling for {name} | TryVox", D["sub"], body
 
 # ---------------------------------------------------------------- pricing
 def page_pricing():
-    plans = [("Pay as you go", "Free to start", "For teams getting their first agent on the phone.", ["All products on one account", "No lock-in, no minimums", "Docs and email support"], ("Start free", APP, "kbtn"), False),
+    plans = [("Pay as you go", "Free to start", "For teams getting their first agent on the phone.", ["All products on one account", "No lock-in, no minimums", "Docs and email support"], ("Start free", APP, "obtn"), False),
              ("Scale", "Volume rates", "For teams running thousands of calls a day.", ["Rates for your volume", "Help planning concurrency", "Priority support"], ("Get a rate card", "/contact/", "kbtn"), True),
              ("Enterprise", "Custom", "For platforms and large operations.", ["Custom terms", "Partner and multi-account setups", "Dedicated contact"], ("Talk to us", "/contact/", "obtn"), False)]
     cards = ""
     for name, price, d, ticks, (cta, href, cls), hl in plans:
         t = "".join(f"<li>{E(x)}</li>" for x in ticks)
         badge = '<span class="badge-top">Most teams</span>' if hl else ""
-        cards += f'<div class="plan rv{" hl" if hl else ""}">{badge}<h3>{E(name)}</h3><div class="pr">{E(price)}</div><p>{E(d)}</p><ul class="ticks">{t}</ul><a class="{cls}" href="{href}">{E(cta)}</a></div>'
+        meter = '<div class="pmeter"><span class="mlabel">Minutes this month</span><span class="mlcd" data-meter>1,25,000</span><div class="bars" data-live>' + "".join(f'<i style="--h:{h}%"></i>' for h in (30, 42, 38, 55, 48, 62, 58, 71, 66, 80, 74, 88)) + '</div></div>' if hl else ""
+        cards += f'<div class="plan rv{" hl" if hl else ""}">{badge}<h3>{E(name)}</h3><div class="pr">{E(price)}</div><p>{E(d)}</p>{meter}<ul class="ticks">{t}</ul><a class="{cls}" href="{href}">{E(cta)}</a></div>'
     est = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
     i = est.index('<section class="wrap sect est" id="estimate"'); j = est.index("</section>", i) + 10
     estimator = est[i:j]
-    vis = mock("Your line · estimate", '<div class="rv-st"><div class="mrow"><span>Calls per month</span><span>50,000</span></div><div class="mrow"><span>Average call</span><span>2.5 min</span></div><div class="mrow"><span>Minutes per month</span><span class="mlcd" style="font-size:22px">1,25,000</span></div><div class="mrow"><span>Peak concurrent calls</span><span>~27</span></div></div>', "Example")
-    body = phero([("Pricing", None)], "Pricing", "Pay for minutes, <em>not seats.</em>", "Pay as you go with no lock-in and no minimums. When your volume grows, ask for a rate card that fits it.", vis,
-                 secondary=("Get a rate card", "/contact/"))
-    body += f'<section class="wrap sect tight">{shead("Plans", "Simple plans that <em>grow with you.</em>", "Every plan includes the same products. Volume and support are what change.")}<div class="plans">{cards}</div></section>'
-    body += f'<section class="wrap sect tight">{shead("Included everywhere", "Every plan gets <em>the full stack.</em>")}{features([(i, n, n, d) for _, n, i, d in PRODUCTS])}</section>'
+    body = xhero([("Pricing", None)], "Pricing", "rupee", "Pay for minutes, <em>not seats.</em>", "Pay as you go with no lock-in and no minimums. When your volume grows, ask for a rate card that fits it.",
+                 f'<div class="plans">{cards}</div>', "#9D61FF", secondary=("Get a rate card", "/contact/"))
+    body += intro_row("Every plan includes the same products. Volume and support are what change.", [("bolt", "", "Start in minutes", "Create an account and buy a number today."), ("rupee", "", "Pay as you go", "No minimums, no lock-in, one bill."), ("users", "", "Rates that scale", "Volume pricing when your calls grow.")])
+    tiles = [(ICON[i], n, d, f"/products/{s}/") for s, n, i, d in PRODUCTS]
+    body += tilegrid("Included everywhere", "Every plan gets <em>the full stack.</em>", tiles)
     body += estimator
+    body += bigstats("Infrastructure you can <em>budget for.</em>")
     body += faq([("Is there a free way to start?", "Yes. Start free from the dashboard and pay as you go."),
                  ("Are there minimums or contracts?", "No. Pay as you go has no lock-in and no minimums."),
                  ("How do I get volume rates?", "Use the estimator above, then ask for a rate card from the contact page."),
@@ -555,11 +773,27 @@ DOC_MAP = [
  ("sip", "SIP trunking", [("Create a trunk", "/sip-trunking/create-trunk"), ("Credentials", "/sip-trunking/credentials"), ("IP ACL", "/sip-trunking/ip-acl"), ("BYOC", "/byoc")]),
  ("bot", "AI agents", [("Connect a provider", "/ai-agents/connect-provider"), ("Connect a number", "/ai-agents/connect-number"), ("Vapi", "/ai-agents/vapi"), ("Retell", "/ai-agents/retell")]),
 ]
+def ide():
+    code = {"curl": ("cURL", CALL_CURL), "node": ("Node", CALL_NODE), "py": ("Python", CALL_PY), "auth": ("Auth", AUTH_CURL)}
+    side = "".join(f'<span class="{"on" if i == 0 else ""}"><em class="m {m.lower()}">{m}</em>{E(n)}</span>' for i, (m, n) in enumerate([("POST", "Make a call"), ("GET", "List calls"), ("POST", "Hang up"), ("POST", "Conferences"), ("GET", "Numbers"), ("POST", "Connect number")]))
+    return f'''<div class="ide"><div class="ide-side"><p class="mlabel">Endpoints</p>{side}<p class="mlabel" style="margin-top:18px">Base URL</p><span class="mono small">api.tryvox.io</span></div>
+<div class="ide-code">{code_panel(code, NOTE_CALL)}</div>
+<div class="ide-resp"><p class="mlabel">Response · 201</p><pre class="mcode">{E(CALL_RESP)}</pre><p class="mlabel" style="margin-top:14px">Webhooks</p>{feed([("ev", "ring_url · ringing"), ("ev ok", "answer_url · answered"), ("ev", "hangup_url · completed")])}</div></div>'''
+
 def page_developers():
     groups = "".join(f'<div class="dgrp rv"><h3>{ic(i)}{E(t)}</h3><ul>' + "".join(f'<li><a href="{DOCS}{h}">{E(n)}<span>↗</span></a></li>' for n, h in links) + "</ul></div>" for i, t, links in DOC_MAP)
-    code = {"curl": ("cURL", CALL_CURL), "node": ("Node", CALL_NODE), "py": ("Python", CALL_PY), "auth": ("Auth", AUTH_CURL)}
-    body = f'''<section class="phero wrap"><div class="phero-grid"><div>{crumb([("Developers", None)])}<p class="tag"><i></i>Developers</p><h1 class="hd">Build on <em>TryVox.</em></h1><p class="sub">A REST API at api.tryvox.io with HTTP Basic auth, VoxML for call flows, and webhooks for every call event.</p><div class="cta"><a class="kbtn" href="{DOCS}/getting-started/quickstart">Read the quickstart</a><a class="obtn" href="{APP}">Get API keys</a></div><div class="micro"><span>REST + JSON</span><span>Signed webhooks</span><span>VoxML</span></div></div><div class="rv" style="min-width:0">{code_panel(code, NOTE_CALL)}</div></div></section>'''
-    body += f'<section class="wrap sect tight">{shead("Quickstart", "Your first call in <em>four steps.</em>")}{steps([("Get your keys", "Copy your Auth ID and Auth Token from the dashboard.", DOCS + "/getting-started/authentication"), ("Buy a number", "Search and purchase a number to call from.", DOCS + "/numbers/purchase"), ("Place a call", "POST to the calls endpoint with from, to and answer_url.", DOCS + "/voice/make-call"), ("Handle webhooks", "Receive ring, answer, status and hangup callbacks.", DOCS + "/getting-started/webhooks")], 4)}</section>'
+    body = xhero([("Developers", None)], "Developers", "code", "Build on <em>TryVox.</em>", "A REST API at api.tryvox.io with HTTP Basic auth, VoxML for call flows, and webhooks for every call event.", ide(), "#3D7BFF",
+                 primary=("Read the quickstart", f"{DOCS}/getting-started/quickstart"), secondary=("Get API keys", APP), micro=("REST + JSON", "Signed webhooks", "VoxML"))
+    body += intro_row("Everything you need to put an agent on the phone network from your own code.", [("code", "", "REST + JSON", "Predictable resources under /v1."), ("hook", "", "Webhooks", "Ring, answer, status and hangup callbacks."), ("flow", "", "VoxML", "Say, Gather, Dial, Stream and more.")])
+    chap = [("Get your keys", "Copy <em>two values.</em>", "Your Auth ID and Auth Token from the dashboard authenticate every request.", ["HTTP Basic auth", "Username = Auth ID", "Password = Auth Token"],
+             pane("Dashboard · API keys", rows([("Auth ID", '<span class="mono">MA••••••••7Q</span>'), ("Auth Token", '<span class="mono">••••••••••••</span>'), ("Webhook secret", '<span class="pill">Set</span>')]), None)),
+            ("Buy a number", "Pick a number <em>to call from.</em>", "Search and purchase a number in the dashboard or through the Numbers API.", ["Local, national, toll-free", "KYC online", "Ready in minutes"],
+             pane("Numbers", rows([('<span class="mlcd" style="font-size:20px">+91 80 4718 2290</span>', '<span class="pill">Active</span>')]), None)),
+            ("Place a call", "POST, <em>and it rings.</em>", "Send from, to and answer_url to the calls endpoint. You get 201 with status queued.", ["Bulk calls on the same endpoint", "ring_timeout and time_limit", "Returns a request_uuid"],
+             pane("POST /calls", mono(CALL_RESP), None)),
+            ("Handle webhooks", "Every stage, <em>in your inbox.</em>", "Receive ring, answer, status and hangup callbacks, signed with your webhook secret.", ["ring_url, answer_url, hangup_url", "status_callback_url", "Signed with webhook_secret"],
+             pane("Webhook log", feed([("ev", "POST ring_url · 200"), ("ev ok", "POST answer_url · VoxML"), ("ev", "POST status_callback_url · 200"), ("ev", "POST hangup_url · 200")]), "Live"))]
+    body += chapters("Quickstart", "Your first call in <em>four steps.</em>", chap, "#3D7BFF")
     body += f'<section class="wrap sect tight">{shead("Documentation", "Everything in <em>the docs.</em>", "Jump straight to the reference you need.")}<div class="dmap">{groups}</div></section>'
     body += faq([("How does authentication work?", "HTTP Basic auth. Your Auth ID is the username and your Auth Token is the password."),
                  ("Where do callbacks go?", "To the URLs you set on each call, such as answer_url, ring_url, hangup_url and status_callback_url."),
@@ -575,26 +809,49 @@ def page_integrations():
     wall = wall.replace('<a class="obtn" href="/integrations/">See all integrations</a>', f'<a class="obtn" href="{DOCS}/ai-agents">Browse integration docs ↗</a>')
     wall = wall.replace('<div class="integ-copy rv">', '<div class="integ-copy rv">' + crumb([("Integrations", None)]), 1)
     provs = [("Vapi", "vapi"), ("Retell", "retell"), ("ElevenLabs", "elevenlabs"), ("LiveKit", "livekit"), ("Bolna", "bolna")]
-    cards = "".join(f'<a class="ccard rv" href="{DOCS}/ai-agents/{s}">{ic("bot")}<h3>{n}</h3><p>Bind a TryVox number to your {n} agent.</p><span class="go">Setup guide ↗</span></a>' for n, s in provs)
-    cards += f'<a class="ccard rv" href="{DOCS}/byoc">{ic("sip")}<h3>Your own SIP or carrier</h3><p>Connect any SIP stack, or bring your own carrier.</p><span class="go">BYOC guide ↗</span></a>'
+    def lg(s, n):
+        if s in LOGOIMG:
+            return f'<img src="/assets/logos/{s}.svg" alt="" width="{LOGOIMG[s][1]}" height="22">'
+        return f'<em>{n}</em>'
+    tiles = [(lg(s, n), n, "Setup guide", f"{DOCS}/ai-agents/{s}") for n, s in provs] + [(ICON["sip"], "Your SIP or carrier", "BYOC guide", f"{DOCS}/byoc")]
     body = wall
-    body += f'<section class="wrap sect tight">{shead("Agent platforms", "Setup guides for <em>every provider.</em>")}<div class="ccards">{cards}</div></section>'
-    note = f'From <a href="{DOCS}/ai-agents/connect-number">Connect a number</a> in the TryVox docs.'
-    panel = code_panel({"sip": ("Agent SIP headers", SIP_HEADERS)}, note)
-    body += f'<section class="wrap sect tight"><div class="devgrid"><div class="rv"><p class="tag"><i></i>How binding works</p><h2 class="hd h2" style="margin-top:20px">Pick, connect, <em>answer.</em></h2><p class="sub">Choose a provider, pick a number and an agent, and confirm. Inbound calls to that number go straight to the agent, with context in SIP headers.</p><ul class="ticks"><li>One number binds to one agent</li><li>No deployment or SIP configuration</li><li>Remove the binding to fall back to your other routing</li></ul></div><div class="rv" style="min-width:0">{panel}</div></div></section>'
+    body += tilegrid("Agent platforms", "Setup guides for <em>every provider.</em>", tiles)
+    chap = [("Choose a provider", "Pick <em>your platform.</em>", "Open AI Agents in the dashboard and choose Vapi, Retell, ElevenLabs, LiveKit or Bolna.", ["Five providers today", "More on the way", "Any SIP stack via trunks"], pane("Providers", provgrid(), None)),
+            ("Connect", "Number plus agent, <em>confirmed.</em>", "Choose an active TryVox number and an agent from your provider, then confirm.", ["One number binds to one agent", "No deployment", "No SIP configuration"], pane("Connect number", rows([("Number", '<span class="mlcd" style="font-size:20px">+91 80 4718 2290</span>'), ("Agent", "Collections · Riya"), ("Status", '<span class="pill">Connected</span>')]))),
+            ("Answer", "Calls arrive <em>with context.</em>", "Inbound calls go straight to the agent with X-TryVox headers for direction, provider, caller and number.", ["Remove the binding to fall back", "Same events and recordings", "Outbound from agents: in progress"], pane("SIP headers", mono(SIP_HEADERS), "Live"))]
+    body += chapters("How binding works", "Pick, connect, <em>answer.</em>", chap, "#C257F0")
     body += faq([("Which agent platforms work with TryVox?", "Vapi, Retell, ElevenLabs, LiveKit and Bolna, plus any standards-based SIP stack."),
                  ("Do I need to configure SIP for agent platforms?", "No. Binding a number to an agent needs no deployment or SIP configuration."),
                  ("Can agents call out through TryVox?", "Outbound calls from agents are still in progress. Inbound calls work today.")])
     return "Integrations | TryVox", "Connect TryVox numbers to Vapi, Retell, ElevenLabs, LiveKit and Bolna, or any SIP stack.", body
 
 # ---------------------------------------------------------------- about / contact
+def layer_diagram():
+    agents = "".join(f'<span><img src="/assets/logos/{k}.svg" alt="{LOGOIMG[k][0]}" width="{LOGOIMG[k][1]}" height="16"></span>' for k in ["vapi", "retell", "livekit", "bolna"])
+    return f'''<div class="ldia">
+  <div class="ld-col"><p class="mlabel">Your agents</p><div class="ld-logos">{agents}<span><em>ElevenLabs</em></span></div></div>
+  <div class="ld-wire" aria-hidden="true"><svg viewBox="0 0 120 40" preserveAspectRatio="none"><path d="M0 20H120"/></svg></div>
+  <div class="ld-core"><svg viewBox="0 0 32 32" aria-hidden="true">{LOGO}</svg><b>TryVox</b><small>Numbers · SIP · Voice API · Messaging · Compliance</small></div>
+  <div class="ld-wire" aria-hidden="true"><svg viewBox="0 0 120 40" preserveAspectRatio="none"><path d="M0 20H120"/></svg></div>
+  <div class="ld-col"><p class="mlabel">Phone network</p><div class="ld-net"><span>{ICON["phone"]}Mobile</span><span>{ICON["globe"]}Landline</span><span>{ICON["chat"]}WhatsApp</span><span>{ICON["mail"]}SMS</span></div></div>
+</div>'''
+
 def page_about():
-    vis = mock("Company", '<div class="rv-st"><div class="mrow"><span>Company</span><span>Tryjolt Solutions Pvt Ltd</span></div><div class="mrow"><span>Product</span><span>TryVox</span></div><div class="mrow"><span>Built in</span><span>India</span></div><div class="mrow"><span>Focus</span><span>Telephony for voice AI</span></div><div class="mrow"><span>Contact</span><span>team@tryvox.io</span></div></div>', None)
-    body = phero([("About", None)], "About TryVox", "We build the <em>phone layer</em> for voice AI.", "TryVox covers voice, SIP, SMS, WhatsApp and workflow automation for teams that need reliable communications in India and beyond.", vis, secondary=("Contact us", "/contact/"))
-    body += f'<section class="wrap sect tight">{shead("What we believe", "Communications should be <em>easy to trust.</em>")}{features([("globe", "India-first", "India-first operations", "Compliance, KYC, DLT-aware messaging and telecom workflows are product requirements, not afterthoughts."), ("code", "Developers", "Developer control", "Voice, messaging, routing and webhooks exposed as primitives engineering teams can build on."), ("bot", "AI", "Built for AI workflows", "Real-time conversations where AI agents, support teams and business systems work together."), ("bolt", "Speed", "Fast to integrate", "Live in minutes, with docs that match the product."), ("eye", "Visibility", "Observable in production", "Events and records for every call and message."), ("shield", "Compliance", "Aligned with compliance", "Telecom rules handled inside the product.")])}</section>'
-    bind = mock("Bindings", '<div class="mchk"><div>Vapi<span>connected</span></div><div>Retell<span>connected</span></div><div>LiveKit<span>connected</span></div><div>Bolna<span>connected</span></div></div>', None)
-    body += f'<section class="wrap sect tight"><div class="frow"><div class="rv"><h3 class="hd">We don&rsquo;t build agents. <em>We connect them.</em></h3><p>TryVox is only the phone layer, so agent platforms and builders can run on us without feeding a competitor.</p><ul class="ticks"><li>Infrastructure only</li><li>Bring any agent platform</li><li>No lock-in</li></ul></div><div class="rv">{bind}</div></div></section>'
+    body = xhero([("About", None)], "About TryVox", "globe", "We build the <em>phone layer</em> for voice AI.", "TryVox covers voice, SIP, SMS, WhatsApp and workflow automation for teams that need reliable communications in India and beyond.", layer_diagram(), "#9D61FF", secondary=("Contact us", "/contact/"))
+    body += manifesto("Voice AI got good fast. Getting it onto a real phone line still meant carriers, KYC, SIP and paperwork. We built TryVox so any agent can get a number, take a call and report every event, without anyone building telephony from scratch.")
+    big = [("We don't build agents", "We connect them", "TryVox is only the phone layer, so agent platforms and builders can run on us without feeding a competitor.", pane("Bindings", checks([("Vapi", "connected"), ("Retell", "connected"), ("LiveKit", "connected"), ("Bolna", "connected")]), None)),
+           ("India-first", "Compliance built in", "KYC, consent, DLT and caller ID verification are product requirements, not afterthoughts.", pane("Readiness", checks([("Business KYC", "verified"), ("Consent", "recorded"), ("DLT", "linked")]), "Ready"))]
+    small = [("code", "", "Developer control", "Voice, messaging, routing and webhooks as primitives."), ("eye", "", "Observable", "Events and records for every call and message."), ("bolt", "", "Fast to integrate", "Live in minutes, with docs that match the product.")]
+    body += bento("What we believe", "Communications should be <em>easy to trust.</em>", big, small, "#9D61FF")
+    body += bigstats("Infrastructure that <em>stays up.</em>")
+    body += related("Start <em>building.</em>", [("bolt", "Products", "Numbers, SIP, Voice API, agents and messaging.", "/products/phone-numbers/"), ("code", "Developers", "Quickstart, code samples and docs.", "/developers/"), ("mail", "Contact", "Talk to the team at team@tryvox.io.", "/contact/")])
     return "About | TryVox", "TryVox builds telephony infrastructure for voice AI: numbers, SIP, voice APIs and messaging. Built in India by Tryjolt Solutions.", body
+
+def compose():
+    return f'''<div class="compose"><div class="mock-bar"><span class="dots"><i></i><i></i><i></i></span><span>New message</span></div>
+<div class="cp-body"><div class="cp-row"><span>To</span><b>team@tryvox.io</b></div><div class="cp-row"><span>Subject</span><b>Rate card request</b></div>
+<div class="cp-text"><span class="typed" data-type="Hi TryVox team, we run about 50,000 calls a month, 2.5 minutes on average, with a Vapi agent. Could you share a rate card for that volume?"></span><i class="caret"></i></div>
+<div class="cp-foot"><a class="kbtn" href="mailto:team@tryvox.io?subject=Rate%20card%20request">Send email</a><span class="mlabel">Replies by email</span></div></div></div>'''
 
 def page_contact():
     cards = [("mail", "Email the team", "Questions about TryVox, partnerships or anything else.", "mailto:team@tryvox.io", "team@tryvox.io"),
@@ -604,8 +861,7 @@ def page_contact():
              ("doc", "Read the docs", "API reference, VoxML, numbers, SIP and agent guides.", f"{DOCS}/", "docs.tryvox.io"),
              ("code", "Developer hub", "Quickstart steps and code samples.", "/developers/", "Go to developers")]
     c = "".join(f'<a class="ccard rv" href="{h}">{ic(i)}<h3>{E(t)}</h3><p>{E(d)}</p><span class="go">{E(l)} →</span></a>' for i, t, d, h, l in cards)
-    vis = mock("team@tryvox.io", '<div class="rv-st"><div class="mrow"><span>Sales &amp; rate cards</span><span class="pill">Open</span></div><div class="mrow"><span>Partnerships</span><span class="pill">Open</span></div><div class="mrow"><span>Support</span><span class="pill p">Docs + email</span></div></div>', None)
-    body = phero([("Contact", None)], "Contact", "Talk to <em>the team.</em>", "Tell us what you're building and how many calls you run. We'll help you get your agent on the phone.", vis,
+    body = xhero([("Contact", None)], "Contact", "mail", "Talk to <em>the team.</em>", "Tell us what you're building and how many calls you run. We'll help you get your agent on the phone.", compose(), "#19B35A",
                  primary=("Email team@tryvox.io", "mailto:team@tryvox.io"), secondary=("Start free", APP), micro=("Built in India", "Replies by email", "No sales pressure"))
     body += f'<section class="wrap sect tight">{shead("Ways to reach us", "Pick what <em>you need.</em>")}<div class="ccards">{c}</div></section>'
     return "Contact | TryVox", "Talk to the TryVox team about numbers, SIP, AI agents and rate cards. Email team@tryvox.io.", body
