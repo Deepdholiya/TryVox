@@ -141,7 +141,15 @@ p{margin:0}
 .hero h1 em{color:var(--accent)}
 .rig{margin-top:clamp(40px,6vw,72px);display:grid;grid-template-columns:1fr 1fr;border-radius:14px;overflow:hidden;box-shadow:0 50px 90px -40px rgba(40,20,90,.45),0 0 0 1px var(--line-2);min-height:440px}
 .glass{background:var(--glass);color:var(--glass-ink);padding:26px 26px 22px;display:flex;flex-direction:column;position:relative;min-width:0}
-.glass::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 60% at 20% 0%,rgba(255,255,255,.06),transparent 60%);pointer-events:none}
+.glass::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 60% at 20% 0%,rgba(255,255,255,.07),transparent 60%);pointer-events:none;z-index:0}
+.glass::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.9;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 3px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px),
+    repeating-linear-gradient(45deg,rgba(0,0,0,.18) 0 1px,transparent 1px 4px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-mask-image:linear-gradient(180deg,#000,rgba(0,0,0,.75));mask-image:linear-gradient(180deg,#000,rgba(0,0,0,.75))}
+.glass>*{position:relative;z-index:1}
 .g-status{font-family:var(--f-dot);font-weight:800;letter-spacing:.04em;font-size:26px;color:var(--glass-ink-2);display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--glass-edge);padding-bottom:14px;gap:12px;min-height:56px}
 .g-status small{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--glass-ink-3);text-transform:uppercase;white-space:nowrap}
 .g-status small b{color:var(--glass-ink);font-weight:400}
@@ -251,7 +259,9 @@ p{margin:0}
 .layers li.on .rd::after{background:var(--brand);transform:scale(1)}
 .lright{position:relative;min-width:0;background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:22px 22px}
 .lright svg{position:absolute;inset:0;width:100%;height:100%}
-.iso .ly{transition:transform .9s var(--ease),opacity .6s;transform-box:view-box}
+.iso .ly{transition:transform .5s var(--ease),opacity .6s;transform-box:view-box}
+.iso .num,.iso .lead{transition:opacity .4s,fill .3s,stroke .3s}
+.iso .ly.shut .num,.iso .ly.shut .lead{opacity:0}
 .iso .face{fill:var(--iso-fill);stroke:rgb(var(--iso-ink));stroke-opacity:.55;stroke-width:1}
 .iso .side{fill:var(--iso-fill);stroke:rgb(var(--iso-ink));stroke-opacity:.35;stroke-width:1}
 .iso .ink{fill:rgb(var(--iso-ink));fill-opacity:.85}
@@ -279,7 +289,12 @@ p{margin:0}
 .lcap p{font-size:14px;color:var(--ink-2);margin-top:6px;line-height:1.45}
 
 /* how it works (purple band) */
-.how{background:var(--how);color:#F5F1FF;position:relative}
+.how{--hd:0;color:#F5F1FF;position:relative;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,#8E62F7,#2B1167 calc(var(--hd)*48%)) 0%,
+    color-mix(in srgb,#7D4FEC,#2B1167 calc(var(--hd)*48%)) 32%,
+    color-mix(in srgb,#7444CF,#2B1167 calc(var(--hd)*48%)) 62%,
+    color-mix(in srgb,#6538BF,#2B1167 calc(var(--hd)*48%)) 100%)}
 .how .tag{color:#F5F1FF}
 .how .hd{color:#fff}
 .how .sub{color:rgba(245,241,255,.75)}
@@ -294,14 +309,15 @@ p{margin:0}
 .htitle h3 em{font-family:var(--f-ital);font-weight:400;letter-spacing:-.01em}
 .htitle p{margin:16px auto 0;font-size:clamp(16px,1.5vw,19px);color:rgba(245,241,255,.8);max-width:46ch;transition:opacity .45s .05s}
 .htitle.swap h3{opacity:0;transform:translateY(10px)}.htitle.swap p{opacity:0}
-.seg{position:absolute;left:50%;bottom:28px;translate:-50% 0;display:flex;align-items:center;gap:6px;padding:5px;border-radius:14px;background:#121016;box-shadow:0 18px 36px rgba(30,10,70,.4),0 0 0 1px rgba(255,255,255,.1);z-index:2;max-width:calc(100% - 32px)}
-.seg .cnt{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:rgba(236,232,244,.55);padding:0 10px 0 8px;white-space:nowrap}
-.seg .cnt b{color:#7CFF8A;font-weight:400}
-.seg .grp{display:flex;background:#1C1A21;border-radius:10px;padding:3px;box-shadow:inset 0 1px 3px rgba(0,0,0,.5)}
-.seg button{position:relative;height:32px;padding:0 15px;border-radius:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(236,232,244,.5);transition:color .2s,background-color .2s}
-.seg button:hover{color:#ECE8F4}
-.seg button.on{background:#3A3741;color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 2px 4px rgba(0,0,0,.4)}
-.seg button .pf{position:absolute;left:10px;right:10px;bottom:3px;height:2px;border-radius:2px;background:#7CFF8A;transform-origin:left;transform:scaleX(0)}
+.seg{position:absolute;left:50%;bottom:28px;translate:-50% 0;display:flex;align-items:center;gap:6px;padding:6px;border-radius:16px;background:#FFFFFF;border:1px solid rgba(20,10,40,.06);box-shadow:0 22px 44px -16px rgba(30,10,70,.45);z-index:2;max-width:calc(100% - 32px)}
+.seg .cnt{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:#8E889C;padding:0 10px 0 10px;white-space:nowrap}
+.seg .cnt b{color:#6D2EE6;font-weight:500}
+.seg .grp{display:flex;background:#F4F1FA;border-radius:11px;padding:3px}
+.seg button{position:relative;display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px 0 11px;border-radius:9px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#6B6578;transition:color .2s,background-color .25s,box-shadow .25s}
+.seg button:hover{color:#17131F}
+.seg button.on{background:#FFFFFF;color:#17131F;box-shadow:0 1px 2px rgba(20,10,40,.12),0 0 0 1px rgba(20,10,40,.06)}
+.seg button .pf{order:-1;--p:0;width:14px;height:14px;border-radius:50%;flex:none;background:conic-gradient(#7444CF calc(var(--p)*1turn),#DDD6EA 0);-webkit-mask:radial-gradient(circle,transparent 3.2px,#000 3.8px);mask:radial-gradient(circle,transparent 3.2px,#000 3.8px);transition:background .2s}
+.seg button.done .pf{-webkit-mask:none;mask:none;background:#00B900 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M4 7.2l2 2 4-4.2' fill='none' stroke='white' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
 .seg a{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:10px;background:var(--key);color:#fff;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;border:1px solid var(--key-edge)}
 .rail{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid rgba(255,255,255,.18);background:rgba(18,8,40,.28);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .rail button{position:relative;text-align:left;padding:18px clamp(14px,2vw,28px) 20px;border-right:1px solid rgba(255,255,255,.14);color:rgba(245,241,255,.55);transition:color .3s,background-color .3s}
@@ -355,6 +371,48 @@ table.cmp{width:100%;border-collapse:collapse;min-width:720px;font-size:14.5px}
 .cmp td{color:var(--ink-2)}
 .cy{color:var(--ink)}.cy::before{content:"● ";color:var(--brand)}
 .cn::before{content:"—";color:var(--ink-3)}
+
+
+/* integrations */
+.integ{padding-block:clamp(80px,10vw,130px) clamp(40px,5vw,70px)}
+.integ-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(32px,5vw,72px);align-items:center}
+.integ-copy .sub{margin-top:18px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+.filters button{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line-2);font-size:13.5px;color:var(--ink-2);background:var(--panel);transition:all .25s}
+.filters button:hover{color:var(--ink);border-color:var(--ink-3)}
+.filters button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters button span{font-family:var(--f-mono);font-size:11px;opacity:.6;margin-left:6px}
+.istats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:34px;border-top:1px solid var(--line-2)}
+.istats div{padding:18px 14px 0 0}
+.istats b{display:block;font-size:clamp(24px,2.4vw,30px);font-weight:600;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.istats span{font-size:13px;color:var(--ink-3);line-height:1.35;display:block;margin-top:2px}
+.integ-copy .obtn{margin-top:30px}
+.iwall{position:relative;height:560px;border:1px solid var(--line-2);border-radius:20px;overflow:hidden;background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:20px 20px;background-color:var(--bg-2);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:0 12px;-webkit-mask-image:linear-gradient(transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(transparent,#000 12%,#000 88%,transparent)}
+.icol{min-width:0;overflow:hidden}
+.itrack{display:grid;gap:12px;padding-block:6px;animation:iup var(--d,32s) linear infinite}
+.icol.rev .itrack{animation-name:idown}
+.iwall:hover .itrack{animation-play-state:paused}
+@keyframes iup{to{transform:translateY(-50%)}}
+@keyframes idown{from{transform:translateY(-50%)}to{transform:none}}
+.icard{position:relative;background:var(--panel);border:1px solid var(--line-2);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:132px;transition:opacity .35s,filter .35s,border-color .3s,transform .35s var(--ease),box-shadow .35s}
+.icard:hover{transform:translateY(-3px);border-color:var(--brand);box-shadow:0 18px 30px -18px rgba(110,50,220,.45)}
+.icard .ilogo{height:30px;display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;letter-spacing:-.02em}
+.icard .ilogo img{height:24px;width:auto;max-width:none}
+.icard .mono{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:var(--f-mono);font-size:11px;font-weight:500;color:#fff;flex:none}
+.icard .iname{font-weight:600;font-size:15px;letter-spacing:-.02em}
+.icard .imeta{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:auto;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.icard .ihow{display:inline-flex;align-items:center;gap:6px;color:var(--accent);white-space:nowrap}
+.icard .ihow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+.iwall[data-f]:not([data-f="all"]) .icard:not(.match){opacity:.25;filter:grayscale(1)}
+.iwall[data-f]:not([data-f="all"]) .icard.match{border-color:var(--brand)}
+.ihub{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:3;display:flex;align-items:center;gap:12px;padding:12px 16px 12px 12px;border-radius:16px;background:var(--glass);color:#ECE8F4;box-shadow:0 24px 50px -16px rgba(20,10,40,.55),0 0 0 1px rgba(255,255,255,.08);white-space:nowrap}
+.ihub .lg{width:40px;height:40px;border-radius:11px;background:#0B0A0F;display:grid;place-items:center;position:relative}
+.ihub .lg svg{width:22px;height:22px}
+.ihub .lg::after{content:"";position:absolute;inset:-6px;border-radius:15px;border:1px solid rgba(157,97,255,.6);animation:hub 2s var(--ease) infinite}
+@keyframes hub{0%{opacity:.9;transform:scale(.9)}100%{opacity:0;transform:scale(1.35)}}
+.ihub small{display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:rgba(236,232,244,.5)}
+.ihub b{display:block;font-weight:500;font-size:14.5px;margin-top:2px;min-width:180px}
+.ihub b::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#59E07A;margin-left:8px;vertical-align:2px;box-shadow:0 0 0 3px rgba(89,224,122,.18)}
 
 /* stack */
 .sect{padding-block:clamp(80px,10vw,130px)}
@@ -470,7 +528,7 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
   .hdr-in{grid-template-columns:1fr auto}
   .burger{display:grid}
   .hdr-r .kbtn{display:none}
-  .rig,.ind-card,.story,.devgrid,.faq,.fcta{grid-template-columns:minmax(0,1fr)}
+  .rig,.ind-card,.story,.devgrid,.faq,.fcta,.integ-grid{grid-template-columns:minmax(0,1fr)}
   .hero-top h1,.hero-side{grid-column:1/-1}
   .hero-side{padding-top:20px}
   .pad{min-height:340px}
@@ -495,6 +553,9 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
   .logos .lbl{max-width:none}
   .marquee{width:100%}
   .grid3,.sliders,.devlinks{grid-template-columns:minmax(0,1fr)}
+  .iwall{grid-template-columns:repeat(2,minmax(0,1fr));height:460px}
+  .icol:nth-child(3){display:none}
+  .ihub b{min-width:0}
   .readout{grid-template-columns:repeat(2,minmax(0,1fr))}
   .readout div:nth-child(2){border-right:0}
   .readout div:nth-child(-n+2){border-bottom:1px solid var(--line)}
@@ -692,6 +753,34 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
   </div>
 </section>
 
+<!-- INTEGRATIONS -->
+<section class="integ" id="integrations" aria-label="Integrations">
+  <div class="wrap integ-grid">
+    <div class="integ-copy rv">
+      <p class="tag"><i></i>Integrations</p>
+      <h2 class="hd h2" style="margin-top:20px">Plug into the voice stack you <em>already use.</em></h2>
+      <p class="sub">Bind a number to your agent platform in a click, stream calls to your own code, or bring your own carrier. Nothing to rebuild.</p>
+      <div class="filters" role="tablist" aria-label="Filter integrations" id="iFilters">
+        <button role="tab" aria-selected="true" data-f="all">All<span id="fAll"></span></button>
+        <button role="tab" aria-selected="false" data-f="agent">Agent platforms<span></span></button>
+        <button role="tab" aria-selected="false" data-f="speech">Speech<span></span></button>
+        <button role="tab" aria-selected="false" data-f="msg">Messaging<span></span></button>
+        <button role="tab" aria-selected="false" data-f="dev">Developers &amp; carriers<span></span></button>
+      </div>
+      <div class="istats"><div><b id="iCount">12</b><span>integrations</span></div><div><b>1-click</b><span>number-to-agent binding</span></div><div><b>0</b><span>SIP setup for agent platforms</span></div></div>
+      <a class="obtn" href="https://docs.tryvox.io/ai-agents">Browse integration docs ↗</a>
+    </div>
+    <div class="rv" style="min-width:0">
+      <div class="iwall" id="iwall" data-f="all">
+        <div class="icol" style="--d:34s"><div class="itrack"></div></div>
+        <div class="icol rev" style="--d:40s"><div class="itrack"></div></div>
+        <div class="icol" style="--d:30s"><div class="itrack"></div></div>
+        <div class="ihub" aria-live="polite"><span class="lg"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#00B900" d="M0 0H10L0 10Z M21 0H32V11H10.5Z M21 11H31L21 21Z M11 11V21H1Z M0 21H21L10.5 32H0Z M32 21V32H21Z"/></svg></span><span><small>TryVox · line 01</small><b id="iHub">Vapi agent connected</b></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- STACK -->
 <section class="wrap sect" id="stack">
   <div class="rv"><p class="tag"><i></i>The stack</p><h2 class="hd h2" style="margin-top:20px">Everything your agent needs to <em>reach a phone.</em></h2><p class="sub">Six building blocks on one account and one bill.</p></div>
@@ -785,7 +874,7 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
       <div class="social"><a href="https://x.com/TryvoxTeam" aria-label="TryVox on X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.3l-4.9-6.4L5.2 21H2.1l7.3-8.3L2 3h6.4l4.4 5.9zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg></a><a href="https://www.linkedin.com/company/tryvox" aria-label="TryVox on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9h4v12H3zm7 0h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.2 1.5-2.2 2.9V21h-4z"/></svg></a><a href="https://docs.tryvox.io/" aria-label="TryVox docs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 4h9a2 2 0 012 2v14H8a3 3 0 01-3-3V7a3 3 0 013-3z"/><path d="M5 17a3 3 0 013-3h11"/></svg></a></div>
     </div>
     <div><h4>Products</h4><ul><li><a href="https://docs.tryvox.io/numbers">Phone numbers</a></li><li><a href="https://docs.tryvox.io/sip-trunking">SIP trunking</a></li><li><a href="https://docs.tryvox.io/voice">Voice API</a></li><li><a href="https://docs.tryvox.io/messaging">Messaging</a></li><li><a href="https://docs.tryvox.io/verify">Verify API</a></li></ul></div>
-    <div><h4>AI agents</h4><ul><li><a href="https://docs.tryvox.io/ai-agents/vapi">Vapi</a></li><li><a href="https://docs.tryvox.io/ai-agents/retell">Retell</a></li><li><a href="https://docs.tryvox.io/ai-agents/livekit">LiveKit</a></li><li><a href="https://docs.tryvox.io/ai-agents/bolna">Bolna</a></li><li><a href="https://docs.tryvox.io/ai-agents/elevenlabs">ElevenLabs</a></li></ul></div>
+    <div><h4>Solutions</h4><ul><li><a href="#industries" data-ind="0">Financial services</a></li><li><a href="#industries" data-ind="1">Healthcare</a></li><li><a href="#industries" data-ind="2">E-commerce</a></li><li><a href="#industries" data-ind="3">Logistics</a></li><li><a href="#industries" data-ind="4">Real estate</a></li><li><a href="#industries" data-ind="5">Travel &amp; hospitality</a></li></ul></div>
     <div><h4>Developers</h4><ul><li><a href="https://docs.tryvox.io/getting-started/quickstart">Quickstart</a></li><li><a href="https://docs.tryvox.io/voxml">VoxML</a></li><li><a href="https://docs.tryvox.io/getting-started/webhooks">Webhooks</a></li><li><a href="https://docs.tryvox.io/compliance/dlt">DLT</a></li></ul></div>
     <div><h4>Company</h4><ul><li><a href="https://tryvox.io/about">About</a></li><li><a href="https://tryvox.io/contact">Contact</a></li><li><a href="https://app.tryvox.io/">Sign in</a></li></ul></div>
   </div>
@@ -888,6 +977,7 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
     const h=$('#indH');h.textContent=d.h+' ';const sp=document.createElement('span');sp.textContent=d.s;h.append(sp);
     const fl=$('#indFlow');fl.innerHTML='';d.f.forEach(([k,v])=>{const r=document.createElement('div');const b=document.createElement('b');b.textContent=k;const t=document.createElement('span');t.textContent=v;r.append(b,t);fl.append(r)});
     $('#indN').textContent=String(cur+1).padStart(2,'0')+' / 06 · '+d.n}
+  $$('.ft a[data-ind]').forEach(a=>a.addEventListener('click',()=>setInd(+a.dataset.ind)));
   setInd(0);$('#indPrev').addEventListener('click',()=>setInd(cur-1));$('#indNext').addEventListener('click',()=>setInd(cur+1));
 
   /* ---------- isometric layer stack ---------- */
@@ -929,21 +1019,25 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
     lyG[i]=g}
   const pkts=[0,1,2].map(k=>el('circle',{class:'pk'+(k===1?' g':''),r:4,cx:cx0,cy:-20},iso));
   const ltrack=$('#ltrack'),lstage=$('#lstage'),lis=$$('#layers li'),capK=$('#lcapK'),capP=$('#lcapP');
-  let lcur=-1,lTop=0,lGap=80,lVis=false;
-  function layout(p){const spread=clamp(p*2.4,0,1);lGap=74+spread*46;const total=lGap*3+S+TH;lTop=(640-total)/2;
-    const a=Math.min(3,Math.floor(p*4));
-    lyG.forEach((g,i)=>{g.style.transform=`translateY(${lTop+i*lGap-(i===a?18:0)}px)`});
-    gds.forEach(({c,l})=>{l.setAttribute('x1',c[0]);l.setAttribute('x2',c[0]);l.setAttribute('y1',lTop+c[1]);l.setAttribute('y2',lTop+3*lGap+c[1])});
+  let lcur=-1,lTop=0,lYs=[0,0,0,0],lVis=false;
+  const OPEN=116,CLOSED=14;
+  const ease=t=>t*t*(3-2*t);
+  function layout(p){const a=Math.min(3,Math.floor(p*4));
+    const e=[1,1,2,3].map((k,i)=>i===0?1:ease(clamp(p*4-k+.9,0,1)));
+    const ys=[0];for(let k=1;k<4;k++)ys[k]=ys[k-1]+CLOSED+e[k]*(OPEN-CLOSED);
+    lYs=ys;const total=ys[3]+S+TH;lTop=(640-total)/2;
+    lyG.forEach((g,i)=>{g.style.transform=`translateY(${lTop+ys[i]-(i===a?14:0)}px)`;g.classList.toggle('shut',i>0&&e[i]<.35)});
+    gds.forEach(({c,l})=>{l.setAttribute('x1',c[0]);l.setAttribute('x2',c[0]);l.setAttribute('y1',lTop+c[1]);l.setAttribute('y2',lTop+ys[3]+c[1])});
     if(a!==lcur){lcur=a;lyG.forEach((g,i)=>{g.classList.toggle('on',i===a);g.classList.toggle('dim',i!==a)});lis.forEach((li,i)=>li.classList.toggle('on',i===a));capK.textContent=LAYERS[a].k;capP.textContent=LAYERS[a].p}}
   function onLayers(){const r=ltrack.getBoundingClientRect(),stick=parseFloat(getComputedStyle(lstage).top)||0,range=ltrack.offsetHeight-lstage.offsetHeight;layout(clamp((stick-r.top)/Math.max(1,range),0,1))}
   layout(0);
-  function pkTick(now){const y0=lTop+S/2,y1=lTop+3*lGap+S/2;pkts.forEach((c,k)=>{const u=((now/2600)+k/3)%1;c.setAttribute('cy',y0+(y1-y0)*u);c.setAttribute('opacity',Math.sin(u*Math.PI).toFixed(2))});if(lVis&&!reduce)requestAnimationFrame(pkTick)}
+  function pkTick(now){const y0=lTop+S/2,y1=lTop+lYs[Math.max(lcur,0)]+S/2,on=lcur>0;pkts.forEach((c,k)=>{const u=((now/2600)+k/3)%1;c.setAttribute('cy',y0+(y1-y0)*u);c.setAttribute('opacity',on?Math.sin(u*Math.PI).toFixed(2):0)});if(lVis&&!reduce)requestAnimationFrame(pkTick)}
   new IntersectionObserver(es=>{const was=lVis;lVis=es[0].isIntersecting;if(lVis&&!was&&!reduce)requestAnimationFrame(pkTick)}).observe(ltrack);
   if(reduce)pkts.forEach(c=>c.setAttribute('opacity',0));
   lis.forEach(li=>li.addEventListener('click',()=>{const range=ltrack.offsetHeight-lstage.offsetHeight,stick=parseFloat(getComputedStyle(lstage).top)||0;scrollTo({top:ltrack.getBoundingClientRect().top+scrollY-stick+range*((+li.dataset.i+.55)/4),behavior:reduce?'auto':'smooth'})}));
 
   /* ---------- strands (purple band) ---------- */
-  const cv=$('#strands'),cx=cv.getContext('2d'),ht=$('#htrack'),hs=$('#hstage'),hT=$('#hT'),hP=$('#hP'),htl=$('#htitle'),railB=$$('#hseg button'),hcnt=$('#hcnt');
+  const cv=$('#strands'),cx=cv.getContext('2d'),ht=$('#htrack'),hs=$('#hstage'),hT=$('#hT'),hP=$('#hP'),htl=$('#htitle'),railB=$$('#hseg button'),hcnt=$('#hcnt'),howEl=$('.how');
   const HT=[['Number.','Search, buy and configure numbers with KYC done online.'],['Connect.','Bind the number to your Vapi, Retell, LiveKit or Bolna agent in the dashboard.'],['Stream.','Live audio flows both ways while your agent talks.'],['Observe.','Webhooks, recordings and call records for every call.']];
   let hp=0,hstep=0,W=0,H=0,t0=performance.now(),visible=false;
   function size(){const d=Math.min(2,devicePixelRatio||1);W=hs.clientWidth;H=hs.clientHeight;cv.width=Math.max(1,W*d);cv.height=Math.max(1,H*d);cx.setTransform(d,0,0,d,0,0)}
@@ -973,10 +1067,43 @@ footer{padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
   requestAnimationFrame(draw);
   function onHow(){const r=ht.getBoundingClientRect(),stick=parseFloat(getComputedStyle(hs).top)||0,range=ht.offsetHeight-hs.offsetHeight;
     hp=clamp((stick-r.top)/Math.max(1,range),0,1);const s=Math.min(3,Math.floor(hp*4));
-    railB.forEach((b,k)=>{b.querySelector('.pf').style.transform=`scaleX(${clamp(hp*4-k,0,1)})`});
+    railB.forEach((b,k)=>{const v=clamp(hp*4-k,0,1);b.querySelector('.pf').style.setProperty('--p',v.toFixed(3));b.classList.toggle('done',v>=.999&&k<3)});howEl.style.setProperty('--hd',hp.toFixed(3));
     if(s!==hstep){hstep=s;htl.classList.add('swap');setTimeout(()=>{hT.textContent=HT[s][0];hP.textContent=HT[s][1];htl.classList.remove('swap')},reduce?0:260);railB.forEach((b,k)=>b.classList.toggle('on',k===s));hcnt.textContent='0'+(s+1)}
     if(reduce)requestAnimationFrame(draw)}
   railB.forEach(b=>b.addEventListener('click',()=>{const range=ht.offsetHeight-hs.offsetHeight,stick=parseFloat(getComputedStyle(hs).top)||0;scrollTo({top:ht.getBoundingClientRect().top+scrollY-stick+range*((+b.dataset.go+.55)/4),behavior:reduce?'auto':'smooth'})}));
+
+
+  /* ---------- integrations wall ---------- */
+  const INTEG=[
+    {n:'Vapi',c:'agent',t:'Agent platform',h:'1-click',img:'assets/logos/vapi.svg',w:62},
+    {n:'Retell AI',c:'agent',t:'Agent platform',h:'1-click',img:'assets/logos/retell.svg',w:72},
+    {n:'LiveKit',c:'agent',t:'Agent framework',h:'Native',img:'assets/logos/livekit.svg',w:24,txt:1},
+    {n:'Bolna',c:'agent',t:'Agent platform',h:'1-click',img:'assets/logos/bolna.svg',w:48},
+    {n:'ElevenLabs',c:'agent',t:'Agent platform',h:'1-click',m:'11',bg:'#17131F'},
+    {n:'Deepgram',c:'speech',t:'Speech to text',h:'Via your agent',m:'DG',bg:'#13A36F'},
+    {n:'Amazon Polly',c:'speech',t:'Text to speech',h:'Via your agent',m:'AP',bg:'#E07B1A'},
+    {n:'WhatsApp',c:'msg',t:'Messaging & calling',h:'Native',m:'WA',bg:'#1FAF55'},
+    {n:'SMS · DLT',c:'msg',t:'Messaging',h:'Native',m:'SMS',bg:'#7444CF'},
+    {n:'Webhooks',c:'dev',t:'Call events',h:'Native',m:'{ }',bg:'#3B3747'},
+    {n:'VoxML',c:'dev',t:'Call flows',h:'Native',m:'</>',bg:'#5B3FB0'},
+    {n:'SIP / BYOC',c:'dev',t:'Bring your own carrier',h:'Any SIP stack',m:'SIP',bg:'#2D3360'}
+  ];
+  const iwall=$('#iwall'),icols=$$('#iwall .itrack');
+  function icard(d,dup){const c=document.createElement('div');c.className='icard';c.dataset.c=d.c;if(dup)c.setAttribute('aria-hidden','true');
+    const lg=document.createElement('span');lg.className='ilogo';
+    if(d.img){const im=document.createElement('img');im.className='plogo';im.src=d.img;im.alt=d.txt?'':d.n;im.width=d.w;im.height=24;lg.append(im);if(d.txt)lg.append(d.n)}
+    else{const m=document.createElement('span');m.className='mono';m.style.background=d.bg;m.textContent=d.m;const nm=document.createElement('span');nm.className='iname';nm.textContent=d.n;lg.append(m,nm)}
+    const meta=document.createElement('span');meta.className='imeta';const t=document.createElement('span');t.textContent=d.t;const h=document.createElement('span');h.className='ihow';h.textContent=d.h;meta.append(t,h);
+    c.append(lg,meta);return c}
+  icols.forEach((tr,ci)=>{const items=INTEG.filter((_,i)=>i%3===ci);for(let r=0;r<2;r++)items.forEach(d=>tr.append(icard(d,r===1)))});
+  const fBtns=$$('#iFilters button'),iCount=$('#iCount'),iHub=$('#iHub');
+  fBtns.forEach(b=>{const f=b.dataset.f,n=f==='all'?INTEG.length:INTEG.filter(d=>d.c===f).length;b.querySelector('span').textContent=n;
+    b.addEventListener('click',()=>{fBtns.forEach(x=>x.setAttribute('aria-selected',x===b));iwall.dataset.f=f;
+      $$('#iwall .icard').forEach(c=>c.classList.toggle('match',f!=='all'&&c.dataset.c===f));iCount.textContent=n;hubI=0;hubNext()})});
+  let hubI=0;
+  function hubNext(){const f=iwall.dataset.f,pool=INTEG.filter(d=>f==='all'||d.c===f),d=pool[hubI%pool.length];hubI++;
+    iHub.textContent=d.c==='agent'?d.n.replace(' AI','')+' agent connected':d.c==='speech'?d.n+' via your agent':d.n+' enabled'}
+  hubNext();if(!reduce)setInterval(hubNext,2000);
 
   /* ---------- cells spotlight ---------- */
   $$('.cell').forEach(c=>c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--x',(e.clientX-r.left)+'px');c.style.setProperty('--y',(e.clientY-r.top)+'px')}));
