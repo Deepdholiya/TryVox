@@ -1948,3 +1948,68 @@ details summary{transition:color .2s}details summary:hover{color:var(--accent)}
 .c7-badge .a1{width:224px;height:224px;margin:-112px 0 0 -112px}
 .c7-badge .a2{width:164px;height:164px;margin:-82px 0 0 -82px}
 .c7-pill{margin-top:72px}
+
+/* ================= v9 ================= */
+/* logo */
+.logo .lgf{width:auto;height:26px;color:var(--ink)}
+.hdr-dk .hdr .logo .lgf{color:#F3F0F9}
+.ft .logo .lgf{height:28px}
+/* home integrations: room for the highlight ring, LCD numbers */
+.ix-row{height:128px}
+.ix-frame i:nth-child(3){top:128px}
+.istats b{font-family:var(--f-dot);font-weight:800;letter-spacing:.02em}
+.integ-copy .istats{margin-top:36px}
+/* product stack: dark the whole way, fades to white after it */
+.ahp-st::before{display:none}
+.ahp-fade{height:38vh;margin-top:-1px;background:linear-gradient(180deg,var(--night),var(--bg))}
+/* compliance: concentric rings centred on the badge */
+.c7-badge .c7-ring{position:absolute;border-radius:50%;border:1px dashed color-mix(in srgb,var(--brand) 35%,transparent);animation:spin 16s linear infinite;pointer-events:none}
+.c7-badge .r1{inset:-34px}
+.c7-badge .r2{inset:-70px;border-style:solid;border-color:var(--line-2);animation-duration:24s;animation-direction:reverse}
+.c7-ring b{position:absolute;left:50%;top:-4px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 18%,transparent)}
+.c7-ring.r2 b{background:var(--green);box-shadow:0 0 0 4px var(--green-soft)}
+.c7-frame{padding-top:clamp(110px,10vw,140px)}
+.c7-pill{margin-top:104px}
+/* about */
+.abp-t{visibility:hidden}
+.ab-c{background:var(--bg)}
+.ab-c:hover{transform:none;box-shadow:none}
+.ab-c:hover .cr-i .brk{color:var(--ink)}
+.ab-fc{color:#fff}
+.ab-fc .ab-fb{border-color:rgba(255,255,255,.35)}
+.ab-fc .ab-fb b{color:#fff}.ab-fc .ab-fb small{color:rgba(255,255,255,.8)}
+.ab-cta{position:relative;overflow:hidden;text-align:center;padding-block:clamp(120px,14vw,180px)}
+.ab-cta>.wrap{position:relative;z-index:1}
+svg.ab-orb{position:absolute;left:50%;top:50%;width:min(960px,120vw);height:auto;aspect-ratio:1000/440;translate:-50% -50%;pointer-events:none;animation:none}
+svg.ab-orb ellipse{fill:none;stroke:var(--line-2);stroke-width:1;vector-effect:non-scaling-stroke}
+svg.ab-orb ellipse.d{stroke-dasharray:4 6}
+svg.ab-orb circle{fill:var(--brand)}svg.ab-orb circle.s{fill:var(--green)}
+/* integrations block (Arrakis industry page) */
+.ig{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 40px minmax(0,1fr);gap:clamp(20px,4vw,48px);min-height:560px;padding:clamp(32px,4vw,56px);border-radius:10px;background:color-mix(in srgb,var(--bg-2) 70%,var(--bg));border:1px solid var(--line)}
+.ig-l{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:space-between;gap:40px}
+.ig-l .h2{margin-top:18px;font-size:clamp(32px,3.6vw,48px)}
+.ig-cats{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.ig-cats button{display:flex;align-items:center;gap:10px;min-height:36px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);transition:color .25s}
+.ig-cats button i{width:6px;height:6px;border-radius:50%;background:transparent;transition:background-color .25s}
+.ig-cats button:hover{color:var(--ink)}
+.ig-cats button.on{color:var(--ink)}.ig-cats button.on i{background:var(--brand)}
+.ig-t{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:56px}
+.ig-t i{display:block;width:32px;height:1px;background:var(--line-2)}
+.ig-r{position:relative;z-index:1;display:grid}
+.ig-set{grid-area:1/1;position:relative;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .5s;-webkit-mask-image:linear-gradient(transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(transparent,#000 22%,#000 78%,transparent)}
+.ig-set.on{opacity:1;pointer-events:auto}
+.ig-tr{display:flex;flex-direction:column;align-items:center;gap:24px;transition:transform .8s var(--ease)}
+.ig-c{width:min(320px,100%);height:100px;display:grid;place-items:center;border-radius:6px;background:var(--panel);border:1px solid var(--line);opacity:.35;transform:scale(.92);transition:opacity .5s,transform .6s var(--ease),box-shadow .5s}
+.ig-c.near{opacity:.7}
+.ig-c.on{opacity:1;transform:scale(1.06);box-shadow:0 24px 40px -26px rgba(60,30,140,.45)}
+.ig-c img{height:26px;width:auto;max-width:none;filter:var(--logo-filter)}
+.ig-c em{font-style:normal;font-weight:600;font-size:19px;letter-spacing:-.02em}
+.ig-glow{position:absolute;right:-10%;bottom:-40%;width:80%;height:90%;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--brand) 45%,transparent),transparent);filter:blur(10px);pointer-events:none;opacity:.8}
+.ig-glow::after{content:"";position:absolute;inset:0;border-radius:50%;background-image:radial-gradient(rgba(255,255,255,.45) 1px,transparent 1.3px);background-size:6px 6px;-webkit-mask-image:radial-gradient(closest-side,#000,transparent);mask-image:radial-gradient(closest-side,#000,transparent);opacity:.5}
+@media (max-width:1000px){.ig{grid-template-columns:minmax(0,1fr);min-height:0}.ig-t{display:none}.ig-r{height:340px}}
+@media (max-width:640px){.ig-c{height:84px}.c7-badge .r2{inset:-56px}.c7-pill{margin-top:84px}}
+.ab-c h3{margin-top:110px}
+.ahp-fade{height:46vh;background:linear-gradient(180deg,var(--night) 0%,#1E1240 26%,#4A2EA0 52%,#B69BFF 76%,#EEE7FF 90%,var(--bg) 100%)}
+:root[data-theme="dark"] .ahp-fade{background:linear-gradient(180deg,var(--night),#1E1240 40%,var(--bg))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ahp-fade{background:linear-gradient(180deg,var(--night),#1E1240 40%,var(--bg))}}
+@media (max-width:640px){.ab-c h3{margin-top:60px}}

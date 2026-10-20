@@ -437,7 +437,6 @@ X-TryVox-To:           <E.164 TryVox number>`};
       cs.forEach((c,j)=>c.classList.toggle('ck',j<k));nb.textContent=k;bd.classList.toggle('full',k===4)})});
   // hero snippets type themselves
   $$('.th-f span').forEach(sp=>{const t=sp.dataset.t;if(reduce){sp.textContent=t;return}let i=0,dir=1;const tick=()=>{i+=dir;sp.textContent=t.slice(0,i);if(i>=t.length){dir=-1;setTimeout(tick,2600+Math.random()*2000);return}if(i<=0){dir=1;setTimeout(tick,600+Math.random()*1500);return}setTimeout(tick,dir>0?55:25)};setTimeout(tick,(+getComputedStyle(sp).getPropertyValue('--i')||0)*450)});
-  $$('.ahp').forEach(sec=>SF.push(()=>{const r=sec.getBoundingClientRect(),p=clamp(-r.top/(r.height-innerHeight),0,1);sec.classList.toggle('lite',p>.55)}));
   // solutions: live console
   $$('.sh6').forEach(h=>{const st=h.querySelector('.lvb'),bars=Array.from(h.querySelectorAll('.lv-wave i')),t=h.querySelector('.lv-t');let s=0;
     if(!reduce){setInterval(()=>bars.forEach(b=>b.style.height=(10+Math.random()*85)+'%'),160);setInterval(()=>{s++;t.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
@@ -461,10 +460,20 @@ X-TryVox-To:           <E.164 TryVox number>`};
 
 
   // header goes dark over dark sections
-  {const DK='.cl,.c6,.how,.ahp:not(.lite)';const hd=$('#hdr');let was=null;
+  {const DK='.cl,.c6,.how,.ahp';const hd=$('#hdr');let was=null;
    SF.push(()=>{const y=(hd?hd.offsetHeight:60)+2,el=document.elementFromPoint(innerWidth/2,y);let dk=false;
      if(el&&!el.closest('.hdr,.mega,.sheet')){const t=el.closest('.th');if(t){const r=t.getBoundingClientRect();dk=(y-r.top)/r.height<.5}else dk=!!el.closest(DK)}
      if(dk!==was){was=dk;root.classList.toggle('hdr-dk',dk)}})}
+
+
+  // integrations (Arrakis rhythm): category list + vertical logo carousel
+  $$('.ig').forEach(ig=>{const bs=Array.from(ig.querySelectorAll('.ig-cats button')),ss=Array.from(ig.querySelectorAll('.ig-set'));let g=0,k=0,hold=false;
+    const place=()=>{const set=ss[g],tr=set.querySelector('.ig-tr'),cs=Array.from(tr.children),c=cs[k];if(!c)return;
+      tr.style.transform=`translateY(${set.clientHeight/2-(c.offsetTop+c.offsetHeight/2)}px)`;cs.forEach((x,j)=>{x.classList.toggle('on',j===k);x.classList.toggle('near',Math.abs(j-k)===1)})};
+    const show=i=>{g=i;k=0;bs.forEach((b,j)=>b.classList.toggle('on',j===i));ss.forEach((x,j)=>x.classList.toggle('on',j===i));place()};
+    bs.forEach((b,i)=>b.addEventListener('click',()=>{hold=true;show(i);setTimeout(()=>hold=false,8000)}));
+    show(0);addEventListener('resize',place);ig.addEventListener('mouseenter',()=>hold=true);ig.addEventListener('mouseleave',()=>hold=false);
+    if(!reduce)setInterval(()=>{if(hold)return;const n=ss[g].querySelectorAll('.ig-c').length;k++;if(k>=n){show((g+1)%ss.length)}else place()},2200)});
 
   /* ---------- footer ---------- */
   const fStt=$('#fStt'),states=['Ringing your agent','Connected · streaming','Call completed · events sent'];let fi=0;

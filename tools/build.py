@@ -11,7 +11,8 @@ import html, json, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 E = html.escape
-LOGO = '<path fill="#00B900" d="M0 0H10L0 10Z M21 0H32V11H10.5Z M21 11H31L21 21Z M11 11V21H1Z M0 21H21L10.5 32H0Z M32 21V32H21Z"/>'
+LOGO = '<g transform="translate(2 2)"><path d="M0 18.6669V28.0003H9.33343L18.6669 18.6669H9.33343V9.33343L0 18.6669Z" fill="#00B900"/><path d="M28.0003 0H18.6669L9.33343 9.33343L18.6669 9.33343V18.6669L28.0003 9.33343V0Z" fill="#00B900"/><path d="M9.33343 9.33343H0V0H9.33343V9.33343Z" fill="url(#tvg0)"/><path d="M18.667 18.6672H28.0004V28.0007H18.667V18.6672Z" fill="url(#tvg1)"/><defs><linearGradient id="tvg0" x1="0" y1="0" x2="9.05892" y2="9.05892" gradientUnits="userSpaceOnUse"><stop stop-color="#00B900"/><stop offset="1" stop-color="#00B900" stop-opacity="0"/></linearGradient><linearGradient id="tvg1" x1="28.0004" y1="28.0007" x2="18.667" y2="18.6672" gradientUnits="userSpaceOnUse"><stop stop-color="#00B900"/><stop offset="1" stop-color="#00B900" stop-opacity="0"/></linearGradient></defs></g>'
+LOGO_FULL = '<svg class="lgf" viewBox="0 0 112 28" role="img" aria-label="TryVox"><path d="M0 18.6669V28.0003H9.33343L18.6669 18.6669H9.33343V9.33343L0 18.6669Z" fill="#00B900"/><path d="M28.0003 0H18.6669L9.33343 9.33343L18.6669 9.33343V18.6669L28.0003 9.33343V0Z" fill="#00B900"/><path d="M9.33343 9.33343H0V0H9.33343V9.33343Z" fill="url(#tvg0)"/><path d="M18.667 18.6672H28.0004V28.0007H18.667V18.6672Z" fill="url(#tvg1)"/><defs><linearGradient id="tvg0" x1="0" y1="0" x2="9.05892" y2="9.05892" gradientUnits="userSpaceOnUse"><stop stop-color="#00B900"/><stop offset="1" stop-color="#00B900" stop-opacity="0"/></linearGradient><linearGradient id="tvg1" x1="28.0004" y1="28.0007" x2="18.667" y2="18.6672" gradientUnits="userSpaceOnUse"><stop stop-color="#00B900"/><stop offset="1" stop-color="#00B900" stop-opacity="0"/></linearGradient></defs><path d="M99.3232 21.3285L103.674 15.18L99.5553 9.40845H102.804L105.53 13.4688L108.256 9.40845H111.533L107.415 15.18L111.794 21.3285H108.546L105.53 16.9491L102.572 21.3285H99.3232Z" fill="currentColor"/><path d="M92.3131 21.6186C90.9983 21.6186 89.8866 21.3575 88.9778 20.8355C88.0884 20.3134 87.4213 19.598 86.9766 18.6893C86.5319 17.7612 86.3096 16.7074 86.3096 15.528C86.3096 14.3292 86.5319 13.2755 86.9766 12.3667C87.4213 11.4386 88.0884 10.7136 88.9778 10.1915C89.8866 9.66947 91.008 9.40845 92.3421 9.40845C94.295 9.40845 95.7741 9.96916 96.7795 11.0906C97.8043 12.212 98.3167 13.6912 98.3167 15.528C98.3167 16.6688 98.104 17.7032 97.6786 18.6313C97.2532 19.5594 96.5958 20.2941 95.7064 20.8355C94.817 21.3575 93.6859 21.6186 92.3131 21.6186ZM92.3131 19.1243C93.1832 19.1243 93.8406 18.9406 94.2853 18.5733C94.7493 18.2059 95.0587 17.7419 95.2134 17.1811C95.3681 16.6011 95.4454 16.021 95.4454 15.441C95.4454 14.8223 95.3681 14.2325 95.2134 13.6718C95.0587 13.1111 94.7493 12.6471 94.2853 12.2797C93.8406 11.893 93.1832 11.6997 92.3131 11.6997C91.4624 11.6997 90.805 11.893 90.3409 12.2797C89.8962 12.6471 89.5869 13.1111 89.4129 13.6718C89.2582 14.2325 89.1808 14.8223 89.1808 15.441C89.1808 16.021 89.2582 16.6011 89.4129 17.1811C89.5869 17.7419 89.8962 18.2059 90.3409 18.5733C90.805 18.9406 91.4624 19.1243 92.3131 19.1243Z" fill="currentColor"/><path d="M83.3627 5.00024H86.611L81.2165 21.3287H76.2861L70.8916 5.00024H74.1109L78.7223 20.0816L83.3627 5.00024Z" fill="currentColor"/><path d="M57.8291 26.868V24.5768H59.6563C59.9463 24.5768 60.1976 24.5478 60.4103 24.4898C60.6424 24.4318 60.8647 24.2771 61.0774 24.0258C61.2901 23.7937 61.5221 23.407 61.7735 22.8657L62.5565 21.1255L57.9161 9.40845H60.9614L64.0067 18.0802L67.284 9.40845H70.3292L64.4707 23.1557C64.1227 23.9678 63.794 24.6155 63.4846 25.0989C63.1946 25.6016 62.8949 25.9786 62.5855 26.23C62.2762 26.4813 61.9185 26.6457 61.5124 26.723C61.1064 26.8197 60.6327 26.868 60.0913 26.868H57.8291Z" fill="currentColor"/><path d="M48.8516 21.3285V9.40845H51.6068L51.8388 12.8888L51.8098 15.441V21.3285H48.8516ZM51.8098 16.1951L51.7228 13.5558C51.7228 13.1498 51.8002 12.7147 51.9548 12.2507C52.1095 11.7673 52.3609 11.313 52.7089 10.8876C53.0763 10.4622 53.55 10.1142 54.13 9.84349C54.7101 9.55346 55.4255 9.40845 56.2762 9.40845H56.7113V12.7147H56.2762C55.4448 12.7147 54.7391 12.7824 54.159 12.9178C53.579 13.0338 53.1149 13.2271 52.7669 13.4978C52.4382 13.7685 52.1965 14.1262 52.0419 14.5709C51.8872 15.0156 51.8098 15.557 51.8098 16.1951Z" fill="currentColor"/><path d="M43.7727 5.52229V21.3287H40.8144V5.52229H43.7727ZM36 7.55248V5.00024H48.6161V7.55248H36Z" fill="currentColor"/></svg>'
 APP = "https://app.tryvox.io/"
 DOCS = "https://docs.tryvox.io"
 
@@ -91,7 +92,7 @@ def header():
     sheet_s = "".join(f'<a href="/solutions/{s}/">{E(n)}</a>' for s, n, _, _ in SOLUTIONS)
     return f'''<header class="hdr" id="hdr">
   <div class="hdr-in">
-    <a class="logo" href="/" aria-label="TryVox home"><svg viewBox="0 0 32 32" aria-hidden="true">{LOGO}</svg>TryVox</a>
+    <a class="logo" href="/" aria-label="TryVox home">{LOGO_FULL}</a>
     <ul class="nav">
       <li class="has-mega"><button class="nl" aria-expanded="false">Products {CHEV}</button>
         <div class="mega mega-p">{mega("Products", PRODUCTS, "products")}</div></li>
@@ -135,7 +136,7 @@ def footer():
   </div>
   <div class="ft">
     <div class="about">
-      <a class="logo" href="/"><svg viewBox="0 0 32 32" aria-hidden="true">{LOGO}</svg>TryVox</a>
+      <a class="logo" href="/" aria-label="TryVox home">{LOGO_FULL}</a>
       <p>Telephony infrastructure that connects AI voice agents to real phone networks. Built in India.</p>
       <div class="badges"><span>KYC</span><span>DLT</span><span>Consent</span></div>
       <p class="mail">team@tryvox.io</p>
@@ -1012,6 +1013,7 @@ def page_developers():
     body += rowsec([("Webhooks", "Every stage, <em>in your system.</em>", "Ring, answer, status and hangup callbacks, signed with your webhook secret.", ["ring_url, answer_url, hangup_url", "status_callback_url", "Signed with webhook_secret"], pm(["Webhooks", "Log"], feed([("ev", "POST ring_url · 200"), ("ev ok", "POST answer_url · VoxML"), ("ev", "POST status_callback_url · 200"), ("ev", "POST hangup_url · 200")]), pill("Signed"))),
                     ("Response", "Predictable <em>JSON responses.</em>", "Every call returns a request_uuid and a status you can track through your webhooks.", ["201 Created with status queued", "request_uuid for every call", "Clear error codes"], pm(["POST", "/calls"], mono(CALL_RESP), pill("201")))])
     body += f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>Documentation</p><h2 class="hd h2">Everything in <em>the docs.</em></h2></div><div class="dmap">{groups}</div></section>'
+    body += intg()
     body += faq([("How does authentication work?", "HTTP Basic auth. Your Auth ID is the username and your Auth Token is the password."),
                  ("Where do callbacks go?", "To the URLs you set on each call, such as answer_url, ring_url, hangup_url and status_callback_url."),
                  ("Are webhooks signed?", "Yes. Set a webhook secret and TryVox signs callback requests with it."),
@@ -1037,6 +1039,7 @@ def page_integrations():
     body += f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>Agent platforms</p><h2 class="hd h2">Setup guides for <em>every provider.</em></h2></div><div class="tiles">{t}</div></section>'
     body += rowsec([("Bind", "Pick, connect, <em>answer.</em>", "Choose a provider, pick a number and an agent, and confirm. Inbound calls to that number go straight to the agent.", ["One number binds to one agent", "No deployment or SIP configuration", "Remove the binding to fall back"], pm(["AI agents", "Connect number"], provgrid() + rows([("Number", '<span class="mono">+91 80 4718 2290</span>'), ("Status", pill("Connected"))]))),
                     ("Context", "Calls arrive <em>with context.</em>", "Your agent receives direction, route, provider, caller and number in SIP headers.", ["X-TryVox-Direction and Route", "X-TryVox-From and To", "Outbound from agents: in progress"], pm(["SIP headers", "Inbound"], mono(SIP_HEADERS)))])
+    body += intg()
     body += faq([("Which agent platforms work with TryVox?", "Vapi, Retell, ElevenLabs, LiveKit and Bolna, plus any standards-based SIP stack."),
                  ("Do I need to configure SIP for agent platforms?", "No. Binding a number to an agent needs no deployment or SIP configuration."),
                  ("Can agents call out through TryVox?", "Outbound calls from agents are still in progress. Inbound calls work today.")])
@@ -1054,7 +1057,7 @@ def page_contact():
     vis = pm(["Email", "New message"], rows([("To", "team@tryvox.io"), ("Subject", "Rate card request")]) + '<p class="cp-text">Hi TryVox team, we run about 50,000 calls a month at 2.5 minutes on average with a Vapi agent. Could you share a rate card?</p>')
     body = hero3([("Contact", None)], "Contact", "Talk to <em>the team.</em>", "Tell us what you're building and how many calls you run. We'll help you get your agent on the phone and share rates for your volume.", vis,
                  primary=("Email team@tryvox.io", "mailto:team@tryvox.io"), secondary=("Start free", APP), micro=("Built in India", "Replies by email", "No sales pressure"))
-    body += f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>Ways to reach us</p><h2 class="hd h2">Pick what <em>you need.</em></h2></div><div class="ccards">{c}</div></section>'
+    body += f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>Ways to reach us</p><h2 class="hd h2">Pick what <em>you need.</em></h2></div><div class="ccards">{c}</div></section>' + intg()
     return "Contact TryVox Sales and Support | TryVox", "Talk to the TryVox team about Indian phone numbers, SIP trunking, AI agents and rate cards. Email team@tryvox.io.", body
 
 # ---------------------------------------------------------------- v6
@@ -1127,7 +1130,8 @@ def ahero6(name, h1, sub, layers, descs):
     </div>
     <div class="ahp-bar"><i></i></div>
   </div>
-</section>'''
+</section>
+<div class="ahp-fade" aria-hidden="true"></div>'''
 
 def panels6(items):
     nav = "".join(f'<a href="#pp-{i}" data-i="{i}"{ON if i == 0 else ""}>{E(t)}</a>' for i, (t, h, p, ticks, v) in enumerate(items))
@@ -1145,7 +1149,7 @@ def comp6():
     return f'''<section class="cp7"><div class="wrap"><div class="c7-frame rv">
   {arcs}
   <div class="c7-in">
-    <div class="c7-badge"><b class="arc a1"></b><b class="arc a2"></b><span class="spk s1"></span><span class="spk s2"></span><span class="spk s3"></span><i></i><i></i>{shield}</div>
+    <div class="c7-badge"><span class="c7-ring r1"><b></b></span><span class="c7-ring r2"><b></b></span><i></i><i></i>{shield}</div>
     <p class="c7-pill"><span class="c7-st">✓</span><b class="mono">0</b>/4 checks · India-ready</p>
     <p class="tag"><i></i>Compliance</p>
     <h2 class="hd h2">Compliance and control, <em>built in.</em></h2>
@@ -1157,6 +1161,27 @@ def comp6():
   <i class="c7-k l"></i><i class="c7-k r"></i>
 </div></div></section>'''
 
+
+IG = [("Agent platforms", ["vapi", "retell", "livekit", "bolna", "ElevenLabs"]),
+      ("Voice stack", ["Deepgram", "Amazon Polly", "Asterisk", "FreeSWITCH", "Any SIP PBX"]),
+      ("Channels", ["WhatsApp", "DLT SMS", "Toll-free", "Local numbers", "SIP trunks"]),
+      ("Developer tools", ["Webhooks", "VoxML", "REST API", "Recordings", "Signed callbacks"])]
+def intg():
+    def card(k):
+        if k in LOGOIMG:
+            n, w = LOGOIMG[k]
+            return f'<div class="ig-c"><img src="/assets/logos/{k}.svg" alt="{n}" width="{w}" height="26"></div>'
+        return f'<div class="ig-c"><em>{E(k)}</em></div>'
+    cats = "".join(f'<li><button type="button" data-g="{i}"{ON if i == 0 else ""}><i></i>{E(n)}</button></li>' for i, (n, _) in enumerate(IG))
+    sets = "".join(f'<div class="ig-set{" on" if i == 0 else ""}" data-g="{i}"><div class="ig-tr">' + "".join(card(k) for k in ks) + "</div></div>" for i, (n, ks) in enumerate(IG))
+    ticks = "<i></i>" * 8
+    return f'''<section class="wrap sect intg"><div class="ig rv">
+  <div class="ig-l"><div><p class="tag"><i></i>Integrations</p><h2 class="hd h2">Connect with everything <em>you already run.</em></h2><p class="sub">Your agent platform, your voice stack and your channels, on one phone layer.</p></div><ul class="ig-cats mono">{cats}</ul></div>
+  <div class="ig-t" aria-hidden="true">{ticks}</div>
+  <div class="ig-r">{sets}</div>
+  <i class="ig-glow" aria-hidden="true"></i>
+</div></section>'''
+
 def page_product(slug):
     D = P[slug]
     name = next(n for s, n, _, _ in PRODUCTS if s == slug)
@@ -1167,6 +1192,7 @@ def page_product(slug):
     body += comp6()
     if D.get("code"):
         body += devsec(D["code"], D["note"])
+    body += intg()
     body += faq(D["faq"])
     return D["title"], D["desc"], body
 
@@ -1229,7 +1255,7 @@ def page_solution(slug):
     cards = [(ICON["phone"], E(D["uses"][0][2])), (ICON["route"], E(D["uses"][1][2])), (ICON["mail"], E(D["uses"][2][2])), (ICON["eye"], "Every call logged with events, records and optional recordings"), (ICON["shield"], "Compliance built in: business KYC, consent records and DLT-ready SMS")]
     body += hcards(D["ph2"], cards)
     body += climb6(D["flow"], D["did"])
-    body += logos6()
+    body += intg()
     body += faq(D["faq"])
     return D["title"], D["sub"], body
 
@@ -1277,6 +1303,7 @@ def page_pricing():
   </div>
 </section>'''
     body += est[i:j]
+    body += intg()
     body += faq([("Is there a free way to start?", "Yes. Start free from the dashboard and pay as you go."),
                  ("Are there minimums or contracts?", "No. Pay as you go has no lock-in and no minimums."),
                  ("How do I get volume rates?", "Use the estimator, then ask for a rate card from the contact page."),
@@ -1312,7 +1339,9 @@ def page_about():
 <section class="wrap sect tight">{sh("What we build", "Designed for production, <em>not prototypes.</em>", "Four principles behind every TryVox product.", center=True)}<div class="ab-cs">{pc}</div></section>
 <section class="wrap sect tight"><div class="ab-rg"><div>{sh("Roadmap", "From first number <em>to full scale.</em>", "How teams go live on TryVox.")}<div class="ab-rl">{rl}</div></div><div class="ab-fc rv"><div class="ab-fw">{fl}</div></div></div></section>
 <section class="wrap sect tight">{sh("Who we are", "Built in India by <em>Tryjolt Solutions.</em>", "A telephony team for voice AI, focused on reliable calls and compliance that just works.", center=True)}<div class="ab-bg"><p class="ab-st hd">We believe every AI agent deserves a real phone line, and every team should be able to give it one in minutes.</p><div>{bl}</div></div></section>
-<section class="ab-cta"><div class="ab-orb" aria-hidden="true"><i></i><i></i><b></b></div><div class="wrap"><p class="tag"><i></i>Get started</p><h2 class="hd h2">Give every agent <em>a real phone line.</em></h2><div class="cta"><a class="kbtn" href="{APP}">Start free</a><a class="obtn" href="/contact/">Contact us</a></div></div></section>
+</div>'''
+    body += intg()
+    body += f'''<div class="abx"><section class="ab-cta"><svg class="ab-orb" viewBox="0 0 1000 440" aria-hidden="true"><ellipse cx="500" cy="220" rx="480" ry="200"/><ellipse class="d" cx="500" cy="220" rx="410" ry="160"/><circle r="5"><animateMotion dur="14s" repeatCount="indefinite" path="M20,220 a480,200 0 1,0 960,0 a480,200 0 1,0 -960,0"/></circle><circle class="s" r="3"><animateMotion dur="10s" repeatCount="indefinite" path="M910,220 a410,160 0 1,0 -820,0 a410,160 0 1,0 820,0"/></circle></svg><div class="wrap"><p class="tag"><i></i>Get started</p><h2 class="hd h2">Give every agent <em>a real phone line.</em></h2><div class="cta"><a class="kbtn" href="{APP}">Start free</a><a class="obtn" href="/contact/">Contact us</a></div></div></section>
 </div>'''
     return "About TryVox: Telephony Infrastructure for Voice AI | TryVox", "TryVox builds telephony infrastructure for voice AI: numbers, SIP, voice APIs and messaging. Built in India by Tryjolt Solutions.", body
 
