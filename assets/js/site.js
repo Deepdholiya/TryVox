@@ -209,9 +209,8 @@
     SF.push(onHow);
   }
 
-  /* ---------- integrations wall ---------- */
-  if($('#iwall')){
-
+  /* ---------- integrations constellation ---------- */
+  if($('#iorb')){
   const INTEG=[
     {n:'Vapi',c:'agent',t:'Agent platform',h:'1-click',img:'/assets/logos/vapi.svg',w:62},
     {n:'Retell AI',c:'agent',t:'Agent platform',h:'1-click',img:'/assets/logos/retell.svg',w:72},
@@ -226,22 +225,27 @@
     {n:'VoxML',c:'dev',t:'Call flows',h:'Native',m:'</>',bg:'#5B3FB0'},
     {n:'SIP / BYOC',c:'dev',t:'Bring your own carrier',h:'Any SIP stack',m:'SIP',bg:'#2D3360'}
   ];
-  const iwall=$('#iwall'),icols=$$('#iwall .itrack');
-  function icard(d,dup){const c=document.createElement('div');c.className='icard';c.dataset.c=d.c;if(dup)c.setAttribute('aria-hidden','true');
-    const lg=document.createElement('span');lg.className='ilogo';
-    if(d.img){const im=document.createElement('img');im.className='plogo';im.src=d.img;im.alt=d.txt?'':d.n;im.width=d.w;im.height=24;lg.append(im);if(d.txt)lg.append(d.n)}
-    else{const m=document.createElement('span');m.className='mono';m.style.background=d.bg;m.textContent=d.m;const nm=document.createElement('span');nm.className='iname';nm.textContent=d.n;lg.append(m,nm)}
-    const meta=document.createElement('span');meta.className='imeta';const t=document.createElement('span');t.textContent=d.t;const h=document.createElement('span');h.className='ihow';h.textContent=d.h;meta.append(t,h);
-    c.append(lg,meta);return c}
-  icols.forEach((tr,ci)=>{const items=INTEG.filter((_,i)=>i%3===ci);for(let r=0;r<2;r++)items.forEach(d=>tr.append(icard(d,r===1)))});
-  const fBtns=$$('#iFilters button'),iCount=$('#iCount'),iHub=$('#iHub');
+
+  const orb=$('#iorb'),rings=[orb.querySelector('.r1 .io-rot'),orb.querySelector('.r2 .io-rot')],tip=$('#ioTip'),iHub=$('#iHub');
+  const lists=[INTEG.filter(d=>d.c==='agent'),INTEG.filter(d=>d.c!=='agent')],nodes=[];
+  lists.forEach((L,ri)=>L.forEach((d,i)=>{const a=360/L.length*i+(ri?18:-90);const sp=document.createElement('div');sp.className='io-sp';sp.style.setProperty('--a',a+'deg');sp.style.setProperty('--dl',(-Math.random()*1.6).toFixed(2)+'s');
+    const pk=document.createElement('i');pk.className='io-pk';sp.append(pk);
+    const n=document.createElement('div');n.className='io-n';n.style.setProperty('--a',a+'deg');n.dataset.c=d.c;
+    const nc=document.createElement('div');nc.className='io-nc';const c=document.createElement('button');c.type='button';c.className='io-card';
+    const nm=document.createElement('span');nm.className='nm';nm.textContent=d.n;c.title=d.n;
+    if(d.img){const im=document.createElement('img');im.src=d.img;im.alt=d.txt?'':d.n;im.width=d.w;im.height=18;c.append(im);if(d.txt)c.append(nm)}
+    else{const m=document.createElement('span');m.className='mk';m.style.background=d.bg;m.textContent=d.m;c.append(m,nm)}
+    nc.append(c);n.append(nc);sp.append(n);rings[ri].append(sp);nodes.push({d,n,sp,c})}));
+  const label=d=>d.c==='agent'?d.n.replace(' AI','')+' agent connected':d.c==='speech'?d.n+' via your agent':d.n+' enabled';
+  let cur=null,hold=false;
+  function focus(o){if(cur){cur.n.classList.remove('on');if(!cur.sp.classList.contains('match'))cur.sp.classList.remove('hot')}cur=o;o.n.classList.add('on');o.sp.classList.add('hot');iHub.textContent=label(o.d);tip.textContent=o.d.t+' · '+o.d.h;tip.classList.add('on')}
+  nodes.forEach(o=>{o.c.addEventListener('mouseenter',()=>{hold=true;focus(o)});o.c.addEventListener('mouseleave',()=>hold=false);o.c.addEventListener('click',()=>focus(o))});
+  const fBtns=$$('#iFilters button'),iCount=$('#iCount');
   fBtns.forEach(b=>{const f=b.dataset.f,n=f==='all'?INTEG.length:INTEG.filter(d=>d.c===f).length;b.querySelector('span').textContent=n;
-    b.addEventListener('click',()=>{fBtns.forEach(x=>x.setAttribute('aria-selected',x===b));iwall.dataset.f=f;
-      $$('#iwall .icard').forEach(c=>c.classList.toggle('match',f!=='all'&&c.dataset.c===f));iCount.textContent=n;hubI=0;hubNext()})});
-  let hubI=0;
-  function hubNext(){const f=iwall.dataset.f,pool=INTEG.filter(d=>f==='all'||d.c===f),d=pool[hubI%pool.length];hubI++;
-    iHub.textContent=d.c==='agent'?d.n.replace(' AI','')+' agent connected':d.c==='speech'?d.n+' via your agent':d.n+' enabled'}
-  hubNext();if(!reduce)setInterval(hubNext,2000);
+    b.addEventListener('click',()=>{fBtns.forEach(x=>x.setAttribute('aria-selected',x===b));orb.dataset.f=f;iCount.textContent=n;
+      nodes.forEach(o=>{const m=f!=='all'&&o.d.c===f;o.n.classList.toggle('match',m);o.sp.classList.toggle('match',m);o.sp.classList.toggle('hot',m||o===cur)});hi=0;next()})});
+  let hi=0;function next(){if(hold)return;const f=orb.dataset.f,pool=nodes.filter(o=>f==='all'||o.d.c===f);focus(pool[hi%pool.length]);hi++}
+  next();if(!reduce)setInterval(next,2200);
   }
 
   /* ---------- cells spotlight ---------- */
@@ -378,7 +382,7 @@ X-TryVox-To:           <E.164 TryVox number>`};
 
   /* ---------- v5 product + solution layouts ---------- */
   // hero layer stack: layers light up in turn, labels follow; hover a label to pick it
-  $$('.ah-stage').forEach(st=>{const sl=Array.from(st.querySelectorAll('.sl')),lb=Array.from(st.querySelectorAll('li[data-i]')),n=sl.length;let cur=n-1,hold=false;
+  $$('.ah-stage').forEach(st=>{if(st.closest('.ahp'))return;const sl=Array.from(st.querySelectorAll('.sl')),lb=Array.from(st.querySelectorAll('li[data-i]')),n=sl.length;let cur=n-1,hold=false;
     const set=k=>{cur=k;sl.forEach(g=>g.classList.toggle('on',+g.dataset.i===k));lb.forEach(l=>l.classList.toggle('on',+l.dataset.i===k))};set(n-1);
     lb.forEach(l=>{l.addEventListener('mouseenter',()=>{hold=true;set(+l.dataset.i)});l.addEventListener('mouseleave',()=>hold=false)});
     if(!reduce)setInterval(()=>{if(!hold)set((cur+n-1)%n)},1900)});
@@ -404,6 +408,49 @@ X-TryVox-To:           <E.164 TryVox number>`};
     set(0);if(reduce)cols.forEach(c=>c.classList.add('on'));else watch([cl],v=>cl.classList.toggle('run',v),{threshold:.3})});
   // logo groups
   $$('.lg5').forEach(l=>{const bs=Array.from(l.querySelectorAll('.lg-tabs button')),ss=Array.from(l.querySelectorAll('.lg-set'));bs.forEach(b=>b.addEventListener('click',()=>{bs.forEach(x=>x.classList.toggle('on',x===b));ss.forEach(x=>x.classList.toggle('on',x.dataset.g===b.dataset.g))}))});
+
+
+  /* ---------- v6 ---------- */
+  // home: dark hero eases to white
+  const hs=$('#hsky');if(hs)SF.push(()=>hs.classList.toggle('lite',scrollY>hs.offsetHeight*.3));
+  // product: stack opens one layer at a time as you scroll
+  $$('.ahp').forEach(sec=>{const svg=sec.querySelector('.stk-svg'),E=+svg.dataset.e,sl=Array.from(svg.querySelectorAll('.sl')),n=sl.length,lb=Array.from(sec.querySelectorAll('li[data-i]')),cnt=sec.querySelector('.ahp-c b'),bar=sec.querySelector('.ahp-bar');
+    const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    SF.push(()=>{const r=sec.getBoundingClientRect(),p=reduce?1:clamp(-r.top/(r.height-innerHeight),0,1);let off=0,opened=0;
+      for(let k=0;k<n;k++){if(k>0){const o=ease(clamp(p*(n-1)*1.12-(n-1-k),0,1));off+=E*o;if(o>.5)opened++}sl[k].style.transform=`translateY(${-off}px)`}
+      const act=Math.max(0,n-1-opened);sl.forEach(g=>g.classList.toggle('hi',+g.dataset.i===act));lb.forEach(l=>l.classList.toggle('on',+l.dataset.i===act));
+      cnt.textContent=String(act+1).padStart(2,'0');bar.style.setProperty('--sp',(p*100).toFixed(1)+'%');const vb=svg.viewBox.baseVal.height,sc=svg.clientHeight/vb;svg.style.transform=`translateY(${-((n-1)*E-off)/2*sc}px)`})});
+  // product: compliance checks tick as you scroll; pick one to see it
+  $$('.cp6').forEach(cp=>{const it=Array.from(cp.querySelectorAll('.cp-i')),ds=Array.from(cp.querySelectorAll('.cp-d')),ring=cp.querySelector('.cp-ring'),sh_=cp.querySelector('.cp-sh'),nb=cp.querySelector('.cp-n b');let manual=false,last=-1;
+    const show=k=>{it.forEach((x,j)=>x.classList.toggle('on',j===k));ds.forEach((x,j)=>x.classList.toggle('on',j===k))};
+    it.forEach((x,k)=>x.addEventListener('click',()=>{manual=true;show(k)}));
+    SF.push(()=>{const r=cp.getBoundingClientRect(),p=reduce?1:clamp((innerHeight*.85-r.top)/(r.height*.75),0,1),k=Math.min(4,Math.floor(p*5));if(k===last)return;last=k;
+      it.forEach((x,j)=>x.classList.toggle('ck',j<k));ring.style.setProperty('--p',k*25);nb.textContent=k;sh_.classList.toggle('full',k===4);if(!manual&&k>0)show(k-1)})});
+  // solutions: live console
+  $$('.sh6').forEach(h=>{const st=h.querySelector('.lvb'),bars=Array.from(h.querySelectorAll('.lv-wave i')),t=h.querySelector('.lv-t');let s=0;
+    if(!reduce){setInterval(()=>bars.forEach(b=>b.style.height=(10+Math.random()*85)+'%'),160);setInterval(()=>{s++;t.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
+      SF.push(()=>{const r=st.getBoundingClientRect(),p=clamp((innerHeight-r.top)/(innerHeight*.7),0,1);st.style.setProperty('--tl',(12*(1-p)).toFixed(2)+'deg')})}});
+  // solutions: horizontal cards driven by vertical scroll
+  $$('.hx').forEach(hx=>{const tr=hx.querySelector('.hx-t'),cs=Array.from(tr.children),cnt=hx.querySelector('.hx-c b'),bar=hx.querySelector('.hx-bar');
+    SF.push(()=>{const r=hx.getBoundingClientRect(),p=clamp(-r.top/(r.height-innerHeight),0,1),last=cs[cs.length-1],max=Math.max(0,last.offsetLeft+last.offsetWidth+parseFloat(getComputedStyle(tr).paddingLeft)-innerWidth);
+      tr.style.setProperty('--tx',(-p*max).toFixed(1)+'px');bar.style.setProperty('--hb',(p*100).toFixed(1)+'%');const a=Math.min(cs.length-1,Math.round(p*(cs.length-1)));cs.forEach((c,j)=>c.classList.toggle('on',j===a));cnt.textContent=String(a+1).padStart(2,'0')})});
+  // solutions: call flow advances with scroll
+  $$('.c6').forEach(c6=>{const it=Array.from(c6.querySelectorAll('.c6-i')),cols=Array.from(c6.querySelectorAll('.cl-col')),rail=c6.querySelector('.c6-rail'),pc=c6.querySelector('.c6-pct b'),n=it.length;
+    SF.push(()=>{const r=c6.getBoundingClientRect(),pin=getComputedStyle(c6.querySelector('.c6-st')).position==='sticky';
+      const p=reduce?1:pin?clamp(-r.top/(r.height-innerHeight),0,1):clamp((innerHeight*.7-r.top)/(r.height*.8),0,1),a=Math.min(n-1,Math.floor(p*n*.999));
+      it.forEach((x,j)=>{x.classList.toggle('on',j===a);x.classList.toggle('done',j<a)});cols.forEach((c,j)=>c.classList.toggle('on',j<=a));rail.style.setProperty('--cr',(p*100).toFixed(1)+'%');pc.textContent=Math.round(p*100)})});
+  // about: problem list advances with scroll
+  $$('.abp').forEach(ab=>{const ps=Array.from(ab.querySelectorAll('.ab-p')),ds=Array.from(ab.querySelectorAll('.ab-d')),l=ab.querySelector('.abp-l'),g=ab.querySelector('.abp-g'),n=ps.length;
+    SF.push(()=>{const r=ab.getBoundingClientRect(),p=clamp(-r.top/(r.height-innerHeight),0,1),a=Math.min(n-1,Math.floor(p*n*.999));
+      ps.forEach((x,j)=>x.classList.toggle('on',j===a));ds.forEach((x,j)=>x.classList.toggle('on',j===a));
+      if(innerWidth>1000){const el=ps[a];l.style.setProperty('--ly',(g.clientHeight/2-el.offsetTop-el.offsetHeight/2)+'px')}else l.style.setProperty('--ly','0px')})});
+  // pricing: volume tiles
+  $$('.gts').forEach(g=>{const bs=Array.from(g.children),m=g.parentElement.querySelector('.gmsg');bs.forEach(b=>b.addEventListener('click',()=>{bs.forEach(x=>x.classList.toggle('on',x===b));m.textContent=b.dataset.msg}))});
+
+
+  // header goes dark over dark sections
+  {const DK='.hsky:not(.lite),.ahp,.rvs,.pp:not(.lite),.hx,.c6,.abx,.gx,.cl';const hd=$('#hdr');let was=null;
+   SF.push(()=>{const y=(hd?hd.offsetHeight:60)+2,el=document.elementFromPoint(innerWidth/2,y),dk=!!(el&&el.closest(DK)&&!el.closest('.hdr,.mega,.sheet'));if(dk!==was){was=dk;root.classList.toggle('hdr-dk',dk)}})}
 
   /* ---------- footer ---------- */
   const fStt=$('#fStt'),states=['Ringing your agent','Connected · streaming','Call completed · events sent'];let fi=0;
