@@ -328,65 +328,6 @@ X-TryVox-To:           <E.164 TryVox number>`};
   }
 
 
-  /* ---------- inner pages v2 ---------- */
-  const seen=(n,cb,m)=>{const o=new IntersectionObserver(es=>es.forEach(e=>cb(e.isIntersecting,e.target)),{rootMargin:m||'0px'});(Array.isArray(n)?n:[n]).forEach(x=>o.observe(x))};
-  // hero stage tilts flat as you scroll
-  const xst=$$('.xh-stage');
-  if(xst.length&&!reduce){SF.push(()=>xst.forEach(st=>{const r=st.getBoundingClientRect(),p=clamp((innerHeight-r.top)/(innerHeight*.75),0,1);st.style.setProperty('--tilt',(14*(1-p)).toFixed(2)+'deg')}))}
-  // live bar charts
-  const lb=$$('.bars[data-live]');
-  if(lb.length&&!reduce){const vis=new Set();seen(lb,(v,t)=>v?vis.add(t):vis.delete(t));
-    setInterval(()=>vis.forEach(b=>b.querySelectorAll('i').forEach(i=>{if(Math.random()<.45)i.style.setProperty('--h',(24+Math.random()*72).toFixed(0)+'%')})),1400)}
-  // meter on pricing
-  const mt=$('[data-meter]');
-  if(mt&&!reduce){let v=125000;setInterval(()=>{v+=Math.floor(Math.random()*9)+1;mt.textContent=v.toLocaleString('en-IN')},900)}
-  // chapters
-  $$('.chaps').forEach(sec=>{
-    const arts=Array.from(sec.querySelectorAll('.chp')),tabs=Array.from(sec.querySelectorAll('.chp-tabs button')),line=sec.querySelector('.chp-line'),list=sec.querySelector('.chp-list');
-    let cur=-1;const set=i=>{if(i===cur)return;cur=i;arts.forEach((a,k)=>a.classList.toggle('on',k===i));tabs.forEach((t,k)=>{t.classList.toggle('on',k===i);t.setAttribute('aria-selected',k===i)})};
-    set(0);
-    tabs.forEach((t,k)=>t.addEventListener('click',()=>{const nav=sec.querySelector('.chp-nav').offsetHeight,hd=$('#hdr').offsetHeight;scrollTo({top:arts[k].getBoundingClientRect().top+scrollY-hd-nav-16,behavior:reduce?'auto':'smooth'})}));
-    SF.push(()=>{const mid=innerHeight*.55;let a=0;arts.forEach((x,k)=>{if(x.getBoundingClientRect().top<mid)a=k});set(a);
-      const r=list.getBoundingClientRect(),p=clamp((mid-r.top)/(r.height-innerHeight*.3),0,1);line.style.setProperty('--cp',(p*100).toFixed(1)+'%')});
-  });
-  // switcher
-  $$('.sw').forEach(sw=>{
-    const it=Array.from(sw.querySelectorAll('.sw-i')),vs=Array.from(sw.querySelectorAll('.sw-v'));let cur=0;
-    const set=i=>{cur=i;it.forEach((b,k)=>{b.classList.toggle('on',k===i);b.setAttribute('aria-pressed',k===i)});vs.forEach((v,k)=>{v.classList.toggle('on',k===i);
-      if(k===i)v.querySelectorAll('.msg').forEach((m,j)=>{m.style.animation='none';void m.offsetWidth;m.style.animation='';m.style.animationDelay=(j*.35)+'s'})})};
-    it.forEach((b,k)=>{b.addEventListener('click',()=>set(k));b.querySelector('.sw-p').addEventListener('animationend',()=>set((cur+1)%it.length))});
-    set(0);if(!reduce)seen(sw,v=>sw.classList.toggle('run',v));
-  });
-  // showcase: dotted sphere + live captions
-  $$('.show').forEach(sh=>{
-    const data=JSON.parse(sh.querySelector('.show-data').textContent),cap=sh.querySelector('.show-cap'),q=cap.querySelector('q'),lab=cap.querySelector('.mlab'),tm=sh.querySelector('.ph-t'),cv=sh.querySelector('.dots3d'),ctx=cv.getContext('2d');
-    let on=false,i=0,sec=0,ang=0,raf=0;const N=760,P=[];const ga=Math.PI*(3-Math.sqrt(5));
-    for(let k=0;k<N;k++){const y=1-(k/(N-1))*2,r=Math.sqrt(1-y*y),t=ga*k;P.push([Math.cos(t)*r,y,Math.sin(t)*r])}
-    function draw(){const d=Math.min(devicePixelRatio||1,2),w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==w*d){cv.width=w*d;cv.height=h*d}
-      ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);const R=Math.min(w,h)*.36,cx=w/2,cy=h*.4,c=Math.cos(ang),s=Math.sin(ang);
-      for(const [x,y,z] of P){const X=x*c-z*s,Z=x*s+z*c,a=(Z+1.2)/2.2;ctx.fillStyle=`rgba(214,200,255,${(a*a*.85).toFixed(3)})`;ctx.fillRect(cx+X*R,cy+y*R,1.4,1.4)}}
-    function loop(){ang+=.0035;draw();if(on)raf=requestAnimationFrame(loop)}
-    const show=()=>{const [l,t,c]=data[i];cap.classList.add('swap');setTimeout(()=>{lab.textContent=l;q.textContent=t;cap.classList.toggle('ev',c.indexOf('ev')===0);cap.classList.remove('swap')},320);i=(i+1)%data.length};
-    draw();
-    if(!reduce){setInterval(()=>{if(!on)return;show();},3000);setInterval(()=>{if(!on)return;sec++;tm.textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')},1000);
-      seen(sh,v=>{on=v;cancelAnimationFrame(raf);if(v)loop()})}
-    addEventListener('resize',draw);
-  });
-  // flow rail
-  $$('.frail').forEach(fr=>{const ns=Array.from(fr.querySelectorAll('.fr-n'));SF.push(()=>{const r=fr.getBoundingClientRect(),p=clamp((innerHeight*.8-r.top)/(innerHeight*.55),0,1);
-    fr.style.setProperty('--fp',(p*100).toFixed(1)+'%');ns.forEach((n,k)=>n.classList.toggle('on',p>=k/Math.max(1,ns.length-1)-.001))})});
-  // count-ups
-  const cn=$$('.cnt[data-to]');
-  if(cn.length&&!reduce){const o=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;o.unobserve(e.target);const n=e.target,to=+n.dataset.to,dec=(n.dataset.to.split('.')[1]||'').length,t0=performance.now();
-    const f=t=>{const k=clamp((t-t0)/1500,0,1),v=to*(1-Math.pow(1-k,3));n.textContent=n.dataset.pre+v.toFixed(dec)+n.dataset.suf;if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}),{threshold:.5});cn.forEach(n=>o.observe(n))}
-  // manifesto word reveal
-  const mani=$('#mani');
-  if(mani){const ws=Array.from(mani.children);SF.push(()=>{const r=mani.getBoundingClientRect(),p=reduce?1:clamp((innerHeight*.85-r.top)/(r.height+innerHeight*.3),0,1),k=Math.round(p*ws.length);ws.forEach((w,j)=>w.classList.toggle('on',j<k))})}
-  // solution device clock
-  $$('.dclock').forEach(c=>{let s=0;if(!reduce)setInterval(()=>{s++;c.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000)});
-  // compose typing
-  $$('.typed').forEach(t=>{const txt=t.dataset.type;if(reduce){t.textContent=txt;return}let done=false;seen(t,v=>{if(!v||done)return;done=true;let i=0;const iv=setInterval(()=>{t.textContent=txt.slice(0,++i);if(i>=txt.length)clearInterval(iv)},28)})});
-
   /* ---------- footer ---------- */
   const fStt=$('#fStt'),states=['Ringing your agent','Connected · streaming','Call completed · events sent'];let fi=0;
   if(fStt&&!reduce)setInterval(()=>{fi=(fi+1)%states.length;fStt.textContent=states[fi]},2600);
