@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#FFFFFF">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Doto:wght@800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Instrument+Sans:wght@400..700&family=Doto:wght@800&family=Instrument+Serif:ital@0;1&display=swap">
 <link rel="stylesheet" href="/assets/css/site.css">
 <script src="/assets/js/site.js" defer></script>
 </head>
@@ -78,12 +78,14 @@
       <a class="obtn" href="https://docs.tryvox.io/ai-agents">Browse integration docs ↗</a>
     </div>
     <div class="rv" style="min-width:0">
-      <div class="iorb" id="iorb" data-f="all">
-        <div class="io-grid" aria-hidden="true"></div>
-        <div class="io-ring r1"><div class="io-rot"></div></div>
-        <div class="io-ring r2"><div class="io-rot"></div></div>
-        <div class="io-hub" aria-live="polite"><span class="lg"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#00B900" d="M0 0H10L0 10Z M21 0H32V11H10.5Z M21 11H31L21 21Z M11 11V21H1Z M0 21H21L10.5 32H0Z M32 21V32H21Z"/></svg></span><span><small>TryVox · line 01</small><b id="iHub">Vapi agent connected</b></span></div>
-        <div class="io-tip" id="ioTip"></div>
+      <div class="ix" id="ix" data-f="all">
+        <div class="ix-frame" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="ix-row"><div class="ix-track" id="ixTrack"></div></div>
+        <div class="ix-wire" aria-hidden="true"><i></i></div>
+        <div class="ix-app">
+          <div class="ix-side"><p class="ix-lbl">Line 01</p><span class="on"><i></i>+91 80 4718 2290</span><span><i></i>Bindings</span><span><i></i>Events</span><button class="ix-add" type="button" aria-label="Add integration">+</button></div>
+          <div class="ix-main" id="ixMain" aria-live="polite"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -94,7 +96,7 @@ X-TryVox-Direction:    inbound
 X-TryVox-Route:        ai-agent
 X-TryVox-AI-Provider:  vapi | elevenlabs | retell
 X-TryVox-From:         &lt;E.164 caller&gt;
-X-TryVox-To:           &lt;E.164 TryVox number&gt;</pre></div></div></div></div></section><section class="wrap sect tight"><div class="faq"><div class="rv"><p class="tag"><i></i>FAQ</p><h2 class="hd h2" style="margin-top:20px">Questions teams <em>ask first.</em></h2><p class="sub" style="margin-top:16px">Something else? <a href="/contact/" style="text-decoration:underline">Talk to the team</a>.</p></div><div class="rv"><details open><summary>Which agent platforms work with TryVox?<i>+</i></summary><p>Vapi, Retell, ElevenLabs, LiveKit and Bolna, plus any standards-based SIP stack.</p></details><details><summary>Do I need to configure SIP for agent platforms?<i>+</i></summary><p>No. Binding a number to an agent needs no deployment or SIP configuration.</p></details><details><summary>Can agents call out through TryVox?<i>+</i></summary><p>Outbound calls from agents are still in progress. Inbound calls work today.</p></details></div></div></section>
+X-TryVox-To:           &lt;E.164 TryVox number&gt;</pre></div></div></div></div></section><section class="wrap sect tight"><div class="faq"><div class="rv"><p class="tag"><i></i>FAQ</p><h2 class="hd h2" style="margin-top:20px">Questions teams <em>ask first.</em></h2></div><div class="rv"><details open><summary>Which agent platforms work with TryVox?<i>+</i></summary><p>Vapi, Retell, ElevenLabs, LiveKit and Bolna, plus any standards-based SIP stack.</p></details><details><summary>Do I need to configure SIP for agent platforms?<i>+</i></summary><p>No. Binding a number to an agent needs no deployment or SIP configuration.</p></details><details><summary>Can agents call out through TryVox?<i>+</i></summary><p>Outbound calls from agents are still in progress. Inbound calls work today.</p></details></div></div></section>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Which agent platforms work with TryVox?", "acceptedAnswer": {"@type": "Answer", "text": "Vapi, Retell, ElevenLabs, LiveKit and Bolna, plus any standards-based SIP stack."}}, {"@type": "Question", "name": "Do I need to configure SIP for agent platforms?", "acceptedAnswer": {"@type": "Answer", "text": "No. Binding a number to an agent needs no deployment or SIP configuration."}}, {"@type": "Question", "name": "Can agents call out through TryVox?", "acceptedAnswer": {"@type": "Answer", "text": "Outbound calls from agents are still in progress. Inbound calls work today."}}]}</script>
 </main>
 <!-- @footer -->

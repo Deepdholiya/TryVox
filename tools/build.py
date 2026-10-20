@@ -166,7 +166,7 @@ def head(title, desc, path):
 <meta name="theme-color" content="#FFFFFF">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Doto:wght@800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Instrument+Sans:wght@400..700&family=Doto:wght@800&family=Instrument+Serif:ital@0;1&display=swap">
 <link rel="stylesheet" href="/assets/css/site.css">
 <script src="/assets/js/site.js" defer></script>
 </head>
@@ -235,7 +235,7 @@ def code_panel(code, note_html):
 def faq(items):
     d = "".join(f"<details{' open' if i == 0 else ''}><summary>{E(q)}<i>+</i></summary><p>{E(a)}</p></details>" for i, (q, a) in enumerate(items))
     ld = json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in items]}).replace("</", "<\\/")
-    return f'''<section class="wrap sect tight"><div class="faq"><div class="rv"><p class="tag"><i></i>FAQ</p><h2 class="hd h2" style="margin-top:20px">Questions teams <em>ask first.</em></h2><p class="sub" style="margin-top:16px">Something else? <a href="/contact/" style="text-decoration:underline">Talk to the team</a>.</p></div><div class="rv">{d}</div></div></section>
+    return f'''<section class="wrap sect tight"><div class="faq"><div class="rv"><p class="tag"><i></i>FAQ</p><h2 class="hd h2" style="margin-top:20px">Questions teams <em>ask first.</em></h2></div><div class="rv">{d}</div></div></section>
 <script type="application/ld+json">{ld}</script>'''
 
 def related(title, links):
@@ -1139,13 +1139,13 @@ def panels6(items):
 
 def comp6():
     checks = [("id", "Business KYC"), ("mail", "DLT-ready SMS"), ("users", "Consent records"), ("phone", "Verified caller IDs")]
-    ch = "".join(f'<span class="c7-c" data-i="{i}"><i></i>{ICON[ic_]}{E(t)}</span>' for i, (ic_, t) in enumerate(checks))
+    ch = "".join(f'<span class="c7-c" data-i="{i}">{ICON[ic_]}{E(t)}</span>' for i, (ic_, t) in enumerate(checks))
     shield = '<svg viewBox="0 0 120 140" aria-hidden="true"><defs><linearGradient id="shg7" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E9DDFF"/><stop offset=".45" stop-color="#9D61FF"/><stop offset="1" stop-color="#3B1C86"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 124 60 134 C32 124 10 100 10 66 V24 Z" fill="url(#shg7)"/><path d="M60 6 L60 134 C32 124 10 100 10 66 V24 Z" fill="#fff" opacity=".14"/><path class="ck" d="M40 70 l14 14 28-30" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-    arcs = '<svg class="c7-arcs" viewBox="0 0 800 520" aria-hidden="true"><defs><linearGradient id="c7g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9D61FF" stop-opacity="0"/><stop offset=".7" stop-color="#9D61FF" stop-opacity=".85"/><stop offset="1" stop-color="#00B900"/></linearGradient></defs><path class="c7-ghost" d="M660 40 L770 80 V180 C770 260 722 316 660 340 C598 316 550 260 550 180 V80 Z"/><circle class="c7-o o1" cx="400" cy="170" r="190"/><circle class="c7-o o2" cx="400" cy="170" r="130"/><g class="c7-sp"><circle cx="252" cy="70" r="2"/><circle cx="236" cy="96" r="1.5"/><circle cx="560" cy="62" r="1.5"/><circle cx="578" cy="88" r="2"/></g></svg>'
+    arcs = ''
     return f'''<section class="cp7"><div class="wrap"><div class="c7-frame rv">
   {arcs}
   <div class="c7-in">
-    <div class="c7-badge"><i></i><i></i>{shield}</div>
+    <div class="c7-badge"><b class="arc a1"></b><b class="arc a2"></b><span class="spk s1"></span><span class="spk s2"></span><span class="spk s3"></span><i></i><i></i>{shield}</div>
     <p class="c7-pill"><span class="c7-st">✓</span><b class="mono">0</b>/4 checks · India-ready</p>
     <p class="tag"><i></i>Compliance</p>
     <h2 class="hd h2">Compliance and control, <em>built in.</em></h2>
@@ -1175,7 +1175,8 @@ def sh6_hero(name, D):
     rd = "".join(f'<div class="lv-e" style="--i:{i}"><span class="mono">{E(k.upper())}</span><b>{E(v)}</b></div>' for i, (k, v) in enumerate(D["flow"]))
     talk = "".join(msg(c, t) for c, t in [l for l in D["hero"] if l[0] != "ev"][:3])
     bars = "<i></i>" * 40
-    chips = "".join(f'<span class="fl-c c{i}"><i></i>{E(k)}</span>' for i, (k, v) in enumerate(D["flow"]))
+    chips = ""
+    steps_ = "".join(f'<span class="lv-s" style="--i:{i}"><i></i><b>{i + 1:02d}</b>{E(k)}</span>' for i, (k, v) in enumerate(D["flow"]))
     return f'''<section class="sh6 th">{thf()}
   <div class="wrap sh6-in">
     <p class="tag"><i></i>{E(name)}</p>
@@ -1187,6 +1188,7 @@ def sh6_hero(name, D):
   <div class="wrap sh6-stage rv">
     {bracket(f"""<div class="lv">
       <div class="lv-top"><span class="dot"></span><b>{E(name)} voice agent</b><span class="live mono">Live</span><span class="lv-t mlcd">00:00</span></div>
+      <div class="lv-steps">{steps_}</div>
       <div class="lv-g"><div><div class="lv-wave">{bars}</div><div class="mfeed lv-feed">{talk}</div></div><div class="lv-ev">{rd}</div></div>
       <div class="lv-ft"><span class="mono">Outcome</span><p>{D["result"]}</p></div>
     </div>{chips}""", "lvb")}

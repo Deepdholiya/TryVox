@@ -209,8 +209,8 @@
     SF.push(onHow);
   }
 
-  /* ---------- integrations constellation ---------- */
-  if($('#iorb')){
+  /* ---------- integrations: one highlighted at a time, panel follows ---------- */
+  if($('#ix')){
   const INTEG=[
     {n:'Vapi',c:'agent',t:'Agent platform',h:'1-click',img:'/assets/logos/vapi.svg',w:62},
     {n:'Retell AI',c:'agent',t:'Agent platform',h:'1-click',img:'/assets/logos/retell.svg',w:72},
@@ -226,26 +226,37 @@
     {n:'SIP / BYOC',c:'dev',t:'Bring your own carrier',h:'Any SIP stack',m:'SIP',bg:'#2D3360'}
   ];
 
-  const orb=$('#iorb'),rings=[orb.querySelector('.r1 .io-rot'),orb.querySelector('.r2 .io-rot')],tip=$('#ioTip'),iHub=$('#iHub');
-  const lists=[INTEG.filter(d=>d.c==='agent'),INTEG.filter(d=>d.c!=='agent')],nodes=[];
-  lists.forEach((L,ri)=>L.forEach((d,i)=>{const a=360/L.length*i+(ri?18:-90);const sp=document.createElement('div');sp.className='io-sp';sp.style.setProperty('--a',a+'deg');sp.style.setProperty('--dl',(-Math.random()*1.6).toFixed(2)+'s');
-    const pk=document.createElement('i');pk.className='io-pk';sp.append(pk);
-    const n=document.createElement('div');n.className='io-n';n.style.setProperty('--a',a+'deg');n.dataset.c=d.c;
-    const nc=document.createElement('div');nc.className='io-nc';const c=document.createElement('button');c.type='button';c.className='io-card';
-    const nm=document.createElement('span');nm.className='nm';nm.textContent=d.n;c.title=d.n;
-    if(d.img){const im=document.createElement('img');im.src=d.img;im.alt=d.txt?'':d.n;im.width=d.w;im.height=18;c.append(im);if(d.txt)c.append(nm)}
-    else{const m=document.createElement('span');m.className='mk';m.style.background=d.bg;m.textContent=d.m;c.append(m,nm)}
-    nc.append(c);n.append(nc);sp.append(n);rings[ri].append(sp);nodes.push({d,n,sp,c})}));
-  const label=d=>d.c==='agent'?d.n.replace(' AI','')+' agent connected':d.c==='speech'?d.n+' via your agent':d.n+' enabled';
-  let cur=null,hold=false;
-  function focus(o){if(cur){cur.n.classList.remove('on');if(!cur.sp.classList.contains('match'))cur.sp.classList.remove('hot')}cur=o;o.n.classList.add('on');o.sp.classList.add('hot');iHub.textContent=label(o.d);tip.textContent=o.d.t+' · '+o.d.h;tip.classList.add('on')}
-  nodes.forEach(o=>{o.c.addEventListener('mouseenter',()=>{hold=true;focus(o)});o.c.addEventListener('mouseleave',()=>hold=false);o.c.addEventListener('click',()=>focus(o))});
+  const X={'Vapi':['Bind a TryVox number to your Vapi assistant. Calls reach it with caller context in SIP headers.',['Number bound · +91 80 4718 2290','X-TryVox-Provider: vapi','Agent answered on first ring']],
+   'Retell AI':['Connect a Retell agent to an Indian number in a few clicks, with no SIP setup.',['Number bound · +91 22 6120 4471','X-TryVox-Provider: retell','Call record sent to your webhook']],
+   'LiveKit':['Route calls into LiveKit rooms over a TryVox SIP trunk or a one-click binding.',['trunk-prod attached','Room joined · agent-01','Audio streaming']],
+   'Bolna':['Give your Bolna agent a local or toll-free line that it answers straight away.',['Number bound · 1800 xxx xxxx','X-TryVox-Provider: bolna','Agent answered']],
+   'ElevenLabs':['Put your ElevenLabs conversational agent on a real phone number.',['Number bound · +91 80 4718 3301','X-TryVox-Provider: elevenlabs','Agent answered']],
+   'Deepgram':['Speech to text runs inside your agent. TryVox streams clean call audio to it.',['Audio streamed to your agent','Transcription via your agent','Call events to your webhook']],
+   'Amazon Polly':['Text to speech runs inside your agent. TryVox carries the call and the audio.',['Agent speaks via Polly','Audio sent to caller','Call record stored']],
+   'WhatsApp':['Follow up on WhatsApp the moment a call ends, from the same account.',['Template payment_reminder sent','Delivered · read','WhatsApp calling enabled']],
+   'SMS · DLT':['Send DLT-ready SMS for OTPs, reminders and alerts across India.',['DLT entity linked','Template otp_login approved','Delivered']],
+   'Webhooks':['Every stage of every call lands in your system, signed with your secret.',['POST ring_url · 200','POST answer_url · VoxML','POST hangup_url · 200']],
+   'VoxML':['Build call flows with Say, Gather, Dial and Stream. TryVox runs them live.',['Say a greeting','Gather a keypress','Stream audio to your agent']],
+   'SIP / BYOC':['Connect any SIP stack, or bring your own carrier and keep your routes.',['trunk-prod created','Credentials + IP ACL set','Your carrier connected']]};
+  const ix=$('#ix'),track=$('#ixTrack'),main=$('#ixMain');let pool=INTEG.slice(),cur=0,hold=false;
+  const logo=(d,big)=>{const w=document.createElement('span');w.className='ix-lg';if(d.img){const im=document.createElement('img');im.src=d.img;im.alt='';im.width=big?d.w:d.w;im.height=20;w.append(im)}else{w.textContent=d.m;w.style.background=d.bg;w.classList.add('mk')}return w};
+  function build(){track.innerHTML='';pool.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.className='ix-i';b.setAttribute('aria-label',d.n);b.append(logo(d));
+    b.addEventListener('click',()=>{hold=true;set(i);setTimeout(()=>hold=false,6000)});track.append(b)})}
+  function set(i){cur=(i+pool.length)%pool.length;const bs=Array.from(track.children);
+    bs.forEach((b,j)=>{const dist=Math.abs(j-cur);b.classList.toggle('on',j===cur);b.classList.toggle('near',dist===1);b.classList.toggle('far',dist>2)});
+    const W=bs[0]?bs[0].offsetWidth:56,G=parseFloat(getComputedStyle(track).columnGap)||20,row=track.parentElement.clientWidth;
+    track.style.transform=`translateX(${row/2-(cur*(W+G)+W/2)}px)`;
+    const d=pool[cur],x=X[d.n]||['',[]];main.classList.remove('in');void main.offsetWidth;
+    main.innerHTML='';const h=document.createElement('div');h.className='ix-h';h.append(logo(d,1));const t=document.createElement('div');const nm=document.createElement('b');nm.textContent=d.n;const ty=document.createElement('small');ty.textContent=d.t;t.append(nm,ty);const pl=document.createElement('span');pl.className='pill';pl.textContent=d.h;h.append(t,pl);
+    const p=document.createElement('p');p.className='ix-d';p.textContent=x[0];const ul=document.createElement('ul');ul.className='ix-ev';x[1].forEach((e,k)=>{const li=document.createElement('li');li.textContent=e;li.style.setProperty('--k',k);ul.append(li)});
+    const inp=document.createElement('div');inp.className='ix-in';const sp=document.createElement('span');sp.textContent='Connect '+d.n.replace(' AI','')+' to line 01';const go=document.createElement('b');go.textContent='→';inp.append(sp,go);
+    main.append(h,p,ul,inp);main.classList.add('in')}
   const fBtns=$$('#iFilters button'),iCount=$('#iCount');
   fBtns.forEach(b=>{const f=b.dataset.f,n=f==='all'?INTEG.length:INTEG.filter(d=>d.c===f).length;b.querySelector('span').textContent=n;
-    b.addEventListener('click',()=>{fBtns.forEach(x=>x.setAttribute('aria-selected',x===b));orb.dataset.f=f;iCount.textContent=n;
-      nodes.forEach(o=>{const m=f!=='all'&&o.d.c===f;o.n.classList.toggle('match',m);o.sp.classList.toggle('match',m);o.sp.classList.toggle('hot',m||o===cur)});hi=0;next()})});
-  let hi=0;function next(){if(hold)return;const f=orb.dataset.f,pool=nodes.filter(o=>f==='all'||o.d.c===f);focus(pool[hi%pool.length]);hi++}
-  next();if(!reduce)setInterval(next,2200);
+    b.addEventListener('click',()=>{fBtns.forEach(x=>x.setAttribute('aria-selected',x===b));ix.dataset.f=f;iCount.textContent=n;pool=f==='all'?INTEG.slice():INTEG.filter(d=>d.c===f);build();set(0)})});
+  build();set(0);addEventListener('resize',()=>set(cur));
+  ix.addEventListener('mouseenter',()=>hold=true);ix.addEventListener('mouseleave',()=>hold=false);
+  if(!reduce)setInterval(()=>{if(!hold&&pool.length>1)set(cur+1)},2800);
   }
 
   /* ---------- cells spotlight ---------- */
@@ -426,6 +437,7 @@ X-TryVox-To:           <E.164 TryVox number>`};
       cs.forEach((c,j)=>c.classList.toggle('ck',j<k));nb.textContent=k;bd.classList.toggle('full',k===4)})});
   // hero snippets type themselves
   $$('.th-f span').forEach(sp=>{const t=sp.dataset.t;if(reduce){sp.textContent=t;return}let i=0,dir=1;const tick=()=>{i+=dir;sp.textContent=t.slice(0,i);if(i>=t.length){dir=-1;setTimeout(tick,2600+Math.random()*2000);return}if(i<=0){dir=1;setTimeout(tick,600+Math.random()*1500);return}setTimeout(tick,dir>0?55:25)};setTimeout(tick,(+getComputedStyle(sp).getPropertyValue('--i')||0)*450)});
+  $$('.ahp').forEach(sec=>SF.push(()=>{const r=sec.getBoundingClientRect(),p=clamp(-r.top/(r.height-innerHeight),0,1);sec.classList.toggle('lite',p>.55)}));
   // solutions: live console
   $$('.sh6').forEach(h=>{const st=h.querySelector('.lvb'),bars=Array.from(h.querySelectorAll('.lv-wave i')),t=h.querySelector('.lv-t');let s=0;
     if(!reduce){setInterval(()=>bars.forEach(b=>b.style.height=(10+Math.random()*85)+'%'),160);setInterval(()=>{s++;t.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
@@ -449,7 +461,7 @@ X-TryVox-To:           <E.164 TryVox number>`};
 
 
   // header goes dark over dark sections
-  {const DK='.cl,.c6,.how';const hd=$('#hdr');let was=null;
+  {const DK='.cl,.c6,.how,.ahp:not(.lite)';const hd=$('#hdr');let was=null;
    SF.push(()=>{const y=(hd?hd.offsetHeight:60)+2,el=document.elementFromPoint(innerWidth/2,y);let dk=false;
      if(el&&!el.closest('.hdr,.mega,.sheet')){const t=el.closest('.th');if(t){const r=t.getBoundingClientRect();dk=(y-r.top)/r.height<.5}else dk=!!el.closest(DK)}
      if(dk!==was){was=dk;root.classList.toggle('hdr-dk',dk)}})}
