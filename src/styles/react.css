@@ -1,0 +1,15 @@
+/* Additions for the React build: Three.js hero layer, skip link, focus. */
+.th>.th-3d.th-3d{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.2s var(--ease,ease)}
+.th>.th-3d.on{opacity:1}
+.th-3d canvas{display:block;width:100%!important;height:100%!important}
+.th-3d-wave{-webkit-mask-image:linear-gradient(transparent 35%,#000 70%,transparent 98%);mask-image:linear-gradient(transparent 35%,#000 70%,transparent 98%)}
+.th>.th-3d-globe.th-3d{bottom:auto;height:min(100vh,860px)}
+.th>.th-3d-globe.on{opacity:.55}
+.th-3d-globe{-webkit-mask-image:linear-gradient(#000 60%,transparent 96%);mask-image:linear-gradient(#000 60%,transparent 96%)}
+@media (max-width:1000px){.th>.th-3d-globe.th-3d{display:none}}
+.skip{position:absolute;left:12px;top:-60px;z-index:1000;padding:10px 14px;border-radius:10px;background:var(--ink);color:var(--bg);font-weight:500;transition:top .2s}
+.skip:focus{top:12px}
+:focus-visible{outline:2px solid var(--brand,#9D61FF);outline-offset:2px}
+.ft .about .mail a{color:inherit}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cmp tbody th{font-family:inherit;font-size:inherit;letter-spacing:normal;text-transform:none;color:var(--ink-2);font-weight:400}
