@@ -375,6 +375,36 @@ X-TryVox-To:           <E.164 TryVox number>`};
     bs.forEach((b,k)=>{b.addEventListener('click',()=>set(k));b.querySelector('.ut-p').addEventListener('animationend',()=>set((cur+1)%bs.length))});
     set(0);if(!reduce)watch([u],vis=>u.classList.toggle('run',vis),{threshold:.3})});
 
+
+  /* ---------- v5 product + solution layouts ---------- */
+  // hero layer stack: layers light up in turn, labels follow; hover a label to pick it
+  $$('.ah-stage').forEach(st=>{const sl=Array.from(st.querySelectorAll('.sl')),lb=Array.from(st.querySelectorAll('li[data-i]')),n=sl.length;let cur=n-1,hold=false;
+    const set=k=>{cur=k;sl.forEach(g=>g.classList.toggle('on',+g.dataset.i===k));lb.forEach(l=>l.classList.toggle('on',+l.dataset.i===k))};set(n-1);
+    lb.forEach(l=>{l.addEventListener('mouseenter',()=>{hold=true;set(+l.dataset.i)});l.addEventListener('mouseleave',()=>hold=false)});
+    if(!reduce)setInterval(()=>{if(!hold)set((cur+n-1)%n)},1900)});
+  // statement: words light up as you scroll
+  $$('.revp').forEach(rp=>{const ws=Array.from(rp.querySelectorAll('span'));SF.push(()=>{const r=rp.getBoundingClientRect(),p=reduce?1:clamp((innerHeight*.78-r.top)/(r.height+innerHeight*.15),0,1),k=Math.round(p*ws.length);ws.forEach((w,j)=>w.classList.toggle('on',j<k))})});
+  // panels: sticky index, panel focus, dark-to-light flip
+  $$('.pp').forEach(pp=>{const ps=Array.from(pp.querySelectorAll('.ppn')),ns=Array.from(pp.querySelectorAll('.pp-nav a'));
+    watch(ps,(v,t)=>{if(v)t.classList.add('on')},{threshold:.35});
+    SF.push(()=>{const mid=innerHeight*.5;let a=0;ps.forEach((x,j)=>{if(x.getBoundingClientRect().top<mid)a=j});ns.forEach((x,j)=>x.classList.toggle('on',j===a));
+      const flip=ps[Math.min(2,ps.length-1)];pp.classList.toggle('lite',flip.getBoundingClientRect().top<innerHeight*.55)})});
+  // industry picker
+  $$('.isel').forEach(d=>{const b=d.querySelector('.isel-b');const set=o=>{d.classList.toggle('open',o);b.setAttribute('aria-expanded',o)};
+    b.addEventListener('click',e=>{e.stopPropagation();set(!d.classList.contains('open'))});document.addEventListener('click',e=>{if(!d.contains(e.target))set(false)});document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false)})});
+  // benefit carousel: auto-advances while in view, pauses on hover
+  $$('.cr').forEach(cr=>{const tr=cr.querySelector('.cr-track'),cs=Array.from(tr.children),bs=Array.from(cr.querySelectorAll('.cr-bars button')),nb=cr.querySelector('.cr-n b');let cur=0,vis=false,hover=false;
+    const set=k=>{cur=k;const view=cr.querySelector('.cr-view'),max=Math.max(0,tr.scrollWidth-view.clientWidth+parseFloat(getComputedStyle(view).paddingLeft));tr.style.setProperty('--cx',-Math.min(cs[k].offsetLeft,max)+'px');cs.forEach((c,j)=>c.classList.toggle('on',j===k));bs.forEach((b,j)=>b.classList.toggle('on',j===k));nb.textContent=String(k+1).padStart(2,'0')};
+    bs.forEach((b,k)=>b.addEventListener('click',()=>set(k)));cr.addEventListener('mouseenter',()=>hover=true);cr.addEventListener('mouseleave',()=>hover=false);
+    set(0);watch([cr],v=>vis=v,{threshold:.3});if(!reduce)setInterval(()=>{if(vis&&!hover)set((cur+1)%cs.length)},3600);addEventListener('resize',()=>set(cur))});
+  // steps + growing columns
+  $$('.cl').forEach(cl=>{const it=Array.from(cl.querySelectorAll('.cl-i')),cols=Array.from(cl.querySelectorAll('.cl-col'));let cur=0;
+    const set=k=>{cur=k;it.forEach((x,j)=>x.classList.toggle('on',j===k));cols.forEach((c,j)=>c.classList.toggle('on',j<=k))};
+    it.forEach((x,k)=>{x.querySelector('button').addEventListener('click',()=>set(k));x.querySelector('.cl-p').addEventListener('animationend',()=>set((cur+1)%it.length))});
+    set(0);if(reduce)cols.forEach(c=>c.classList.add('on'));else watch([cl],v=>cl.classList.toggle('run',v),{threshold:.3})});
+  // logo groups
+  $$('.lg5').forEach(l=>{const bs=Array.from(l.querySelectorAll('.lg-tabs button')),ss=Array.from(l.querySelectorAll('.lg-set'));bs.forEach(b=>b.addEventListener('click',()=>{bs.forEach(x=>x.classList.toggle('on',x===b));ss.forEach(x=>x.classList.toggle('on',x.dataset.g===b.dataset.g))}))});
+
   /* ---------- footer ---------- */
   const fStt=$('#fStt'),states=['Ringing your agent','Connected · streaming','Call completed · events sent'];let fi=0;
   if(fStt&&!reduce)setInterval(()=>{fi=(fi+1)%states.length;fStt.textContent=states[fi]},2600);

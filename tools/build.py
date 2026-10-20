@@ -68,11 +68,19 @@ SOLUTIONS = [
 ]
 
 # ---------------------------------------------------------------- partials
+PV = {
+ "phone-numbers": '<div class="pv"><i class="pv-bar"></i><div class="pv-s"><i></i><b>Bengaluru</b></div><div class="pv-r"><b>+91 80 4718 2290</b><em class="g"></em></div><div class="pv-r"><b>+91 80 4718 3301</b><em class="g"></em></div><div class="pv-r"><b>1800 xxx xxxx</b><em></em></div></div>',
+ "sip-trunking": '<div class="pv"><i class="pv-bar"></i><div class="pv-r"><b>trunk-prod</b><em class="g"></em></div><div class="pv-m"><i style="--h:40%"></i><i style="--h:70%"></i><i style="--h:55%"></i><i style="--h:85%"></i><i style="--h:60%"></i><i style="--h:75%"></i><i style="--h:45%"></i></div><div class="pv-r"><b>30 channels</b><em class="p"></em></div></div>',
+ "voice-api": '<div class="pv"><i class="pv-bar"></i><div class="pv-code"><b>POST</b> /calls</div><div class="pv-chip">201 · queued</div><div class="pv-w"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>',
+ "ai-agents": '<div class="pv"><i class="pv-bar"></i><div class="pv-pr"><span class="on">Vapi</span><span>Retell</span><span>Bolna</span></div><div class="pv-r"><b>+91 80 4718 2290</b><em class="g"></em></div><div class="pv-tg"><i></i>Connected</div></div>',
+ "messaging": '<div class="pv"><i class="pv-bar"></i><div class="pv-b a">Here is your payment link</div><div class="pv-b c">Paid, thanks!</div><div class="pv-chip">read</div></div>',
+ "compliance": '<div class="pv"><i class="pv-bar"></i><div class="pv-k"><i></i>Business KYC</div><div class="pv-k"><i></i>Consent</div><div class="pv-k"><i></i>DLT entity</div></div>',
+}
+RCHEV = '<svg class="rch" viewBox="0 0 10 10" aria-hidden="true"><path d="M3.5 2l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>'
 def mega(title, items, base):
-    links = "".join(
-        f'<a href="/{base}/{slug}/"><span class="mi">{ICON[icon]}</span><span><span class="mt">{E(name)}</span><span class="md">{E(desc)}</span></span></a>'
-        for slug, name, icon, desc in items)
-    return links
+    if base == "products":
+        return "".join(f'<a class="mc" href="/{base}/{slug}/"><span class="mc-h"><span class="mc-i">{ICON[icon]}</span><b>{E(name)}</b>{RCHEV}</span><span class="mc-d">{E(desc)}</span><span class="mc-pv">{PV[slug]}</span></a>' for slug, name, icon, desc in items)
+    return "".join(f'<a class="mc so" href="/{base}/{slug}/"><span class="mc-i">{ICON[icon]}</span><span class="mc-h"><b>{E(name)}</b>{RCHEV}</span><span class="mc-d">{E(desc)}</span></a>' for slug, name, icon, desc in items)
 
 CHEV = '<svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>'
 SUN = '<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>'
@@ -86,9 +94,9 @@ def header():
     <a class="logo" href="/" aria-label="TryVox home"><svg viewBox="0 0 32 32" aria-hidden="true">{LOGO}</svg>TryVox</a>
     <ul class="nav">
       <li class="has-mega"><button class="nl" aria-expanded="false">Products {CHEV}</button>
-        <div class="mega"><p>Telephony for voice AI</p>{mega("Products", PRODUCTS, "products")}</div></li>
+        <div class="mega mega-p">{mega("Products", PRODUCTS, "products")}</div></li>
       <li class="has-mega"><button class="nl" aria-expanded="false">Solutions {CHEV}</button>
-        <div class="mega"><p>By industry</p>{mega("Solutions", SOLUTIONS, "solutions")}</div></li>
+        <div class="mega mega-s">{mega("Solutions", SOLUTIONS, "solutions")}</div></li>
       <li><a class="nl" href="/integrations/">Integrations</a></li>
       <li><a class="nl" href="/developers/">Developers</a></li>
       <li><a class="nl" href="/pricing/">Pricing</a></li>
@@ -791,21 +799,6 @@ def counters(items):
         out += f'<div class="ct4 rv"><p class="mlab">{E(lbl)}</p>{b}<p>{E(d)}</p></div>'
     return f'<div class="ct4s">{out}</div>'
 
-def page_product(slug):
-    D = P[slug]
-    name = next(n for s, n, _, _ in PRODUCTS if s == slug)
-    body = prhero([("Products", None), (name, None)], D["tag"], D["h1"], D["sub"], D["hero"])
-    body += partners()
-    body += tour("Product tour", "How " + E(name) + " <em>works.</em>", D["rows"])
-    body += vs4(VS[slug], name)
-    body += featgrid("Everything included", "Built for <em>production.</em>", FEAT[slug])
-    body += f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>Results</p><h2 class="hd h2">{D["rh2"]}</h2></div>{counters(D["res"] + [])}</section>'
-    if D.get("code"):
-        body += devsec(D["code"], D["note"])
-    body += faq(D["faq"])
-    body += related_products(slug)
-    return D["title"], D["desc"], body
-
 # ---------------------------------------------------------------- v4 solution layout: a call, start to finish
 def live_call(name, D):
     data = json.dumps({"msgs": D["hero"], "events": D["did"]}).replace("</", "<\\/")
@@ -857,15 +850,171 @@ def utabs(name, uses):
         panes += f'<div class="ut-v{" on" if i == 0 else ""}" data-i="{i}"><div class="ut-copy"><h3 class="hd">{h}</h3><p>{E(p)}</p></div><div class="ut-vis">{pm([name, t], feed(lines), pill("Live"))}</div></div>'
     return f'<section class="wrap sect tight ut"><div class="ctr rv"><p class="tag"><i></i>Use cases</p><h2 class="hd h2">Calls you can put on <em>autopilot.</em></h2></div><div class="ut-tabs rv" role="tablist">{tabs}</div><div class="ut-panes rv">{panes}</div></section>'
 
+# ---------------------------------------------------------------- v5: Arrakis-style product + solution layouts
+import math as _m
+
+LAYERS = {
+ "phone-numbers": ["Carrier network", "Number inventory", "Business KYC", "Routing", "Your AI agent"],
+ "sip-trunking": ["Phone network", "Carrier or BYOC", "Credentials + IP ACL", "Channel limits", "Your SIP stack"],
+ "voice-api": ["Phone network", "Calls API", "Webhooks", "VoxML flows", "Your code"],
+ "ai-agents": ["Phone network", "TryVox numbers", "Agent bindings", "SIP context headers", "Your AI agent"],
+ "messaging": ["Phone numbers", "WhatsApp Business", "DLT SMS", "Templates", "Your follow-ups"],
+ "compliance": ["Business KYC", "Consent records", "DLT registration", "Verified caller IDs", "Signed webhooks"],
+}
+STORY = {
+ "phone-numbers": ["Every agent needs a number people trust.", "TryVox gives you local, national and toll-free Indian numbers, verified online and routed in a click.", "Point them at an AI agent, a SIP trunk or your own code, and change your mind any time."],
+ "sip-trunking": ["Your voice stack speaks SIP. The phone network should too.", "TryVox trunks connect LiveKit, Asterisk or your PBX to Indian numbers with credentials, IP allow-lists and channel limits.", "Bring your own carrier or use ours, and get the same call events either way."],
+ "voice-api": ["Calls should be as programmable as the rest of your stack.", "One REST API places calls, a webhook reports every stage, and VoxML tells each call what to do.", "Recordings, conferences and live control are one request away."],
+ "ai-agents": ["You built the agent. Now give it a phone line.", "Bind any TryVox number to Vapi, Retell, ElevenLabs, LiveKit or Bolna in a few clicks, with no SIP configuration.", "Calls arrive with full context, and you can switch providers without changing numbers."],
+ "messaging": ["The best follow-up lands while the call is still fresh.", "Send WhatsApp messages, take WhatsApp calls and send DLT-ready SMS from the same account as your numbers.", "Track delivered and read events, and keep voice and messaging on one bill."],
+ "compliance": ["In India, compliance is part of every call.", "TryVox builds business KYC, consent records, DLT registration and verified caller IDs into the product.", "Your team ships campaigns, and the audit trail writes itself."],
+}
+
+def iso_stack(n=5):
+    s, t, gap = 150, 14, 42
+    c, sn = _m.cos(_m.pi / 6), _m.sin(_m.pi / 6)
+    P = lambda x, y, z: ((x - y) * c * s, (x + y) * sn * s - z)
+    pts = lambda L: " ".join(f"{P(*p)[0]:.1f},{P(*p)[1]:.1f}" for p in L)
+    g = ""
+    for k in range(n):
+        z0 = k * gap; z1 = z0 + t
+        top = pts([(0, 0, z1), (1, 0, z1), (1, 1, z1), (0, 1, z1)])
+        left = pts([(0, 1, z1), (1, 1, z1), (1, 1, z0), (0, 1, z0)])
+        right = pts([(1, 0, z1), (1, 1, z1), (1, 1, z0), (1, 0, z0)])
+        extra = ""
+        if k == n - 1:
+            for q in (1 / 3, 2 / 3):
+                a, b = P(q, 0.04, z1), P(q, 0.96, z1); extra += f'<line x1="{a[0]:.1f}" y1="{a[1]:.1f}" x2="{b[0]:.1f}" y2="{b[1]:.1f}" class="gl"/>'
+                a, b = P(0.04, q, z1), P(0.96, q, z1); extra += f'<line x1="{a[0]:.1f}" y1="{a[1]:.1f}" x2="{b[0]:.1f}" y2="{b[1]:.1f}" class="gl"/>'
+            core = pts([(.38, .38, z1), (.62, .38, z1), (.62, .62, z1), (.38, .62, z1)])
+            cx, cy = P(.5, .5, z1)
+            extra += f'<polygon points="{core}" class="core"/><ellipse cx="{cx:.1f}" cy="{cy:.1f}" rx="{s * .62:.1f}" ry="{s * .36:.1f}" class="orb"/>'
+            for ang in range(0, 360, 60):
+                r = _m.radians(ang); ox, oy = cx + _m.cos(r) * s * .62, cy + _m.sin(r) * s * .36
+                extra += f'<circle cx="{ox:.1f}" cy="{oy:.1f}" r="3" class="od" style="--d:{ang * 8}ms"/>'
+        g += f'<g class="sl" data-i="{k}"><polygon points="{left}" class="fl"/><polygon points="{right}" class="fr"/><polygon points="{top}" class="ft"/>{extra}</g>'
+    w = 2 * c * s + 20; h = s + (n - 1) * gap + t + 30
+    return f'<svg class="stk-svg" viewBox="{-w / 2:.0f} {-(n - 1) * gap - t - 14:.0f} {w:.0f} {h:.0f}" aria-hidden="true">{g}</svg>'
+
+def bracket(inner, cls=""):
+    return f'<div class="brk{(" " + cls) if cls else ""}"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i>{inner}</div>'
+
+def ahero(name, h1, sub, layers):
+    n = len(layers)
+    left = "".join(f'<li data-i="{n - 1 - j}"><svg viewBox="0 0 64 30" aria-hidden="true"><polygon points="32,2 62,15 32,28 2,15"/></svg><span>{n - j:02d}</span></li>' for j in range(n))
+    right = "".join(f'<li data-i="{n - 1 - j}">{E(layers[n - 1 - j])}</li>' for j in range(n))
+    return f'''<section class="ah">
+  <div class="ah-sky" aria-hidden="true"><i></i><i></i></div>
+  <div class="wrap ah-in">
+    {crumb([("Products", None), (name, None)])}
+    <p class="ah-k mono">{E(name)}</p>
+    <h1 class="hd split">{h1}</h1>
+    <p class="sub rv">{E(sub)}</p>
+    <div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn ghost" href="/contact/">Talk to sales</a></div>
+  </div>
+  <div class="ah-stage">
+    <ul class="ah-l">{left}</ul>
+    {bracket(iso_stack(n), "stk")}
+    <ul class="ah-r">{right}</ul>
+  </div>
+  <div class="wrap ah-rule" aria-hidden="true"></div>
+</section>'''
+
+def revp(lines):
+    p = "".join("<p>" + " ".join(f"<span>{E(w)}</span>" for w in ln.split()) + "</p>" for ln in lines)
+    ticks = "<i></i>" * 8
+    return f'<section class="rvs"><div class="rvs-t l" aria-hidden="true">{ticks}</div><div class="wrap rvs-in"><div class="revp">{p}</div></div><div class="rvs-t r" aria-hidden="true">{ticks}</div></section>'
+
+def isob(vis):
+    return f'''<div class="isob"><svg class="isob-w" viewBox="0 0 520 420" preserveAspectRatio="none" aria-hidden="true"><path d="M260 70 L470 190 L260 310 L50 190 Z"/><path d="M50 190 L50 250 L260 370 L470 250 L470 190"/><path d="M260 310 L260 370"/><path d="M260 0 V70 M260 370 V420 M50 250 V420 M470 250 V420" class="dash"/></svg><div class="isob-c">{vis}</div><i class="isob-g" aria-hidden="true"></i></div>'''
+
+def panels(items):
+    nav = "".join(f'<a href="#pp-{i}" data-i="{i}"{ON if i == 0 else ""}>{E(t)}</a>' for i, (t, h, p, ticks, v) in enumerate(items))
+    out = ""
+    for i, (t, h, p, ticks, v) in enumerate(items):
+        tk = "".join(f"<li>{E(x)}</li>" for x in (ticks or []))
+        out += f'''<article class="ppn" id="pp-{i}" data-i="{i}"><div class="ppn-b t"></div><div class="ppn-g">{isob(v)}<div class="ppn-c"><h2 class="hd">{h}</h2><div><p>{E(p)}</p><ul class="ticks">{tk}</ul></div></div></div><div class="ppn-b b"></div></article>'''
+    return f'<section class="pp"><div class="pp-in"><nav class="pp-nav mono" aria-label="On this page">{nav}</nav><div class="pp-list">{out}</div></div></section>'
+
+def trust(h2):
+    cells = [("01", "Business KYC"), ("02", "DLT-ready SMS"), ("03", "Consent records")]
+    c = "".join(f'<div><span>{a}</span><b class="mono">{E(b)}</b></div>' for a, b in cells)
+    shield = '<svg viewBox="0 0 120 140" aria-hidden="true"><defs><linearGradient id="shg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E9DDFF"/><stop offset=".45" stop-color="#9D61FF"/><stop offset="1" stop-color="#3B1C86"/></linearGradient><linearGradient id="shh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 124 60 134 C32 124 10 100 10 66 V24 Z" fill="url(#shg)"/><path d="M60 6 L60 134 C32 124 10 100 10 66 V24 Z" fill="url(#shh)" opacity=".35"/><path d="M40 70 l14 14 28-30" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    return f'<section class="tr5"><div class="wrap"><h2 class="hd h2 rv">{h2}</h2><div class="tr5-s rv">{shield}</div><div class="tr5-cells rv">{c}<a href="/products/compliance/"><span class="arr">[→]</span>Learn about compliance</a></div></div></section>'
+
+def page_product(slug):
+    D = P[slug]
+    name = next(n for s, n, _, _ in PRODUCTS if s == slug)
+    body = ahero(name, D["h1"], D["sub"], LAYERS[slug])
+    body += revp(STORY[slug])
+    body += panels(D["rows"] + [("Results", D["rh2"], D["res"][0][2] + " " + D["res"][2][2], [r[0] + ": " + r[1] for r in D["res"]], pm([name, "Overview"], rows([(E(r[0]), f'<b>{E(r[1])}</b>') for r in D["res"]]), pill("Live")))])
+    body += trust("Compliance and control, <em>built in.</em>")
+    if D.get("code"):
+        body += devsec(D["code"], D["note"])
+    body += faq(D["faq"])
+    body += related_products(slug)
+    return D["title"], D["desc"], body
+
+# ---------------------------------------------------------------- solutions (chemicals-style)
+def sel(name):
+    opts = "".join(f'<a href="/solutions/{s}/"{ON if n == name else ""}><i></i>{E(n)}</a>' for s, n, _, _ in SOLUTIONS)
+    return f'<div class="isel rv"><span class="isel-k mono">Industry</span><button type="button" class="isel-b mono" aria-expanded="false"><i></i>{E(name)}{CHEV}</button><div class="isel-m">{opts}</div></div>'
+
+def sx_hero(name, D):
+    parts = D["h1"].split("<em>")
+    h1 = f'<span class="mut">{parts[0]}</span><em>{parts[1]}' if len(parts) > 1 else D["h1"]
+    rd = "".join(f'<span>{E(k.upper())}:</span><b>{E(v)}</b>' for k, v in D["flow"])
+    ticks = "<i></i>" * 10
+    vis = f'''<div class="sx-alert"><span class="dot"></span><b>{E(name)} voice agent</b><span class="rev mono">Review</span><p><span class="live mono">Live</span>{D["result"]}</p></div>
+<div class="sx-frame">{bracket('<div class="sx-read mono">' + rd + '</div><div class="sxo" aria-hidden="true"><i></i><i></i><i></i><span class="ball"><svg viewBox="0 0 32 32">' + LOGO + '</svg></span></div>')}</div>'''
+    return f'''<section class="sx">
+  <div class="wrap sx-box"><div class="sx-grid">
+    <div class="sx-l">{crumb([("Solutions", None), (name, None)])}<h1 class="hd split">{h1}</h1><p class="sub rv">{E(D["sub"])}</p><div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn" href="/contact/">Talk to sales</a></div>{sel(name)}</div>
+    <div class="sx-rule" aria-hidden="true">{ticks}</div>
+    <div class="sx-r rv">{vis}</div>
+  </div></div>
+</section>'''
+
+def carousel(h2, cards):
+    cs = "".join(f'<div class="cr-c"><span class="cr-i">{bracket(i)}</span><p>{t}</p></div>' for i, t in cards)
+    bars = "".join(f'<button type="button" aria-label="Card {k + 1}"{ON if k == 0 else ""}></button>' for k in range(len(cards)))
+    return f'<section class="cr"><div class="wrap"><h2 class="hd cr-h rv">{h2}</h2></div><div class="cr-view"><div class="cr-track">{cs}</div></div><div class="wrap cr-nav"><span class="cr-bars">{bars}</span><span class="mono cr-n"><b>01</b> / {len(cards):02d}</span></div></section>'
+
+def climb(flow, did_):
+    acc = ""
+    for i, (k, v) in enumerate(flow):
+        ev = did_[i] if i < len(did_) else ""
+        acc += f'<div class="cl-i{" on" if i == 0 else ""}" data-i="{i}"><button type="button"><span class="mono">{i + 1:02d}</span>{E(k)}</button><div class="cl-d"><p><b>{E(v)}.</b> {ev}</p><i class="cl-p"></i></div></div>'
+    counts = [1, 3, 5, 8]
+    cols = ""
+    for i, (k, v) in enumerate(flow):
+        blocks = "".join(f'<i style="--j:{j}"></i>' for j in range(counts[i % 4]))
+        cols += f'<div class="cl-col" data-i="{i}"><span class="cl-t">{E(k)}</span><div class="cl-st">{blocks}</div></div>'
+    return f'''<section class="cl" data-step="0"><div class="wrap cl-g">
+  <div><h2 class="hd h2">From first call <em>to full scale.</em></h2><div class="cl-acc">{acc}</div></div>
+  <div class="cl-chart"><span class="cl-y mono">Value</span><div class="cl-cols">{cols}</div></div>
+</div></section>'''
+
+def logos5():
+    def lg(k):
+        if k in LOGOIMG:
+            n, w = LOGOIMG[k]
+            return f'<span class="lg-c"><img src="/assets/logos/{k}.svg" alt="{n}" width="{w}" height="22"></span>'
+        return f'<span class="lg-c"><em>{E(k)}</em></span>'
+    groups = [("Agent platforms", ["vapi", "retell", "livekit", "bolna", "ElevenLabs"]), ("Voice stack", ["Deepgram", "Amazon Polly", "ElevenLabs", "LiveKit SIP", "Any PBX"]), ("Channels", ["WhatsApp", "DLT SMS", "Toll-free", "SIP trunks", "VoxML"])]
+    tabs = "".join(f'<button type="button" data-g="{i}"{ON if i == 0 else ""}><i></i>{E(n)}</button>' for i, (n, _) in enumerate(groups))
+    sets = "".join(f'<div class="lg-set{" on" if i == 0 else ""}" data-g="{i}"><div class="lg-run">' + "".join(lg(k) for k in ks * 2) + "</div></div>" for i, (n, ks) in enumerate(groups))
+    return f'<section class="wrap sect tight lg5"><div class="lg5-g"><div class="lg-frame rv">{bracket(sets)}</div><div class="rv"><h2 class="hd h2">TryVox works with <em>the stack you already run.</em></h2><div class="lg-tabs mono">{tabs}</div></div></div></section>'
+
 def page_solution(slug):
     D = S[slug]
     name = next(n for s, n, _, _ in SOLUTIONS if s == slug)
-    body = shero([("Solutions", None), (name, None)], name, D["h1"], D["sub"], live_call(name, D))
-    body += partners()
-    body += pains(D["ph2"], D["pcols"])
-    body += hpin("One call, <em>start to finish.</em>", D["flow"], D["did"])
-    body += utabs(name, D["uses"])
-    body += f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>Built for production</p><h2 class="hd h2">Infrastructure your customers <em>never notice.</em></h2></div>{counters([("Response time", "<200ms", "Platform response time, so callers never wait."), ("Platform uptime", "99.9%", "Telephony that stays up while campaigns run."), ("Availability", "24/7", "Your agent answers at 3 AM like it does at noon.")])}</section>'
+    body = sx_hero(name, D)
+    cards = [(ICON["phone"], E(D["uses"][0][2])), (ICON["route"], E(D["uses"][1][2])), (ICON["mail"], E(D["uses"][2][2])), (ICON["eye"], "Every call logged with events, records and optional recordings"), (ICON["shield"], "Compliance built in: business KYC, consent records and DLT-ready SMS")]
+    statement = re.sub(r"</?em>", "", D["ph2"])
+    body += carousel(E(statement), cards)
+    body += climb(D["flow"], D["did"])
+    body += logos5()
     body += faq(D["faq"])
     prods = [next(p for p in PRODUCTS if p[0] == ps) for ps in D["prods"]]
     body += related("What you'll <em>use.</em>", [(i, n, d, f"/products/{s}/") for s, n, i, d in prods])
