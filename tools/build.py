@@ -600,21 +600,6 @@ P["compliance"] = dict(
       ("How do verified caller IDs work?", "You verify that you own a number, then use it as the caller ID on outbound calls."),
       ("Can I record consent for the people I call?", "Yes. Store consent per contact and respect withdrawals.")])
 
-def page_product(slug):
-    D = P[slug]
-    name = next(n for s, n, _, _ in PRODUCTS if s == slug)
-    body = hero3([("Products", None), (name, None)], D["tag"], D["h1"], D["sub"], D["hero"])
-    body += partners()
-    body += problem(D["ptag"], D["ph2"], D["pcols"], D["pwide"])
-    body += rowsec(D["rows"])
-    body += steps3("How it works", "Live in <em>three steps.</em>", D["steps"])
-    body += results("Built for production", D["rh2"], D["res"])
-    if D.get("code"):
-        body += devsec(D["code"], D["note"])
-    body += faq(D["faq"])
-    body += related_products(slug)
-    return D["title"], D["desc"], body
-
 # ---------------------------------------------------------------- solution content
 S = {}
 S["financial-services"] = dict(title="AI Voice Calling for Banks, NBFCs and Fintech in India | TryVox",
@@ -732,17 +717,155 @@ S["travel-hospitality"] = dict(title="AI Phone Agents for Hotels and Travel Comp
       ("Can I confirm bookings by message?", "Yes, by SMS or WhatsApp from the same account."),
       ("Does the agent work at night?", "Yes. Calls to a bound number reach your agent 24/7.")])
 
+# ---------------------------------------------------------------- v4 product layout: interactive product tour
+FEAT = {
+ "phone-numbers": [("search", "Search", "Search and buy instantly", "Find numbers by city or type from the dashboard or the API."), ("id", "KYC", "Online business KYC", "Verification before numbers go live, without paperwork loops."), ("route", "Routing", "Route anywhere", "AI agent, SIP trunk or VoxML call flow, switched any time."), ("phone", "Caller ID", "Verified caller IDs", "Outbound calls that show a number people trust."), ("bot", "Agents", "Bind to an AI agent", "Vapi, Retell, ElevenLabs, LiveKit or Bolna in a few clicks."), ("eye", "Events", "Call events per number", "Status callbacks and call records for every line.")],
+ "sip-trunking": [("sip", "Trunks", "Inbound + outbound trunks", "Both directions on one trunk, from the dashboard or API."), ("key", "Credentials", "Credentials you control", "Generate and rotate SIP credentials per trunk."), ("shield", "IP ACL", "IP access lists", "Accept calls only from the ranges you trust."), ("flow", "Channels", "Channel limits", "Cap concurrent calls so one campaign can't starve another."), ("globe", "BYOC", "Bring your own carrier", "Keep existing routes and rates with TryVox on top."), ("bot", "Any stack", "Works with any SIP stack", "LiveKit, Asterisk, FreeSWITCH or your PBX.")],
+ "voice-api": [("wave", "Calls", "Make and list calls", "One request per call, or a list for bulk."), ("hook", "Webhooks", "Webhooks for every stage", "Ring, answer, status and hangup, signed."), ("flow", "VoxML", "VoxML call flows", "Say, Gather, Dial, Stream and more."), ("users", "Conference", "Conferences", "Callers, agents and people on one call."), ("rec", "Record", "Recordings", "Record calls and fetch them through the API."), ("bolt", "Control", "Live call control", "Act on calls in progress, or hang up.")],
+ "ai-agents": [("bot", "Providers", "Five agent platforms", "Vapi, Retell, ElevenLabs, LiveKit and Bolna."), ("bolt", "Setup", "No SIP to configure", "Bind a number in a few clicks."), ("route", "Routing", "One number, one agent", "Predictable routing you can reason about."), ("code", "Headers", "Context in SIP headers", "Direction, provider, caller and number."), ("flow", "Fallback", "Clean fallback", "Remove a binding and other routing takes over."), ("eye", "Records", "Same call records", "Agent calls get the same events and recordings.")],
+ "messaging": [("chat", "WhatsApp", "WhatsApp messaging", "Send and receive messages in one place."), ("phone", "Calling", "WhatsApp calling", "Take WhatsApp calls next to your numbers."), ("doc", "Templates", "Templates", "Manage and track approved templates."), ("mail", "SMS", "DLT-ready SMS", "OTPs, alerts and reminders under DLT rules."), ("hook", "Events", "Delivery events", "Know what was delivered and read."), ("rupee", "Billing", "One account, one bill", "Voice and messaging, pay as you go.")],
+ "compliance": [("id", "KYC", "Business KYC", "Online verification before numbers go live."), ("users", "Consent", "Consent records", "Consent stored per contact."), ("mail", "DLT", "DLT registration", "Entity and template workflows for SMS."), ("phone", "Caller ID", "Verified caller IDs", "Verify the numbers you call from."), ("eye", "Audit", "Audit trail", "An event record for every call and message."), ("shield", "Security", "Signed webhooks", "Callbacks signed with your secret.")],
+}
+VS = {
+ "phone-numbers": [("Days of KYC emails", "Online KYC, live in minutes"), ("A carrier ticket to re-route", "Re-route from the dashboard"), ("An unfamiliar caller ID", "A local number in every city"), ("One vendor per number type", "Local, national and toll-free together")],
+ "sip-trunking": [("Weeks of carrier onboarding", "A trunk created in one form"), ("Open trunks and toll fraud", "Credentials and IP access lists"), ("No cap on concurrency", "Channel limits per trunk"), ("Locked into one carrier", "Bring your own carrier")],
+ "voice-api": [("Calls you can't see", "A webhook at every stage"), ("An IVR stuck in a vendor console", "Call flows in VoxML"), ("Glue code for recordings", "Recordings through the API"), ("Custom auth schemes", "HTTP Basic with two keys")],
+ "ai-agents": [("Weeks waiting on telephony", "Agent live in a few clicks"), ("Numbers locked in one platform", "Switch providers, keep numbers"), ("SIP setup for every agent", "No SIP configuration"), ("The agent starts blind", "Caller context in SIP headers")],
+ "messaging": [("Links read out on the call", "Link on WhatsApp as the call ends"), ("Two vendors, two bills", "Voice and messaging, one bill"), ("SMS blocked for DLT", "DLT-ready templates"), ("No idea if it was read", "Delivered and read events")],
+ "compliance": [("Consent in spreadsheets", "Consent stored per contact"), ("Paper KYC loops", "Online business KYC"), ("Unverified caller IDs", "Verified caller IDs"), ("Unsigned callbacks", "Webhooks signed with your secret")],
+}
+
+def tilt(inner): return f'<div class="tilt"><div class="tilt-in">{inner}<i class="glare" aria-hidden="true"></i></div></div>'
+
+def prhero(crumbs, tag, h1, sub, visual):
+    return f'''<section class="ph4 wrap">
+  <div class="ph4-grid">
+    <div class="ph4-copy">
+      {crumb(crumbs)}
+      <p class="tag"><i></i>{E(tag)}</p>
+      <h1 class="hd split">{h1}</h1>
+      <p class="sub rv">{{sub}}</p>
+      <div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn" href="/contact/">Talk to sales</a></div>
+      <div class="micro rv"><span>No lock-in</span><span>Pay per minute</span><span>Live in minutes</span></div>
+    </div>
+    <div class="ph4-vis rv">{tilt(visual)}</div>
+  </div>
+</section>'''.replace("{sub}", E(sub))
+
+def tour(tag, h2, items):
+    txt = ""
+    vis = ""
+    for i, (t, h3, p, ticks, v) in enumerate(items):
+        tk = "".join(f"<li>{E(x)}</li>" for x in (ticks or []))
+        txt += f'<div class="tr4{" on" if i == 0 else ""}" data-i="{i}"><span class="tr4-n">{i + 1:02d}</span><p class="tag"><i></i>{E(t)}</p><h3 class="hd">{h3}</h3><p class="tr4-p">{E(p)}</p><ul class="ticks">{tk}</ul><div class="tr4-m">{v}</div></div>'
+        vis += f'<div class="tv4{" on" if i == 0 else ""}" data-i="{i}">{v}</div>'
+    return f'''<section class="wrap sect tight tour4">
+  <div class="ctr rv"><p class="tag"><i></i>{E(tag)}</p><h2 class="hd h2">{h2}</h2></div>
+  <div class="t4-grid">
+    <div class="t4-stage"><div class="t4-sticky"><div class="t4-frame">{vis}</div><div class="t4-prog"><b></b></div></div></div>
+    <div class="t4-list">{txt}</div>
+  </div>
+</section>'''
+
+def vs4(items, name):
+    li = "".join(f'<li style="--d:{i * 70}ms"><span class="vs-a">{E(a)}</span><span class="vs-b">{E(b)}</span></li>' for i, (a, b) in enumerate(items))
+    return f'''<section class="wrap sect tight"><div class="vs4 with rv">
+  <div class="vs-copy"><p class="tag"><i></i>Before and after</p><h2 class="hd h2">Flip the switch on <em>{E(name)}.</em></h2><p class="sub">See what changes when your phone layer runs on TryVox.</p>
+  <button class="vs-t" type="button" role="switch" aria-checked="true"><span class="vs-l">Without</span><span class="vs-k"><i></i></span><span class="vs-r">With TryVox</span></button></div>
+  <ul class="vs-list">{li}</ul>
+</div></section>'''
+
+def featgrid(tag, h2, items):
+    cells = "".join(f'<div class="cell rv" style="transition-delay:{(i % 3) * 80}ms"><span class="k">{ic(icn)}<span>{E(k)}</span></span><h3>{E(t)}</h3><p>{E(d)}</p></div>' for i, (icn, k, t, d) in enumerate(items))
+    return f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>{E(tag)}</p><h2 class="hd h2">{h2}</h2></div><div class="grid3 g4">{cells}</div></section>'
+
+def counters(items):
+    out = ""
+    for lbl, v, d in items:
+        import re as _re
+        m = _re.match(r"^([^0-9]*)([0-9.]+)(.*)$", v)
+        if m:
+            b = f'<b class="cnt" data-pre="{E(m.group(1))}" data-to="{m.group(2)}" data-suf="{E(m.group(3))}">{E(v)}</b>'
+        else:
+            b = f"<b>{E(v)}</b>"
+        out += f'<div class="ct4 rv"><p class="mlab">{E(lbl)}</p>{b}<p>{E(d)}</p></div>'
+    return f'<div class="ct4s">{out}</div>'
+
+def page_product(slug):
+    D = P[slug]
+    name = next(n for s, n, _, _ in PRODUCTS if s == slug)
+    body = prhero([("Products", None), (name, None)], D["tag"], D["h1"], D["sub"], D["hero"])
+    body += partners()
+    body += tour("Product tour", "How " + E(name) + " <em>works.</em>", D["rows"])
+    body += vs4(VS[slug], name)
+    body += featgrid("Everything included", "Built for <em>production.</em>", FEAT[slug])
+    body += f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>Results</p><h2 class="hd h2">{D["rh2"]}</h2></div>{counters(D["res"] + [])}</section>'
+    if D.get("code"):
+        body += devsec(D["code"], D["note"])
+    body += faq(D["faq"])
+    body += related_products(slug)
+    return D["title"], D["desc"], body
+
+# ---------------------------------------------------------------- v4 solution layout: a call, start to finish
+def live_call(name, D):
+    data = json.dumps({"msgs": D["hero"], "events": D["did"]}).replace("</", "<\\/")
+    bars = "<i></i>" * 24
+    return f'''<div class="lc rv" data-live>
+  <div class="lc-call">
+    <div class="lc-top"><span class="lc-av"><svg viewBox="0 0 32 32" aria-hidden="true">{LOGO}</svg></span><span class="lc-who"><b>{E(name)} line</b><small>+91 80 4718 2290</small></span><span class="lc-t mlcd">00:00</span></div>
+    <div class="lc-wave" aria-hidden="true">{bars}</div>
+    <div class="lc-feed mfeed" aria-live="polite"></div>
+    <button class="lc-re" type="button">Replay call</button>
+  </div>
+  <div class="lc-log"><p class="duo-t">What TryVox did</p><ul class="did lc-ev"></ul><div class="lc-done">{pill("Done")}<p>{D["result"]}</p></div></div>
+  <script type="application/json" class="lc-data">{data}</script>
+</div>'''
+
+def shero(crumbs, tag, h1, sub, stage):
+    return f'''<section class="sh4">
+  <div class="wrap sh4-in">
+    {crumb(crumbs)}
+    <p class="tag"><i></i>{E(tag)}</p>
+    <h1 class="hd split">{h1}</h1>
+    <p class="sub rv">{E(sub)}</p>
+    <div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn" href="/contact/">Talk to sales</a></div>
+  </div>
+  <div class="wrap sh4-stage">{stage}</div>
+</section>'''
+
+def pains(h2, cols):
+    c = "".join(f'<div class="pn4 rv" style="transition-delay:{i * 90}ms"><span class="pn4-n">0{i + 1}</span><h3>{E(t)}</h3><p>{E(d)}</p></div>' for i, (t, d) in enumerate(cols))
+    return f'<section class="wrap sect tight"><div class="pn4-head rv"><p class="tag"><i></i>The challenge</p><h2 class="hd h2">{h2}</h2></div><div class="pn4s">{c}</div></section>'
+
+def hpin(h2, flow, events):
+    cards = ""
+    for i, (k, v) in enumerate(flow):
+        ev = events[i] if i < len(events) else ""
+        cards += f'<div class="hp-c" data-i="{i}"><span class="hp-n">{i + 1:02d}</span><p class="tag"><i></i>{E(k)}</p><h3>{E(v)}</h3><div class="hp-ev">{ev}</div></div>'
+    return f'''<section class="hp" style="--n:{len(flow)}">
+  <div class="hp-stick">
+    <div class="wrap hp-head"><div><p class="tag"><i></i>Call flow</p><h2 class="hd h2">{h2}</h2></div><span class="hp-count mono"><b>01</b> / {len(flow):02d}</span></div>
+    <div class="hp-rail wrap"><div class="hp-line"><i></i></div></div>
+    <div class="hp-view"><div class="hp-track">{cards}</div></div>
+  </div>
+</section>'''
+
+def utabs(name, uses):
+    tabs = "".join(f'<button type="button" role="tab" class="ut-b{" on" if i == 0 else ""}" data-i="{i}"><span>{E(t)}</span><i class="ut-p"></i></button>' for i, (t, h, p, lines) in enumerate(uses))
+    panes = ""
+    for i, (t, h, p, lines) in enumerate(uses):
+        panes += f'<div class="ut-v{" on" if i == 0 else ""}" data-i="{i}"><div class="ut-copy"><h3 class="hd">{h}</h3><p>{E(p)}</p></div><div class="ut-vis">{pm([name, t], feed(lines), pill("Live"))}</div></div>'
+    return f'<section class="wrap sect tight ut"><div class="ctr rv"><p class="tag"><i></i>Use cases</p><h2 class="hd h2">Calls you can put on <em>autopilot.</em></h2></div><div class="ut-tabs rv" role="tablist">{tabs}</div><div class="ut-panes rv">{panes}</div></section>'
+
 def page_solution(slug):
     D = S[slug]
     name = next(n for s, n, _, _ in SOLUTIONS if s == slug)
-    hero = pm([name, "Live call"], feed(D["hero"]), pill("Live"))
-    wide = pm([name, "Call"], duo("Conversation", feed(D["convo"]), "What TryVox did", did(D["did"], D["result"])), pill("Completed"))
-    body = hero3([("Solutions", None), (name, None)], name, D["h1"], D["sub"], hero)
+    body = shero([("Solutions", None), (name, None)], name, D["h1"], D["sub"], live_call(name, D))
     body += partners()
-    body += problem("The challenge", D["ph2"], D["pcols"], wide)
-    body += rowsec([(t, h, p, None, pm([name, t], feed(lines))) for t, h, p, lines in D["uses"]])
-    body += steps3("Call flow", "One call, <em>start to finish.</em>", [(f"{k}", v) for k, v in D["flow"]])
-    body += results("Built for production", "Infrastructure your customers <em>never notice.</em>", STD_RESULTS)
+    body += pains(D["ph2"], D["pcols"])
+    body += hpin("One call, <em>start to finish.</em>", D["flow"], D["did"])
+    body += utabs(name, D["uses"])
+    body += f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>Built for production</p><h2 class="hd h2">Infrastructure your customers <em>never notice.</em></h2></div>{counters([("Response time", "<200ms", "Platform response time, so callers never wait."), ("Platform uptime", "99.9%", "Telephony that stays up while campaigns run."), ("Availability", "24/7", "Your agent answers at 3 AM like it does at noon.")])}</section>'
     body += faq(D["faq"])
     prods = [next(p for p in PRODUCTS if p[0] == ps) for ps in D["prods"]]
     body += related("What you'll <em>use.</em>", [(i, n, d, f"/products/{s}/") for s, n, i, d in prods])

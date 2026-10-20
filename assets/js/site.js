@@ -328,6 +328,53 @@ X-TryVox-To:           <E.164 TryVox number>`};
   }
 
 
+
+  /* ---------- inner pages: motion + micro-interactions ---------- */
+  const watch=(nodes,cb,opt)=>{const o=new IntersectionObserver(es=>es.forEach(e=>cb(e.isIntersecting,e.target)),opt||{threshold:.25});nodes.forEach(n=>o.observe(n))};
+  // headline words rise in
+  $$('.split').forEach(h=>{if(reduce)return;let i=0;const walk=n=>{Array.from(n.childNodes).forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();c.textContent.split(/(\s+)/).forEach(t=>{if(!t)return;if(/^\s+$/.test(t)){f.append(t);return}const w=document.createElement('span');w.className='w';const s=document.createElement('span');s.textContent=t;s.style.setProperty('--i',i++);w.append(s);f.append(w)});c.replaceWith(f)}else if(c.nodeType===1)walk(c)})};walk(h)});
+  // panel tilt + glare that follows the pointer
+  if(matchMedia('(hover:hover) and (pointer:fine)').matches&&!reduce)$$('.tilt').forEach(t=>{const inn=t.querySelector('.tilt-in');
+    t.addEventListener('pointermove',e=>{const r=t.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;inn.style.setProperty('--ry',((x-.5)*7).toFixed(2)+'deg');inn.style.setProperty('--rx',((.5-y)*6).toFixed(2)+'deg');inn.style.setProperty('--mx',(x*100)+'%');inn.style.setProperty('--my',(y*100)+'%')});
+    t.addEventListener('pointerleave',()=>{inn.style.setProperty('--rx','0deg');inn.style.setProperty('--ry','0deg')})});
+  // product tour: sticky panel follows the step in view
+  $$('.tour4').forEach(sec=>{const its=Array.from(sec.querySelectorAll('.tr4')),vs=Array.from(sec.querySelectorAll('.tv4')),pr=sec.querySelector('.t4-prog'),list=sec.querySelector('.t4-list');let cur=-1;
+    const set=k=>{if(k===cur)return;cur=k;its.forEach((x,j)=>x.classList.toggle('on',j===k));vs.forEach((x,j)=>x.classList.toggle('on',j===k))};set(0);
+    SF.push(()=>{const mid=innerHeight*.5;let a=0;its.forEach((x,j)=>{if(x.getBoundingClientRect().top<mid)a=j});set(a);const r=list.getBoundingClientRect();pr.style.setProperty('--tp',(clamp((mid-r.top)/r.height,0,1)*100).toFixed(1)+'%')})});
+  // before/after switch: flips itself once on first view, then it's yours
+  $$('.vs4').forEach(v=>{const b=v.querySelector('.vs-t');const set=on=>{v.classList.toggle('with',on);b.setAttribute('aria-checked',on)};
+    b.addEventListener('click',()=>set(!v.classList.contains('with')));
+    if(!reduce&&v.getBoundingClientRect().top>innerHeight){set(false);let done=false;watch([v],vis=>{if(vis&&!done){done=true;setTimeout(()=>set(true),700)}},{threshold:.5})}});
+  // counters
+  const cs=$$('.cnt[data-to]');
+  if(cs.length&&!reduce)watch(cs,(vis,n)=>{if(!vis||n.dataset.run)return;n.dataset.run=1;const to=+n.dataset.to,dec=(n.dataset.to.split('.')[1]||'').length,t0=performance.now();
+    const f=t=>{const k=clamp((t-t0)/1400,0,1),v=to*(1-Math.pow(1-k,3));n.textContent=n.dataset.pre+v.toFixed(dec)+n.dataset.suf;if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)},{threshold:.6});
+  // solution hero: the call plays itself, events land as it goes
+  $$('.lc').forEach(lc=>{const D=JSON.parse(lc.querySelector('.lc-data').textContent),feed=lc.querySelector('.lc-feed'),ev=lc.querySelector('.lc-ev'),tm=lc.querySelector('.lc-t'),bars=Array.from(lc.querySelectorAll('.lc-wave i'));
+    let timers=[],clock=null,talk=null,sec=0,started=false;const later=(f,ms)=>timers.push(setTimeout(f,ms));
+    const wave=on=>{clearInterval(talk);if(!on||reduce){bars.forEach(b=>b.style.height='12%');return}talk=setInterval(()=>bars.forEach(b=>b.style.height=(12+Math.random()*80)+'%'),140)};
+    const addMsg=(c,t)=>{const d=document.createElement('div');d.className='msg '+c;d.textContent=t;feed.append(d)};
+    const addEv=h=>{const li=document.createElement('li');const s=document.createElement('span');s.innerHTML=h;li.append(s);ev.append(li)};
+    function play(){timers.forEach(clearTimeout);timers=[];clearInterval(clock);feed.innerHTML='';ev.innerHTML='';lc.classList.remove('ended');sec=0;tm.textContent='00:00';
+      if(reduce){D.msgs.forEach(m=>addMsg(m[0],m[1]));D.events.forEach(addEv);lc.classList.add('ended');return}
+      clock=setInterval(()=>{sec++;tm.textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')},1000);
+      let t=300;const per=D.events.length/D.msgs.length;let e=0;
+      D.msgs.forEach((m,i)=>{const speak=m[0]!=='ev';if(speak){later(()=>{const ty=document.createElement('div');ty.className='msg typing '+m[0];ty.innerHTML='<i></i><i></i><i></i>';feed.append(ty);wave(true)},t);t+=750}
+        later(()=>{const ty=feed.querySelector('.typing');if(ty)ty.remove();addMsg(m[0],m[1]);wave(false);while(e<Math.round((i+1)*per)&&e<D.events.length){addEv(D.events[e]);e++}},t);t+=speak?1100:600});
+      later(()=>{while(e<D.events.length){addEv(D.events[e]);e++}clearInterval(clock);lc.classList.add('ended')},t+300)}
+    lc.querySelector('.lc-re').addEventListener('click',play);
+    watch([lc],vis=>{if(vis&&!started){started=true;play()}},{threshold:.3})});
+  // pinned horizontal call flow
+  $$('.hp').forEach(hp=>{const tr=hp.querySelector('.hp-track'),cards=Array.from(hp.querySelectorAll('.hp-c')),cnt=hp.querySelector('.hp-count b'),line=hp.querySelector('.hp-line');
+    SF.push(()=>{const r=hp.getBoundingClientRect(),p=clamp(-r.top/(r.height-innerHeight),0,1),last=cards[cards.length-1],max=Math.max(0,last.offsetLeft+last.offsetWidth+parseFloat(getComputedStyle(tr).paddingLeft)-innerWidth);
+      tr.style.setProperty('--tx',(-p*max).toFixed(1)+'px');line.style.setProperty('--hp',(p*100).toFixed(1)+'%');
+      const a=Math.min(cards.length-1,Math.round(p*(cards.length-1)));cards.forEach((c,j)=>c.classList.toggle('on',j===a));cnt.textContent=String(a+1).padStart(2,'0')})});
+  // use-case tabs with auto-advance
+  $$('.ut').forEach(u=>{const bs=Array.from(u.querySelectorAll('.ut-b')),vs=Array.from(u.querySelectorAll('.ut-v'));let cur=0;
+    const set=k=>{cur=k;bs.forEach((b,j)=>{b.classList.toggle('on',j===k);b.setAttribute('aria-selected',j===k)});vs.forEach((v,j)=>v.classList.toggle('on',j===k))};
+    bs.forEach((b,k)=>{b.addEventListener('click',()=>set(k));b.querySelector('.ut-p').addEventListener('animationend',()=>set((cur+1)%bs.length))});
+    set(0);if(!reduce)watch([u],vis=>u.classList.toggle('run',vis),{threshold:.3})});
+
   /* ---------- footer ---------- */
   const fStt=$('#fStt'),states=['Ringing your agent','Connected · streaming','Call completed · events sent'];let fi=0;
   if(fStt&&!reduce)setInterval(()=>{fi=(fi+1)%states.length;fStt.textContent=states[fi]},2600);
