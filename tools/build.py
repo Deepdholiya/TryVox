@@ -374,7 +374,7 @@ def provgrid(on="vapi"):
 
 def hero3(crumbs, tag, h1, sub, visual, primary=("Start free", APP), secondary=("Talk to sales", "/contact/"), micro=("No lock-in", "Pay per minute", "Live in minutes")):
     m = "".join(f"<span>{E(x)}</span>" for x in micro)
-    return f'''<section class="h3 wrap">
+    return f'''<section class="th h3t">{thf()}<div class="h3 wrap">
   <div class="h3-grid">
     <div class="h3-copy">
       {crumb(crumbs)}
@@ -386,7 +386,7 @@ def hero3(crumbs, tag, h1, sub, visual, primary=("Start free", APP), secondary=(
     </div>
     <div class="h3-vis rv">{visual}</div>
   </div>
-</section>'''
+</div></section>'''
 
 def problem(tag, h2, cols, wide):
     c = "".join(f'<div class="pc rv"><h3>{E(t)}</h3><p>{E(d)}</p></div>' for t, d in cols)
@@ -910,7 +910,7 @@ def ahero(name, h1, sub, layers):
     <p class="ah-k mono">{E(name)}</p>
     <h1 class="hd split">{h1}</h1>
     <p class="sub rv">{E(sub)}</p>
-    <div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn ghost" href="/contact/">Talk to sales</a></div>
+    <div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn" href="/contact/">Talk to sales</a></div>
   </div>
   <div class="ah-stage">
     <ul class="ah-l">{left}</ul>
@@ -1022,9 +1022,9 @@ def page_developers():
 def page_integrations():
     idx = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
     i = idx.index('<section class="integ" id="integrations"'); j = idx.index("</section>", i) + 10
-    wall = idx[i:j].replace('<h2 class="hd h2" style="margin-top:20px">', '<h1 class="hd h2" style="margin-top:20px">', 1).replace("</em></h2>", "</em></h1>", 1)
+    wall = idx[i:j]
     wall = wall.replace('<a class="obtn" href="/integrations/">See all integrations</a>', f'<a class="obtn" href="{DOCS}/ai-agents">Browse integration docs ↗</a>')
-    wall = wall.replace('<div class="integ-copy rv">', '<div class="integ-copy rv">' + crumb([("Integrations", None)]), 1)
+
     provs = [("Vapi", "vapi"), ("Retell", "retell"), ("ElevenLabs", "elevenlabs"), ("LiveKit", "livekit"), ("Bolna", "bolna")]
     def lg(s, n):
         if s in LOGOIMG:
@@ -1032,7 +1032,8 @@ def page_integrations():
         return f"<em>{n}</em>"
     t = "".join(f'<a class="tile rv" href="{DOCS}/ai-agents/{s}"><span class="tl-i">{lg(s, n)}</span><b>{n}</b><small>Bind a TryVox number to your {n} agent.</small><span class="go">↗</span></a>' for n, s in provs)
     t += f'<a class="tile rv" href="{DOCS}/byoc"><span class="tl-i">{ICON["sip"]}</span><b>Any SIP stack</b><small>Connect your PBX, or bring your own carrier.</small><span class="go">↗</span></a>'
-    body = wall
+    body = hero3([("Integrations", None)], "Integrations", "Connect any agent to <em>a real phone line.</em>", "Bind a TryVox number to Vapi, Retell, ElevenLabs, LiveKit or Bolna in a few clicks, or connect any SIP stack. No deployment, no SIP configuration.", pm(["AI agents", "Connect number"], provgrid() + rows([("Number", '<span class="mono">+91 80 4718 2290</span>'), ("Status", pill("Connected"))])), secondary=("Read the docs", DOCS + "/ai-agents"))
+    body += wall
     body += f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>Agent platforms</p><h2 class="hd h2">Setup guides for <em>every provider.</em></h2></div><div class="tiles">{t}</div></section>'
     body += rowsec([("Bind", "Pick, connect, <em>answer.</em>", "Choose a provider, pick a number and an agent, and confirm. Inbound calls to that number go straight to the agent.", ["One number binds to one agent", "No deployment or SIP configuration", "Remove the binding to fall back"], pm(["AI agents", "Connect number"], provgrid() + rows([("Number", '<span class="mono">+91 80 4718 2290</span>'), ("Status", pill("Connected"))]))),
                     ("Context", "Calls arrive <em>with context.</em>", "Your agent receives direction, route, provider, caller and number in SIP headers.", ["X-TryVox-Direction and Route", "X-TryVox-From and To", "Outbound from agents: in progress"], pm(["SIP headers", "Inbound"], mono(SIP_HEADERS)))])
@@ -1057,6 +1058,11 @@ def page_contact():
     return "Contact TryVox Sales and Support | TryVox", "Talk to the TryVox team about Indian phone numbers, SIP trunking, AI agents and rate cards. Email team@tryvox.io.", body
 
 # ---------------------------------------------------------------- v6
+
+THF = ["call_8f2a19 · ringing", "201 · status: queued", "+91 80 4718 2290", "KYC · verified", "X-TryVox-Route: ai-agent", "consent · recorded", "answer_url · VoxML", "whatsapp · read"]
+def thf():
+    return '<div class="th-f" aria-hidden="true">' + "".join(f'<span class="mono" style="--i:{i}" data-t="{E(t)}"></span>' for i, t in enumerate(THF)) + "</div>"
+
 def sh(tag, h2, sub=None, center=False, dark=False):
     s = f'<p class="sub">{sub}</p>' if sub else ""
     return f'<div class="shd{" c" if center else ""}{" dk" if dark else ""} rv"><p class="tag"><i></i>{E(tag)}</p><h2 class="hd h2">{h2}</h2>{s}</div>'
@@ -1103,13 +1109,12 @@ def ahero6(name, h1, sub, layers, descs):
     n = len(layers)
     left = "".join(f'<li data-i="{n - 1 - j}"><svg viewBox="0 0 64 30" aria-hidden="true"><polygon points="32,2 62,15 32,28 2,15"/></svg><span>{n - j:02d}</span></li>' for j in range(n))
     right = "".join(f'<li data-i="{n - 1 - j}"><b>{E(layers[n - 1 - j])}</b><small>{E(descs[n - 1 - j])}</small></li>' for j in range(n))
-    return f'''<section class="ah ah6">
-  <div class="ah-sky" aria-hidden="true"><i></i><i></i></div>
+    return f'''<section class="ah ah6 th">{thf()}
   <div class="wrap ah-in">
     <p class="tag"><i></i>{E(name)}</p>
     <h1 class="hd split">{h1}</h1>
     <p class="sub rv">{E(sub)}</p>
-    <div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn ghost" href="/contact/">Talk to sales</a></div>
+    <div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn" href="/contact/">Talk to sales</a></div>
   </div>
 </section>
 <section class="ahp" style="--n:{n}">
@@ -1133,20 +1138,24 @@ def panels6(items):
     return f'<section class="pp"><div class="pp-in"><nav class="pp-nav mono" aria-label="On this page">{nav}</nav><div class="pp-list">{out}</div></div></section>'
 
 def comp6():
-    items = [("id", "Business KYC", "Verified online before any number goes live.", ["Business details submitted", "Documents uploaded", "Review complete"]),
-             ("mail", "DLT-ready SMS", "Entity and templates linked, so messages are delivered, not blocked.", ["DLT entity linked", "Template otp_login approved", "Header registered"]),
-             ("users", "Consent records", "Consent stored per contact and respected when withdrawn.", ["+91 98•• ••5678 · consented", "+91 99•• ••0412 · consented", "+91 97•• ••2231 · withdrawn"]),
-             ("phone", "Verified caller IDs", "Outbound calls show a number people can trust.", ["+91 80 4718 2290 · verified", "+91 22 6120 4471 · verified", "Spoofed IDs blocked"])]
-    lst = "".join(f'<button type="button" class="cp-i{" on" if i == 0 else ""}" data-i="{i}"><span class="cp-ck"></span><span class="cp-ic">{ICON[ic_]}</span><span><b>{E(t)}</b><small>{E(d)}</small></span></button>' for i, (ic_, t, d, _) in enumerate(items))
-    det = "".join(f'<div class="cp-d{" on" if i == 0 else ""}" data-i="{i}">{pm(["Compliance", t], did([E(x) for x in xs]), pill("Verified"))}</div>' for i, (_, t, _, xs) in enumerate(items))
-    shield = '<svg viewBox="0 0 120 140" aria-hidden="true"><defs><linearGradient id="shg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E9DDFF"/><stop offset=".45" stop-color="#9D61FF"/><stop offset="1" stop-color="#3B1C86"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 124 60 134 C32 124 10 100 10 66 V24 Z" fill="url(#shg)"/><path d="M60 6 L60 134 C32 124 10 100 10 66 V24 Z" fill="#fff" opacity=".12"/><path class="ck" d="M40 70 l14 14 28-30" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-    return f'''<section class="cp6"><div class="wrap">
-  {sh("Compliance", "Compliance and control, <em>built in.</em>", "India's telecom rules are part of the product. Scroll to run the checks, or pick one to see how it works.", center=True)}
-  <div class="cp-g">
-    <div class="cp-l">{lst}<a class="obtn" href="/products/compliance/">Explore compliance</a></div>
-    <div class="cp-r"><div class="cp-sh"><div class="cp-ring" style="--p:0"></div>{shield}<span class="cp-n mono"><b>0</b>/4 checks</span></div>{det}</div>
+    checks = [("id", "Business KYC"), ("mail", "DLT-ready SMS"), ("users", "Consent records"), ("phone", "Verified caller IDs")]
+    ch = "".join(f'<span class="c7-c" data-i="{i}"><i></i>{ICON[ic_]}{E(t)}</span>' for i, (ic_, t) in enumerate(checks))
+    shield = '<svg viewBox="0 0 120 140" aria-hidden="true"><defs><linearGradient id="shg7" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E9DDFF"/><stop offset=".45" stop-color="#9D61FF"/><stop offset="1" stop-color="#3B1C86"/></linearGradient></defs><path d="M60 6 L110 24 V66 C110 100 88 124 60 134 C32 124 10 100 10 66 V24 Z" fill="url(#shg7)"/><path d="M60 6 L60 134 C32 124 10 100 10 66 V24 Z" fill="#fff" opacity=".14"/><path class="ck" d="M40 70 l14 14 28-30" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    arcs = '<svg class="c7-arcs" viewBox="0 0 800 520" aria-hidden="true"><defs><linearGradient id="c7g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9D61FF" stop-opacity="0"/><stop offset=".7" stop-color="#9D61FF" stop-opacity=".85"/><stop offset="1" stop-color="#00B900"/></linearGradient></defs><path class="c7-ghost" d="M660 40 L770 80 V180 C770 260 722 316 660 340 C598 316 550 260 550 180 V80 Z"/><circle class="c7-o o1" cx="400" cy="170" r="190"/><circle class="c7-o o2" cx="400" cy="170" r="130"/><g class="c7-sp"><circle cx="252" cy="70" r="2"/><circle cx="236" cy="96" r="1.5"/><circle cx="560" cy="62" r="1.5"/><circle cx="578" cy="88" r="2"/></g></svg>'
+    return f'''<section class="cp7"><div class="wrap"><div class="c7-frame rv">
+  {arcs}
+  <div class="c7-in">
+    <div class="c7-badge"><i></i><i></i>{shield}</div>
+    <p class="c7-pill"><span class="c7-st">✓</span><b class="mono">0</b>/4 checks · India-ready</p>
+    <p class="tag"><i></i>Compliance</p>
+    <h2 class="hd h2">Compliance and control, <em>built in.</em></h2>
+    <p class="sub">India&rsquo;s telecom rules are part of the product, not a project you run on the side.</p>
+    <div class="c7-cs">{ch}</div>
+    <div class="cta"><a class="kbtn" href="/products/compliance/">Explore compliance</a><a class="obtn" href="/contact/">Talk to sales</a></div>
   </div>
-</div></section>'''
+  <svg class="c7-notch" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 1 H180 L220 39 H780 L820 1 H1000"/></svg>
+  <i class="c7-k l"></i><i class="c7-k r"></i>
+</div></div></section>'''
 
 def page_product(slug):
     D = P[slug]
@@ -1167,13 +1176,12 @@ def sh6_hero(name, D):
     talk = "".join(msg(c, t) for c, t in [l for l in D["hero"] if l[0] != "ev"][:3])
     bars = "<i></i>" * 40
     chips = "".join(f'<span class="fl-c c{i}"><i></i>{E(k)}</span>' for i, (k, v) in enumerate(D["flow"]))
-    return f'''<section class="sh6">
-  <div class="ah-sky" aria-hidden="true"><i></i><i></i></div>
+    return f'''<section class="sh6 th">{thf()}
   <div class="wrap sh6-in">
     <p class="tag"><i></i>{E(name)}</p>
     <h1 class="hd split">{D["h1"]}</h1>
     <p class="sub rv">{E(D["sub"])}</p>
-    <div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn ghost" href="/contact/">Talk to sales</a></div>
+    <div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn" href="/contact/">Talk to sales</a></div>
     {sel(name)}
   </div>
   <div class="wrap sh6-stage rv">
@@ -1188,7 +1196,7 @@ def sh6_hero(name, D):
 def hcards(h2, cards):
     cs = "".join(f'<div class="hc"><span class="mono hc-n">{i + 1:02d}</span><span class="cr-i">{bracket(ic_)}</span><p>{t}</p></div>' for i, (ic_, t) in enumerate(cards))
     return f'''<section class="hx" style="--n:{len(cards)}"><div class="hx-st">
-  <div class="wrap hx-h">{sh("The challenge", h2, "What changes when every call runs on TryVox. Keep scrolling.", dark=True)}<span class="mono hx-c"><b>01</b> / {len(cards):02d}</span></div>
+  <div class="wrap hx-h">{sh("The challenge", h2, "What changes when every call runs on TryVox. Keep scrolling.")}<span class="mono hx-c"><b>01</b> / {len(cards):02d}</span></div>
   <div class="hx-v"><div class="hx-t">{cs}</div></div>
   <div class="wrap"><div class="hx-bar"><i></i></div></div>
 </div></section>'''
@@ -1225,7 +1233,7 @@ def page_solution(slug):
 
 # ---------------------------------------------------------------- pricing (Griffin rhythm)
 def page_pricing():
-    logos = [("vapi", None), ("retell", None), (None, "TRUSTED STACK"), ("livekit", None), ("bolna", None), (None, "ElevenLabs"), (None, "Deepgram"), (None, "WhatsApp"), (None, "Amazon Polly"), (None, "SIP / BYOC"), (None, "VoxML")]
+    logos = [("vapi", None), ("retell", None), ("livekit", None), ("bolna", None), (None, "ElevenLabs"), (None, "Deepgram"), (None, "WhatsApp"), (None, "Amazon Polly"), (None, "SIP / BYOC"), (None, "VoxML")]
     cells = ""
     for k, t in logos:
         if t == "TRUSTED STACK":
@@ -1240,26 +1248,29 @@ def page_pricing():
     est = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
     i = est.index('<section class="wrap sect est" id="estimate"'); j = est.index("</section>", i) + 10
     body = crumb([("Pricing", None)])
-    body += f'''<section class="gx">
+    body += f'''<section class="th gxh">{thf()}
   <div class="wrap gx-in">
-    <p class="gpill mono">Pricing</p>
+    <p class="tag"><i></i>Pricing</p>
     <h1 class="hd split">Pricing for every stage. <em>Pay per minute, scale with volume.</em></h1>
     <p class="sub rv">See how TryVox pricing works below. Get in touch for a rate card that fits your volume.</p>
-    <div class="cta rv"><a class="obtn gbtn" href="/contact/">Let&rsquo;s chat <span>→</span></a></div>
+    <div class="cta rv"><a class="kbtn" href="/contact/">Let&rsquo;s chat</a><a class="obtn" href="{APP}">Start free</a></div>
   </div>
+</section>
+<section class="gx">
+  <p class="lg-lbl mono">Works with your voice stack</p>
   <div class="lgrid rv">{cells}</div>
   <div class="wrap gsec">
-    {sh("Start", "Pay as you go", "Everything you need to put your first agent on the phone.", center=True, dark=True)}
-    <div class="gcard rv"><div class="gch"><h3>Start free</h3><a class="obtn gbtn" href="{APP}">Start free <span>→</span></a></div>
+    {sh("Start", "Pay as you go", "Everything you need to put your first agent on the phone.", center=True)}
+    <div class="gcard rv"><div class="gch"><h3>Start free</h3><a class="kbtn" href="{APP}">Start free</a></div>
       <div class="grow"><span>Setup fee</span><b>None</b></div><div class="grow"><span>Monthly minimum</span><b>None</b></div><div class="grow"><span>Billing</span><b>Per minute, one account</b></div><div class="grow"><span>Lock-in</span><b>None</b></div></div>
     <p class="gnote">Voice and messaging on one bill. Numbers require business KYC.</p>
   </div>
   <div class="wrap gsec">
-    {sh("Scale", "Rates that grow with you", "Three steps from your first call to committed volume.", center=True, dark=True)}
+    {sh("Scale", "Rates that grow with you", "Three steps from your first call to committed volume.", center=True)}
     <div class="gcard rv"><div class="gch"><h3><span class="gn mono">01</span>Go live on pay as you go</h3><span class="gside">No setup fee</span></div><p class="gp1"><b>Live in minutes.</b> Buy a number, bind your agent and take your first call.</p></div>
     <div class="gcard rv"><div class="gch"><h3><span class="gn mono">02</span>Choose your monthly volume</h3></div><p class="gp1"><b>Select your monthly minutes.</b> Unlock volume rates as you grow.</p><div class="gts">{tl}</div><p class="gmsg" aria-live="polite">{E(tiles[0][2])}</p></div>
     <div class="gcard rv"><div class="gch"><h3><span class="gn mono">03</span>Use it across the stack</h3></div><p class="gp1"><b>One balance covers every product.</b> Numbers, SIP, calls, agents, messaging and compliance.</p><div class="gps">{prods}</div></div>
-    <div class="gcard rv gcalc"><div class="gch"><h3>Estimate your monthly minutes</h3><a class="obtn gbtn" href="#estimate">Calculate <span>↓</span></a></div></div>
+    <div class="gcard rv gcalc"><div class="gch"><h3>Estimate your monthly minutes</h3><a class="obtn" href="#estimate">Calculate</a></div></div>
     <p class="gnote">Rate cards are shared by email for your volume. <a href="/contact/">Talk to sales</a>.</p>
   </div>
 </section>'''
@@ -1294,12 +1305,12 @@ def page_about():
     bl = "".join(f'<div class="ab-b rv"><div class="ab-art">{bracket(ART[i])}</div><div><h3>{E(t)}</h3><p>{E(d)}</p></div></div>' for i, (t, d) in enumerate(beliefs))
     body = crumb([("About", None)])
     body += f'''<div class="abx">
-<section class="wrap ab-h"><p class="bk mono">[ Why TryVox ]</p><h1 class="hd split">Voice AI moved fast. <em>The phone network didn&rsquo;t.</em></h1><p class="sub rv">Teams can build a great voice agent in a week, then spend months on carriers, KYC and SIP. TryVox exists to close that gap for every agent, in India and beyond.</p></section>
+<section class="th ab-h">{thf()}<div class="wrap"><p class="tag"><i></i>Why TryVox</p><h1 class="hd split">Voice AI moved fast. <em>The phone network didn&rsquo;t.</em></h1><p class="sub rv">Teams can build a great voice agent in a week, then spend months on carriers, KYC and SIP. TryVox exists to close that gap for every agent, in India and beyond.</p><div class="cta rv"><a class="kbtn" href="{APP}">Start free</a><a class="obtn" href="/contact/">Contact us</a></div></div></section>
 <section class="abp" style="--n:{len(probs)}"><div class="abp-st"><div class="wrap">{bracket(f'<div class="abp-g"><div class="abp-l">{pl}</div><div class="abp-t" aria-hidden="true">{"<i></i>" * 8}</div><div class="abp-r">{pd}</div></div>', "abf")}</div></div></section>
-<section class="wrap sect tight">{sh("What we build", "Designed for production, <em>not prototypes.</em>", "Four principles behind every TryVox product.", center=True, dark=True)}<div class="ab-cs">{pc}</div></section>
-<section class="wrap sect tight"><div class="ab-rg"><div>{sh("Roadmap", "From first number <em>to full scale.</em>", "How teams go live on TryVox.", dark=True)}<div class="ab-rl">{rl}</div></div><div class="ab-fc rv"><div class="ab-fw">{fl}</div></div></div></section>
-<section class="wrap sect tight">{sh("Who we are", "Built in India by <em>Tryjolt Solutions.</em>", "A telephony team for voice AI, focused on reliable calls and compliance that just works.", center=True, dark=True)}<div class="ab-bg"><p class="ab-st hd">We believe every AI agent deserves a real phone line, and every team should be able to give it one in minutes.</p><div>{bl}</div></div></section>
-<section class="ab-cta"><div class="ab-orb" aria-hidden="true"><i></i><i></i><b></b></div><div class="wrap"><p class="bk mono">[ Get started ]</p><h2 class="hd h2">Give every agent <em>a real phone line.</em></h2><div class="cta"><a class="kbtn" href="{APP}">Start free</a><a class="obtn ghost" href="/contact/">Contact us</a></div></div></section>
+<section class="wrap sect tight">{sh("What we build", "Designed for production, <em>not prototypes.</em>", "Four principles behind every TryVox product.", center=True)}<div class="ab-cs">{pc}</div></section>
+<section class="wrap sect tight"><div class="ab-rg"><div>{sh("Roadmap", "From first number <em>to full scale.</em>", "How teams go live on TryVox.")}<div class="ab-rl">{rl}</div></div><div class="ab-fc rv"><div class="ab-fw">{fl}</div></div></div></section>
+<section class="wrap sect tight">{sh("Who we are", "Built in India by <em>Tryjolt Solutions.</em>", "A telephony team for voice AI, focused on reliable calls and compliance that just works.", center=True)}<div class="ab-bg"><p class="ab-st hd">We believe every AI agent deserves a real phone line, and every team should be able to give it one in minutes.</p><div>{bl}</div></div></section>
+<section class="ab-cta"><div class="ab-orb" aria-hidden="true"><i></i><i></i><b></b></div><div class="wrap"><p class="tag"><i></i>Get started</p><h2 class="hd h2">Give every agent <em>a real phone line.</em></h2><div class="cta"><a class="kbtn" href="{APP}">Start free</a><a class="obtn" href="/contact/">Contact us</a></div></div></section>
 </div>'''
     return "About TryVox: Telephony Infrastructure for Voice AI | TryVox", "TryVox builds telephony infrastructure for voice AI: numbers, SIP, voice APIs and messaging. Built in India by Tryjolt Solutions.", body
 

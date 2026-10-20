@@ -412,7 +412,7 @@ X-TryVox-To:           <E.164 TryVox number>`};
 
   /* ---------- v6 ---------- */
   // home: dark hero eases to white
-  const hs=$('#hsky');if(hs)SF.push(()=>hs.classList.toggle('lite',scrollY>hs.offsetHeight*.3));
+  
   // product: stack opens one layer at a time as you scroll
   $$('.ahp').forEach(sec=>{const svg=sec.querySelector('.stk-svg'),E=+svg.dataset.e,sl=Array.from(svg.querySelectorAll('.sl')),n=sl.length,lb=Array.from(sec.querySelectorAll('li[data-i]')),cnt=sec.querySelector('.ahp-c b'),bar=sec.querySelector('.ahp-bar');
     const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
@@ -420,12 +420,12 @@ X-TryVox-To:           <E.164 TryVox number>`};
       for(let k=0;k<n;k++){if(k>0){const o=ease(clamp(p*(n-1)*1.12-(n-1-k),0,1));off+=E*o;if(o>.5)opened++}sl[k].style.transform=`translateY(${-off}px)`}
       const act=Math.max(0,n-1-opened);sl.forEach(g=>g.classList.toggle('hi',+g.dataset.i===act));lb.forEach(l=>l.classList.toggle('on',+l.dataset.i===act));
       cnt.textContent=String(act+1).padStart(2,'0');bar.style.setProperty('--sp',(p*100).toFixed(1)+'%');const vb=svg.viewBox.baseVal.height,sc=svg.clientHeight/vb;svg.style.transform=`translateY(${-((n-1)*E-off)/2*sc}px)`})});
-  // product: compliance checks tick as you scroll; pick one to see it
-  $$('.cp6').forEach(cp=>{const it=Array.from(cp.querySelectorAll('.cp-i')),ds=Array.from(cp.querySelectorAll('.cp-d')),ring=cp.querySelector('.cp-ring'),sh_=cp.querySelector('.cp-sh'),nb=cp.querySelector('.cp-n b');let manual=false,last=-1;
-    const show=k=>{it.forEach((x,j)=>x.classList.toggle('on',j===k));ds.forEach((x,j)=>x.classList.toggle('on',j===k))};
-    it.forEach((x,k)=>x.addEventListener('click',()=>{manual=true;show(k)}));
-    SF.push(()=>{const r=cp.getBoundingClientRect(),p=reduce?1:clamp((innerHeight*.85-r.top)/(r.height*.75),0,1),k=Math.min(4,Math.floor(p*5));if(k===last)return;last=k;
-      it.forEach((x,j)=>x.classList.toggle('ck',j<k));ring.style.setProperty('--p',k*25);nb.textContent=k;sh_.classList.toggle('full',k===4);if(!manual&&k>0)show(k-1)})});
+  // compliance: checks tick as you scroll
+  $$('.cp7').forEach(cp=>{const cs=Array.from(cp.querySelectorAll('.c7-c')),nb=cp.querySelector('.c7-pill b'),bd=cp.querySelector('.c7-badge');let last=-1;
+    SF.push(()=>{const r=cp.getBoundingClientRect(),p=reduce?1:clamp((innerHeight*.9-r.top)/(r.height*.7),0,1),k=Math.min(4,Math.floor(p*5));if(k===last)return;last=k;
+      cs.forEach((c,j)=>c.classList.toggle('ck',j<k));nb.textContent=k;bd.classList.toggle('full',k===4)})});
+  // hero snippets type themselves
+  $$('.th-f span').forEach(sp=>{const t=sp.dataset.t;if(reduce){sp.textContent=t;return}let i=0,dir=1;const tick=()=>{i+=dir;sp.textContent=t.slice(0,i);if(i>=t.length){dir=-1;setTimeout(tick,2600+Math.random()*2000);return}if(i<=0){dir=1;setTimeout(tick,600+Math.random()*1500);return}setTimeout(tick,dir>0?55:25)};setTimeout(tick,(+getComputedStyle(sp).getPropertyValue('--i')||0)*450)});
   // solutions: live console
   $$('.sh6').forEach(h=>{const st=h.querySelector('.lvb'),bars=Array.from(h.querySelectorAll('.lv-wave i')),t=h.querySelector('.lv-t');let s=0;
     if(!reduce){setInterval(()=>bars.forEach(b=>b.style.height=(10+Math.random()*85)+'%'),160);setInterval(()=>{s++;t.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
@@ -449,8 +449,10 @@ X-TryVox-To:           <E.164 TryVox number>`};
 
 
   // header goes dark over dark sections
-  {const DK='.hsky:not(.lite),.ahp,.rvs,.pp:not(.lite),.hx,.c6,.abx,.gx,.cl';const hd=$('#hdr');let was=null;
-   SF.push(()=>{const y=(hd?hd.offsetHeight:60)+2,el=document.elementFromPoint(innerWidth/2,y),dk=!!(el&&el.closest(DK)&&!el.closest('.hdr,.mega,.sheet'));if(dk!==was){was=dk;root.classList.toggle('hdr-dk',dk)}})}
+  {const DK='.cl,.c6,.how';const hd=$('#hdr');let was=null;
+   SF.push(()=>{const y=(hd?hd.offsetHeight:60)+2,el=document.elementFromPoint(innerWidth/2,y);let dk=false;
+     if(el&&!el.closest('.hdr,.mega,.sheet')){const t=el.closest('.th');if(t){const r=t.getBoundingClientRect();dk=(y-r.top)/r.height<.5}else dk=!!el.closest(DK)}
+     if(dk!==was){was=dk;root.classList.toggle('hdr-dk',dk)}})}
 
   /* ---------- footer ---------- */
   const fStt=$('#fStt'),states=['Ringing your agent','Connected · streaming','Call completed · events sent'];let fi=0;
