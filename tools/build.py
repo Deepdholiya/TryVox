@@ -1022,11 +1022,6 @@ def page_developers():
 
 # ---------------------------------------------------------------- integrations
 def page_integrations():
-    idx = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
-    i = idx.index('<section class="integ" id="integrations"'); j = idx.index("</section>", i) + 10
-    wall = idx[i:j]
-    wall = wall.replace('<a class="obtn" href="/integrations/">See all integrations</a>', f'<a class="obtn" href="{DOCS}/ai-agents">Browse integration docs ↗</a>')
-
     provs = [("Vapi", "vapi"), ("Retell", "retell"), ("ElevenLabs", "elevenlabs"), ("LiveKit", "livekit"), ("Bolna", "bolna")]
     def lg(s, n):
         if s in LOGOIMG:
@@ -1035,7 +1030,6 @@ def page_integrations():
     t = "".join(f'<a class="tile rv" href="{DOCS}/ai-agents/{s}"><span class="tl-i">{lg(s, n)}</span><b>{n}</b><small>Bind a TryVox number to your {n} agent.</small><span class="go">↗</span></a>' for n, s in provs)
     t += f'<a class="tile rv" href="{DOCS}/byoc"><span class="tl-i">{ICON["sip"]}</span><b>Any SIP stack</b><small>Connect your PBX, or bring your own carrier.</small><span class="go">↗</span></a>'
     body = hero3([("Integrations", None)], "Integrations", "Connect any agent to <em>a real phone line.</em>", "Bind a TryVox number to Vapi, Retell, ElevenLabs, LiveKit or Bolna in a few clicks, or connect any SIP stack. No deployment, no SIP configuration.", pm(["AI agents", "Connect number"], provgrid() + rows([("Number", '<span class="mono">+91 80 4718 2290</span>'), ("Status", pill("Connected"))])), secondary=("Read the docs", DOCS + "/ai-agents"))
-    body += wall
     body += f'<section class="wrap sect tight"><div class="ctr rv"><p class="tag"><i></i>Agent platforms</p><h2 class="hd h2">Setup guides for <em>every provider.</em></h2></div><div class="tiles">{t}</div></section>'
     body += rowsec([("Bind", "Pick, connect, <em>answer.</em>", "Choose a provider, pick a number and an agent, and confirm. Inbound calls to that number go straight to the agent.", ["One number binds to one agent", "No deployment or SIP configuration", "Remove the binding to fall back"], pm(["AI agents", "Connect number"], provgrid() + rows([("Number", '<span class="mono">+91 80 4718 2290</span>'), ("Status", pill("Connected"))]))),
                     ("Context", "Calls arrive <em>with context.</em>", "Your agent receives direction, route, provider, caller and number in SIP headers.", ["X-TryVox-Direction and Route", "X-TryVox-From and To", "Outbound from agents: in progress"], pm(["SIP headers", "Inbound"], mono(SIP_HEADERS)))])
@@ -1364,6 +1358,7 @@ def sync_home():
     s = open(fp, encoding="utf-8").read()
     s = re.sub(r"<!-- @header -->.*?<!-- /@header -->", lambda m: "<!-- @header -->\n" + header() + "\n<!-- /@header -->", s, flags=re.S)
     s = re.sub(r"<!-- @footer -->.*?<!-- /@footer -->", lambda m: "<!-- @footer -->\n" + footer() + "\n<!-- /@footer -->", s, flags=re.S)
+    s = re.sub(r"<!-- @integ -->.*?<!-- /@integ -->", lambda m: "<!-- @integ -->\n" + intg().replace('<section class="wrap sect intg">', '<section class="wrap sect intg" id="integrations">', 1) + "\n<!-- /@integ -->", s, flags=re.S)
     open(fp, "w", encoding="utf-8").write(s)
 
 if __name__ == "__main__":
