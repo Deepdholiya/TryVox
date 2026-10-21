@@ -13,3 +13,114 @@
 .ft .about .mail a{color:inherit}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .cmp tbody th{font-family:inherit;font-size:inherit;letter-spacing:normal;text-transform:none;color:var(--ink-2);font-weight:400}
+
+/* =====================================================================
+   v10 · one type and spacing system for every page
+   Roles: display (H1) · section (H2) · sub-section · card title · lead · body · small · caption · label
+   ===================================================================== */
+:root{
+  --t-h1:clamp(40px,5.6vw,80px);
+  --t-h2:clamp(32px,3.9vw,56px);
+  --t-h3:clamp(24px,2.2vw,32px);
+  --t-h4:clamp(18px,1.4vw,20px);
+  --t-lead:clamp(17px,1.3vw,19px);
+  --t-body:16px;
+  --t-small:14px;
+  --t-cap:12px;
+  --t-label:12px;
+  --hero-top:clamp(88px,10.4vw,150px);
+  --hero-bot:clamp(72px,8vw,120px);
+  --gap-tag:20px;   /* tag → heading */
+  --gap-sub:20px;   /* heading → lead */
+  --gap-cta:32px;   /* lead → buttons */
+}
+
+/* display: every page title, plus the big step titles */
+main h1,main h1.hd,main .hd.h1,.htitle h3{font-size:var(--t-h1)!important;line-height:1.02!important;letter-spacing:-.045em!important;font-weight:500}
+
+/* section headings */
+main h2,main h2.hd,main .hd.h2,footer .fcta h2.hd,.abp .ab-p h3.hd{font-size:var(--t-h2)!important;line-height:1.06!important;letter-spacing:-.04em!important;font-weight:500}
+
+/* sub-section headings: headings that sit beside a visual, inside a section */
+main .ppn-c h2.hd,main .r3 h2.hd,main .ind-copy h3,main .ab-st.hd,main .revp p{font-size:var(--t-h3)!important;line-height:1.16!important;letter-spacing:-.03em!important}
+main .revp p{font-weight:400}
+
+/* card titles: every other h3 */
+main h3:not(.hd):not(.ind-copy h3):not(.htitle h3){font-size:var(--t-h4)!important;line-height:1.3!important;letter-spacing:-.015em!important;font-weight:500!important}
+
+/* lead text */
+main .sub,main .quote,main .ab-d,.htitle p,main .r3-copy>p:not(.tag),main .hc p,footer .fcta .sub{font-size:var(--t-lead)!important;line-height:1.55!important;letter-spacing:0!important}
+
+/* body copy: paragraphs and lists outside the product mock-ups */
+main :is(p,li):not(.sub,.tag,.quote,.ab-d,.note,.fine,.gnote,.gmsg,.est-msg,.c7-pill,.lbl,.lg-lbl,.hd):not(:is(.pm,.lv,.glass,.mfeed,.pv,.lcap,.htitle,.c6-i,.revp,.ah-r,.ah-l,.layers,.ig-cats,.c7-cs,.lv-steps,.cmp,.ind-flow,.isob) *){font-size:var(--t-body);line-height:1.6;letter-spacing:0}
+main .lcap p,main .c6-i p,main .gmsg,main .est-msg,main small:not(.pm small):not(.glass small),main .c7-pill,main .gnote,main .tile small{font-size:var(--t-small)!important;line-height:1.5}
+main .note,main .fine{font-size:var(--t-cap)!important;line-height:1.5}
+main details summary{font-size:var(--t-h4);line-height:1.35;letter-spacing:-.01em}
+
+/* labels: eyebrow tags and mono captions */
+main .tag,footer .tag,main .ppn-c .tag{font-size:var(--t-label)!important;letter-spacing:.07em!important;line-height:1.5!important}
+main .lbl,main .lg-lbl,main .ah-r li,main .ah-r li b,main .layers li,main .ahp-cap,main .hx-c,main .c6-n,main .cl-t{font-size:var(--t-label)!important;letter-spacing:.07em}
+main .ah-r li small{font-size:var(--t-small)!important;letter-spacing:0;text-transform:none}
+
+/* rhythm inside text blocks */
+main .tag+h1,main .tag+h2,main .tag+.hd,main .tag+.split,main div>.tag+h2{margin-top:var(--gap-tag)!important}
+main :is(h1,h2,.hd)+.sub{margin-top:var(--gap-sub)!important}
+main .sub+.cta,main .sub+.devlinks,main .hero-side .sub+.cta{margin-top:var(--gap-cta)!important}
+main .cta+.micro{margin-top:18px}
+
+/* ---------- heroes: same eyebrow position and bottom space on every page ---------- */
+.hsky.th .hero{padding-top:var(--hero-top)!important}
+.ah6.th,.sh6.th,.ab-h.th{padding-top:var(--hero-top)!important}
+.h3t.h3t{padding-top:0!important;padding-bottom:0!important}
+.h3t .h3{padding-top:var(--hero-top)!important;padding-bottom:var(--hero-bot)!important}
+.h3t .h3-grid{align-items:start}
+.gxh.gxh{padding-top:0!important;padding-bottom:var(--hero-bot)!important}
+.gxh .gx-in{padding-top:var(--hero-top)!important}
+.ah6.th{padding-bottom:var(--hero-bot)!important}
+.ab-h.th{padding-bottom:var(--hero-bot)!important}
+.ab-cta{padding-block:var(--sp)!important}
+main .th h1,main .th .sub{margin-left:auto;margin-right:auto}
+main .h3t h1,main .h3t .sub,main .hsky h1,main .hsky .sub{margin-left:0;margin-right:0}
+main .th .sub{max-width:60ch}
+
+/* ---------- sections: one --sp between any two content sections ---------- */
+:is(.sect,.story,.ind,.cp7,.rvs,.pp,.r3s,.intg)+:is(.sect,.story,.ind,.cp7,.rvs,.pp,.r3s,.intg,#compare){padding-top:0!important}
+#compare{padding-bottom:var(--sp)}
+
+/* ---------- mobile ---------- */
+@media (max-width:640px){
+  :root{--gap-cta:28px}
+  main .cta{flex-wrap:wrap;gap:10px}
+  main .cta>a{flex:1 1 auto;justify-content:center;text-align:center}
+  main .micro{flex-wrap:wrap;row-gap:6px}
+  main h1,main h2,main h3{overflow-wrap:break-word;hyphens:manual}
+  main .th h1,main .th .sub{max-width:none}
+  /* how it works: the step bar fits the screen, only the active step shows its label */
+  .seg{left:12px;right:12px;translate:none;max-width:none;justify-content:center}
+  .seg .grp{width:100%;justify-content:space-between}
+  .seg .grp button{flex:1 1 auto;justify-content:center;padding:0 8px;font-size:10px}
+  .seg .grp button:not(.on){flex:0 0 auto;font-size:0;gap:0}
+  /* comparison table: row labels stay visible while the table scrolls sideways */
+  .cmp{min-width:600px}
+  .cmp tbody th,.cmp thead th:first-child{position:sticky;left:0;z-index:1;background:var(--bg);min-width:150px;max-width:170px}
+  .cmpw::after{content:"Swipe to compare →";display:block;padding:12px 0 0;font:500 12px/1.4 var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);position:sticky;left:0}
+  /* orbit: keep the partner chips on screen */
+  .story .orb{width:calc(100% - 72px);max-width:340px;margin-inline:auto;justify-self:center}
+  /* section heads read left-aligned on phones, like every other section */
+  .est,.est .sub{text-align:left}
+  .est .tag,.shd.c .tag{justify-content:flex-start}
+  .est .sub{margin-left:0}
+  .shd.c,.shd.c .sub{text-align:left;margin-left:0}
+  .ctr,.ctr .sub{text-align:left;margin-left:0}
+  .ctr .tag{justify-content:flex-start}
+  /* hero secondary button stays legible where the gradient turns light */
+  main .th .obtn{background:rgba(17,7,36,.62)!important;border-color:rgba(255,255,255,.28)!important;color:#fff!important;backdrop-filter:blur(6px)}
+  /* about: problem statements step down a size so each description fits the frame */
+  .abp .ab-p h3.hd{font-size:var(--t-h3)!important}
+}
+
+/* product pages: hero flows straight into the dark layer stack (no white-to-grey band) */
+.ah6.th,:root[data-theme="dark"] .ah6.th{background:linear-gradient(180deg,#110724 0%,#1E0D44 20%,#3A1B8A 48%,#4A2EA0 64%,#22124A 86%,var(--night) 100%)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ah6.th{background:linear-gradient(180deg,#110724 0%,#1E0D44 20%,#3A1B8A 48%,#4A2EA0 64%,#22124A 86%,var(--night) 100%)!important}}
+.ah6.th::after{display:none}
+.ahp{background:var(--night)!important}

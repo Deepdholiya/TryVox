@@ -245,7 +245,7 @@ export default function Home() {
       </section>
 
       {/* ---------- developers ---------- */}
-      <section className="wrap sect" id="developers" style={{ paddingTop: 0 }} aria-labelledby="dev-h">
+      <section className="wrap sect" id="developers" aria-labelledby="dev-h">
         <div className="devgrid">
           <div className="rv">
             <p className="tag">

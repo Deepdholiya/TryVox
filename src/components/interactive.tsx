@@ -234,7 +234,7 @@ export function Estimator() {
     );
   };
   return (
-    <section className="wrap sect est" id="estimate" style={{ paddingTop: 20 }} aria-labelledby="est-h">
+    <section className="wrap sect est" id="estimate" aria-labelledby="est-h">
       <p className="tag rv">
         <i />
         Size your line
