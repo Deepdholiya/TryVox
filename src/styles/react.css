@@ -236,9 +236,9 @@ main .th .sub{max-width:60ch}
 .intg+.abx>.ab-cta:first-child{padding-top:0!important}
 .th+.sect,.th+.wrap.sect{padding-top:0!important}
 /* the compliance badge's rings reach above and below its box */
-.cp7{margin-top:-58px;padding-bottom:calc(var(--sp) - 32px)!important}
+.cp7{margin-top:-22px;padding-bottom:calc(var(--sp) - 32px)!important}
 /* one fixed space above the footer on every page */
-main>section:last-of-type,main>.abx:last-of-type>section:last-child{padding-bottom:0!important}
+main>section:not(:has(~ section,~ .abx)),main>.abx:not(:has(~ section,~ .abx))>section:last-child{padding-bottom:0!important}
 .ab-bg>div>.ab-b:last-child{margin-bottom:0}
 footer{padding-top:calc(var(--sp) * 1.5)!important}
 .gx+.sect{padding-top:0!important}
@@ -281,3 +281,23 @@ footer{padding-top:calc(var(--sp) * 1.5)!important}
 @media (max-width:640px){.hx-h{flex-wrap:wrap;row-gap:12px}.hx-h .shd{flex:1 1 100%;max-width:100%}}
 .hx-h.wrap{width:auto}
 .abp-st>.wrap{width:auto;flex:1 1 auto;min-width:0}
+
+/* about, What we build: on tablet and phone the principles line up with the heading */
+@media (max-width:1000px){
+  .ab-cs{border-left:0}
+  .ab-c:nth-child(odd){padding-left:0;border-left:0}
+}
+@media (max-width:640px){
+  .ab-c{padding:28px 0!important;min-height:0!important}
+  .ab-c h3{margin-top:24px!important}
+}
+@media (max-width:640px){svg.ab-orb{display:none}}
+@media (max-width:1000px) and (min-width:641px){
+  .ab-c{border-bottom:0!important}
+  .ab-c:nth-child(-n+2){border-bottom:1px solid var(--line-2)!important}
+  .ab-c:nth-child(even){border-left:1px solid var(--line-2)!important;padding-right:0}
+}
+@media (max-width:640px){
+  .ab-c{border-left:0!important;border-bottom:1px solid var(--line-2)!important}
+  .ab-c:last-child{border-bottom:0!important}
+}
