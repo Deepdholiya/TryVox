@@ -39,10 +39,10 @@ export function Body() {
                 <i className="b4" />
                 <div className="abp-g">
                   <div className="abp-l">
-                    <div className="ab-p on" data-i="0"><h3 className="hd">Telephony wasn't built for agents</h3><p className="ab-pd">Carriers, trunks and IVRs were designed for human call centres, so every voice AI team rebuilds the same plumbing.</p></div>
-                    <div className="ab-p" data-i="1"><h3 className="hd">Compliance slows every launch</h3><p className="ab-pd">KYC, consent and DLT rules turn a two-day agent launch into a month of paperwork.</p></div>
-                    <div className="ab-p" data-i="2"><h3 className="hd">Numbers get locked in</h3><p className="ab-pd">Numbers bought inside an agent platform make it painful to switch providers or run more than one.</p></div>
-                    <div className="ab-p" data-i="3"><h3 className="hd">Calls happen in a black box</h3><p className="ab-pd">Without events and records, teams can't see why calls drop, ring out or never connect.</p></div>
+                    <div className="ab-p on" data-i="0"><h3 className="hd">Telephony wasn't built for agents</h3><p className="ab-pd"><span>Carriers, trunks and IVRs were designed for human call centres, so every voice AI team rebuilds the same plumbing.</span></p></div>
+                    <div className="ab-p" data-i="1"><h3 className="hd">Compliance slows every launch</h3><p className="ab-pd"><span>KYC, consent and DLT rules turn a two-day agent launch into a month of paperwork.</span></p></div>
+                    <div className="ab-p" data-i="2"><h3 className="hd">Numbers get locked in</h3><p className="ab-pd"><span>Numbers bought inside an agent platform make it painful to switch providers or run more than one.</span></p></div>
+                    <div className="ab-p" data-i="3"><h3 className="hd">Calls happen in a black box</h3><p className="ab-pd"><span>Without events and records, teams can't see why calls drop, ring out or never connect.</span></p></div>
                   </div>
                   <div className="abp-t" aria-hidden="true">
                     <i />
