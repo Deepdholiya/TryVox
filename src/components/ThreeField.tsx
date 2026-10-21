@@ -113,9 +113,10 @@ export function ThreeField({ variant = "wave" }: { variant?: Variant }) {
         group.rotation.set(0.35, -1.25, 0.12); // India toward the viewer
         layout = (w) => {
           const aspect = w / Math.max(1, el.clientHeight);
+          const wide = w > 1000;
           camera.position.set(0, 0, 4.4);
-          group.position.set(Math.min(2.7, 1.18 * aspect), 0.12, 0);
-          group.scale.setScalar(1.1);
+          group.position.set(wide ? Math.min(2.5, 1.02 * aspect) : 0.35, wide ? 0.05 : 0.55, 0);
+          group.scale.setScalar(wide ? 1.6 : 1.3);
         };
         tick = (t) => {
           group.rotation.y = -1.25 + Math.sin(t * 0.00012) * 0.35 + mx * 0.12;

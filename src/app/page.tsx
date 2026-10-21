@@ -49,7 +49,7 @@ const FAQ: QA[] = [
   ["Can I get Indian phone numbers for my AI agent?", "Yes. Local, national and toll-free numbers, with business KYC and India's telecom requirements handled during setup."],
   ["How do I connect TryVox to Vapi or Retell?", "Open AI Agents in the dashboard, pick your provider and click Connect number. Choose a TryVox number and an agent, confirm, and the agent answers calls on that number straight away. No SIP setup needed."],
   ["Is TryVox only for voice AI?", "No. The same account covers SIP, programmable voice, WhatsApp, SMS and alerts."],
-  ["How is TryVox priced?", "Pay as you go, billed per minute, with no setup fee, no monthly minimum and no lock-in. Use the estimator above and ask for a rate card for your volume."],
+  ["How is TryVox priced?", "A one-time ₹100 setup fee, ₹399 monthly rent and calls billed per minute, with no lock-in. Use the estimator above and ask for a rate card for your volume."],
   ["Is TryVox an alternative to Exotel, Plivo or Twilio for voice AI?", "Yes, for teams running AI voice agents in India. TryVox puts Indian numbers, SIP trunking, a Voice API, agent bindings and DLT-ready messaging on one account, and never sells its own agents."],
 ];
 

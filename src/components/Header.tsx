@@ -70,6 +70,7 @@ function Mega({ id, label, open, setOpen, children }: { id: string; label: strin
 export function Header() {
   const [open, setOpen] = useState<string | null>(null);
   const [sheet, setSheet] = useState(false);
+  const [acc, setAcc] = useState<string | null>(null);
   const path = usePathname();
 
   useEffect(() => {
@@ -78,6 +79,7 @@ export function Header() {
   }, [path]);
   useEffect(() => {
     document.documentElement.classList.toggle("menu-open", sheet);
+    if (!sheet) setAcc(null);
   }, [sheet]);
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
@@ -163,33 +165,44 @@ export function Header() {
           </div>
         </div>
       </header>
-      <nav className="sheet" id="sheet" aria-label="Mobile">
-        <details>
-          <summary>
-            Products<i aria-hidden="true">+</i>
-          </summary>
-          <div>
-            {PRODUCTS.map((p) => (
-              <Link href={`/products/${p.slug}/`} key={p.slug} onClick={() => setSheet(false)}>{p.name}</Link>
-            ))}
+      <nav className="sheet" id="sheet" aria-label="Mobile" aria-hidden={!sheet}>
+        {([["p", "Products", PRODUCTS, "products"], ["s", "Solutions", SOLUTIONS, "solutions"]] as const).map(([id, label, items, base]) => (
+          <div className={`sh-g${acc === id ? " open" : ""}`} key={id}>
+            <button type="button" className="sh-row" aria-expanded={acc === id} aria-controls={`sh-${id}`} onClick={() => setAcc(acc === id ? null : id)}>
+              {label}
+              <Chev />
+            </button>
+            <div className="sh-list" id={`sh-${id}`}>
+              <div>
+                {items.map((it) => (
+                  <Link href={`/${base}/${it.slug}/`} key={it.slug} className="sh-item" onClick={() => setSheet(false)}>
+                    <span className="sh-i">
+                      <Icon name={it.icon} bare />
+                    </span>
+                    {it.name}
+                    <RChev />
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
-        </details>
-        <details>
-          <summary>
-            Solutions<i aria-hidden="true">+</i>
-          </summary>
-          <div>
-            {SOLUTIONS.map((s) => (
-              <Link href={`/solutions/${s.slug}/`} key={s.slug} onClick={() => setSheet(false)}>{s.name}</Link>
-            ))}
-          </div>
-        </details>
-        {[["Integrations", "/integrations/"], ["Developers", "/developers/"], ["Pricing", "/pricing/"], ["About", "/about/"], ["Contact", "/contact/"]].map(([t, h]) => (
-          <Link href={h} key={h} onClick={() => setSheet(false)}>{t}</Link>
         ))}
-        <div className="sheet-cta">
+        {[["Integrations", "/integrations/"], ["Developers", "/developers/"], ["Pricing", "/pricing/"], ["About", "/about/"], ["Contact", "/contact/"]].map(([t, h]) => (
+          <Link href={h} key={h} className="sh-row" onClick={() => setSheet(false)}>
+            {t}
+          </Link>
+        ))}
+        <div className="sh-foot">
           <a className="obtn" href={APP}>Sign in</a>
-          <a className="kbtn" href={APP}>Start free</a>
+          <button className="theme-t" type="button" aria-label="Switch light or dark theme" onClick={toggleTheme}>
+            <svg className="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.2" />
+              <path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6" />
+            </svg>
+            <svg className="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+              <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" />
+            </svg>
+          </button>
         </div>
       </nav>
     </>

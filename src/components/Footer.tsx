@@ -33,7 +33,7 @@ export function Footer() {
           <h2 className="hd" style={{ marginTop: 18 }}>
             Your agent is ready. Give it a <em>line.</em>
           </h2>
-          <p className="sub">Get a number, connect your agent and take your first call today. No setup fee, no lock-in.</p>
+          <p className="sub">Get a number, connect your agent and take your first call today. Live in minutes, no lock-in.</p>
           <div className="cta">
             <a className="kbtn" href={APP}>Start free</a>
             <Link className="obtn" href="/contact/">Talk to us</Link>

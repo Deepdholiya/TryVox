@@ -1,7 +1,7 @@
 /* Ported from the original static site. Edit freely: this file is now the source of truth. */
 import { Breadcrumb, Estimator, Faq, HeroFx, Integrations, Split, VolumeTiles } from "@/components";
 
-export const meta = { title: "Pricing: Pay-Per-Minute Telephony for AI Voice Agents | TryVox", description: "Pay-as-you-go telephony for AI voice agents in India. No lock-in, no monthly minimums. Volume rate cards on request." };
+export const meta = { title: "Pricing: Pay-Per-Minute Telephony for AI Voice Agents | TryVox", description: "Telephony for AI voice agents in India: ₹100 setup fee, ₹399 monthly rent and per-minute calls. No lock-in. Volume rate cards on request." };
 
 export function Body() {
   return (
@@ -61,16 +61,16 @@ export function Body() {
           </div>
           <div className="gcard rv">
             <div className="gch">
-              <h3>Start free</h3>
-              <a className="kbtn" href="https://app.tryvox.io/">Start free</a>
+              <h3>Everything to go live</h3>
+              <a className="kbtn" href="https://app.tryvox.io/">Get started</a>
             </div>
             <div className="grow">
               <span>Setup fee</span>
-              <b>None</b>
+              <b>₹100</b>
             </div>
             <div className="grow">
-              <span>Monthly minimum</span>
-              <b>None</b>
+              <span>Monthly rent</span>
+              <b>₹399</b>
             </div>
             <div className="grow">
               <span>Billing</span>
@@ -98,7 +98,7 @@ export function Body() {
                 <span className="gn mono">01</span>
                 Go live on pay as you go
               </h3>
-              <span className="gside">No setup fee</span>
+              <span className="gside">₹100 setup · ₹399/month</span>
             </div>
             <p className="gp1">
               <b>Live in minutes.</b>
@@ -119,7 +119,7 @@ export function Body() {
               Unlock volume rates as you grow.
             </p>
             <VolumeTiles as="div" className="gts">
-              <button type="button" className="gt on" data-i="0" data-msg="Pay as you go. Start free, no minimums.">
+              <button type="button" className="gt on" data-i="0" data-msg="₹399 a month plus per-minute calls. No lock-in.">
                 <b>Up to 10k</b>
                 <small>minutes a month</small>
               </button>
@@ -136,7 +136,7 @@ export function Body() {
                 <small>Custom</small>
               </button>
             </VolumeTiles>
-            <p className="gmsg" aria-live="polite">Pay as you go. Start free, no minimums.</p>
+            <p className="gmsg" aria-live="polite">₹399 a month plus per-minute calls. No lock-in.</p>
           </div>
           <div className="gcard rv">
             <div className="gch">
@@ -222,7 +222,7 @@ export function Body() {
       </section>
       <Estimator />
       <Integrations />
-      <Faq items={[["Is there a free way to start?", "Yes. Start free from the dashboard and pay as you go."], ["Are there minimums or contracts?", "No. Pay as you go has no lock-in and no minimums."], ["How do I get volume rates?", "Use the estimator, then ask for a rate card from the contact page."], ["Is messaging billed separately?", "Voice and messaging run on one account and one bill."]]} />
+      <Faq items={[["What does TryVox cost?", "A one-time ₹100 setup fee, ₹399 monthly rent, and calls billed per minute on one account. Volume rate cards are available on request."], ["Is there a contract or lock-in?", "No. There is no lock-in, so you can stop any time."], ["How do I get volume rates?", "Use the estimator, then ask for a rate card from the contact page."], ["Is messaging billed separately?", "Voice and messaging run on one account and one bill."]]} />
     </>
   );
 }

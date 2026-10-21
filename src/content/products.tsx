@@ -20,7 +20,7 @@ export const PRODUCT_PAGES: Record<string, Product> = {
     layers: ["Carrier network", "Number inventory", "Business KYC", "Routing", "Your AI agent"],
     layerNotes: ["Tier-1 routes to every Indian network", "Local, national and toll-free inventory", "Business verification, done online", "Agent, SIP trunk or VoxML, switch any time", "Your Vapi, Retell or LiveKit agent answers"],
     story: ["Every agent needs a number people trust.", "TryVox gives you local, national and toll-free Indian numbers, verified online and routed in a click.", "Point them at an AI agent, a SIP trunk or your own code, and change your mind any time."],
-    results: [["Number types", "3 line types", "Local, national and toll-free, for every kind of Indian voice line."], ["Time to live", "Minutes", "Online KYC and instant routing, not days of email."], ["Pricing", "Pay per minute", "No lock-in and no monthly minimums."]],
+    results: [["Number types", "3 line types", "Local, national and toll-free, for every kind of Indian voice line."], ["Time to live", "Minutes", "Online KYC and instant routing, not days of email."], ["Pricing", "Pay per minute", "No lock-in, calls billed per minute."]],
     panels: [
       {
         tag: "Search and buy",
@@ -137,7 +137,7 @@ export const PRODUCT_PAGES: Record<string, Product> = {
       {
         tag: "Results",
         heading: <>Numbers that are{" "}<em>ready for production.</em></>,
-        body: "Local, national and toll-free, for every kind of Indian voice line. No lock-in and no monthly minimums.",
+        body: "Local, national and toll-free, for every kind of Indian voice line. No lock-in, calls billed per minute.",
         points: ["Number types: 3 line types", "Time to live: Minutes", "Pricing: Pay per minute"],
         visual: (
           <div className="pm">
