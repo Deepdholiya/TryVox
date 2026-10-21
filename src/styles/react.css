@@ -251,3 +251,19 @@ footer{padding-top:calc(var(--sp) * 1.5)!important}
   .menu-open .hdr .burger span::before,.menu-open .hdr .burger span::after{background:var(--ink)!important}
   .menu-open .sheet{top:calc(var(--hdr) + env(safe-area-inset-top,0px))}
 }
+
+/* about: on tablet and phone each problem reads heading + description, no pinned box */
+.ab-pd{display:none}
+@media (max-width:1000px){
+  .abp{height:auto!important;padding-block:var(--sp)}
+  .abp-st{position:static!important;height:auto!important;display:block}
+  .abf{height:auto!important;padding:8px 20px!important}
+  .abp-g{display:block!important;height:auto!important;overflow:visible!important}
+  .abp-l{transform:none!important}
+  .abp-r,.abp-t{display:none!important}
+  .ab-p{opacity:1!important;padding:24px 0!important;border-top:1px solid var(--line)}
+  .ab-p:first-child{border-top:0}
+  .ab-pd{display:block;margin-top:10px;font-size:var(--t-body);line-height:1.6;color:var(--ink-2)}
+  .th+.abp{padding-top:0}
+}
+@media (max-width:1000px){.abp+.sect{padding-top:0!important}}
