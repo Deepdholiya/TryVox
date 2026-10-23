@@ -301,3 +301,53 @@ footer{padding-top:calc(var(--sp) * 1.5)!important}
   .ab-c{border-left:0!important;border-bottom:1px solid var(--line-2)!important}
   .ab-c:last-child{border-bottom:0!important}
 }
+
+/* =====================================================================
+   v12 · Instrument Sans is the site typeface (headings, body, labels, buttons)
+   Instrument Serif stays for italic accents, Geist Mono for code, Doto for LCD numbers.
+   ===================================================================== */
+:root{
+  --f-head:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-sans:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+}
+body{font-family:var(--f-sans)}
+
+/* =====================================================================
+   v12 · one content edge for every section
+   --edge is the distance from the screen edge to the content grid (the .wrap edge):
+   max(gutter, (container - 1160px) / 2). % in padding/margin resolves against the
+   full-width container, so these match .wrap exactly, scrollbar or not.
+   ===================================================================== */
+:root{--edge-pad:max(var(--gutter),calc((100% - var(--maxw)) / 2))}
+
+/* header: logo and buttons on the content edge */
+.hdr-in{padding-left:max(var(--gutter),calc((100% - var(--maxw)) / 2))!important;padding-right:max(var(--gutter),calc((100% - var(--maxw)) / 2))!important}
+
+/* product layer stack: caption, labels and progress bar on the content edge */
+.ahp-cap,.ahp .ah-stage{padding-left:max(var(--gutter),calc((100% - var(--maxw)) / 2))!important;padding-right:max(var(--gutter),calc((100% - var(--maxw)) / 2))!important}
+.ahp-bar{margin-left:max(var(--gutter),calc((100% - var(--maxw)) / 2))!important;margin-right:max(var(--gutter),calc((100% - var(--maxw)) / 2))!important}
+
+/* product feature panels: same width as every other section */
+.pp-in{max-width:var(--maxw)!important;box-sizing:content-box;padding-left:var(--gutter)!important;padding-right:var(--gutter)!important}
+
+/* solutions challenge: heading on the content edge, cards start there too */
+.hx-h.wrap{width:100%!important;box-sizing:border-box;max-width:calc(var(--maxw) + 2 * var(--gutter))}
+.hx-t{padding-inline:max(var(--gutter),calc((100% - var(--maxw)) / 2))!important}
+
+/* home layer stack: text column and caption on the content edge (container units = the stage width) */
+.ltrack{container-type:inline-size}
+.lleft{padding-left:max(var(--gutter),calc((100cqw - var(--maxw)) / 2))!important}
+.lright .lcap{right:max(var(--gutter),calc((100cqw - var(--maxw)) / 2))!important}
+.layers{left:max(var(--gutter),calc((100cqw - var(--maxw)) / 2))!important}
+@media (max-width:1000px){.layers{left:auto!important}}
+.isob-c .pm{max-width:100%;box-sizing:border-box}
+.isob{container-type:inline-size}
+/* tilted mock-up cards scale with their panel, keeping the desktop proportions (330px card in a 520px panel) */
+.isob-c{width:330px!important;transform:translate(-50%,-50%) scale(var(--s,1)) rotateX(56deg) rotateZ(-34deg)!important}
+.ppn.on .isob-c{transform:translate(-50%,-50%) scale(var(--s,1)) rotateX(56deg) rotateZ(-34deg) translateZ(34px)!important}
+@container (max-width:500px){.isob-c{--s:.86}}
+@container (max-width:440px){.isob-c{--s:.76}}
+@container (max-width:380px){.isob-c{--s:.66}}
+@container (max-width:340px){.isob-c{--s:.58}}
+@container (max-width:300px){.isob-c{--s:.5}}

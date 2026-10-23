@@ -569,11 +569,11 @@ export function HowItWorks() {
             }
         }
         cx.fillStyle = `rgba(${col},${active ? 0.85 : 0.45})`;
-        cx.font = "13px Geist, system-ui, sans-serif";
+        cx.font = "13px 'Instrument Sans', system-ui, sans-serif";
         cx.fillText(g.label, W * 0.03, H * g.y - (sp * g.n) / 2 - 12);
       });
       const lbl = hp > 0.72 ? "Your agent, on every call" : hp > 0.48 ? "Your agent, live" : "Your agent";
-      cx.font = "500 15px Geist, system-ui, sans-serif";
+      cx.font = "500 15px 'Instrument Sans', system-ui, sans-serif";
       const pw = cx.measureText(lbl).width + 24, ph = 32;
       const lx = mob ? clamp(nx - pw / 2, 12, W - pw - 12) : nx + 18, ly = mob ? ny + 20 : ny - ph / 2;
       if (hp > 0.72) {
