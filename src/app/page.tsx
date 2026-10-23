@@ -1,4 +1,5 @@
 import { Estimator, Faq, HeroFx, Icon, Integrations, LogoMark } from "@/components";
+import { BrandLogo } from "@/components/BrandLogo";
 import { CodePanel } from "@/components/interactive";
 import { HeroRig, HowItWorks, Industries, LayerStack } from "@/components/home";
 import { CALL_CURL, CALL_NODE, CALL_PY, SIP_HEADERS } from "@/content/code";
@@ -12,17 +13,7 @@ export const metadata = pageMeta({
   path: "/",
 });
 
-const MQ: [kind: "img" | "imgt" | "t", src: string, name: string][] = [
-  ["img", "/assets/logos/vapi.svg", "Vapi"],
-  ["img", "/assets/logos/retell.svg", "Retell AI"],
-  ["imgt", "/assets/logos/livekit.svg", "LiveKit"],
-  ["img", "/assets/logos/bolna.svg", "Bolna"],
-  ["t", "", "ElevenLabs"],
-  ["t", "", "Deepgram"],
-  ["t", "", "Amazon Polly"],
-  ["t", "", "WhatsApp"],
-  ["t", "", "Webhooks"],
-];
+const MQ = ["vapi", "retell", "livekit", "bolna", "elevenlabs", "deepgram", "amazon-polly", "whatsapp", "webhooks"];
 
 const STACK: { slug: string; k: string; h: string; p: string; go: string }[] = [
   { slug: "phone-numbers", k: "Numbers", h: "Phone numbers callers pick up", p: "Search, buy and configure local, national and toll-free numbers. Verified caller IDs for every campaign.", go: "Get a number" },
@@ -53,11 +44,12 @@ const FAQ: QA[] = [
   ["Is TryVox an alternative to Exotel, Plivo or Twilio for voice AI?", "Yes, for teams running AI voice agents in India. TryVox puts Indian numbers, SIP trunking, a Voice API, agent bindings and DLT-ready messaging on one account, and never sells its own agents."],
 ];
 
-const ORBIT: [string, string, React.ReactNode][] = [
-  ["50%", "4%", <img className="plogo" src="/assets/logos/vapi.svg" alt="Vapi" width={67} height={22} key="v" />],
-  ["93.7%", "35.8%", <img className="plogo" src="/assets/logos/retell.svg" alt="Retell AI" width={79} height={22} key="r" />],
-  ["77%", "87.2%", <><img className="plogo" src="/assets/logos/livekit.svg" alt="" width={22} height={22} />LiveKit</>],
-  ["23%", "87.2%", <img className="plogo" src="/assets/logos/bolna.svg" alt="Bolna" width={41} height={26} style={{ height: 26 }} key="b" />],
+const ORBIT: [string, string, string][] = [
+  ["50%", "4%", "vapi"],
+  ["93.7%", "35.8%", "retell"],
+  ["77%", "87.2%", "livekit"],
+  ["23%", "87.2%", "bolna"],
+  ["6.3%", "35.8%", "your-code"],
 ];
 const SPOKES = [[50, 4], [93.7, 35.8], [77, 87.2], [23, 87.2], [6.3, 35.8]];
 
@@ -102,10 +94,9 @@ export default function Home() {
           <div className="marquee">
             <div className="mq">
               {[0, 1].map((r) =>
-                MQ.map(([k, src, name]) => (
-                  <span className={`it${k === "t" ? " t" : ""}`} aria-hidden={r ? true : undefined} key={`${r}${name}`}>
-                    {k !== "t" && <img className="plogo" src={src} alt={k === "imgt" || r ? "" : name} />}
-                    {k !== "img" && name}
+                MQ.map((id) => (
+                  <span className="it" aria-hidden={r ? true : undefined} key={`${r}${id}`}>
+                    <BrandLogo id={id} size={24} />
                   </span>
                 )),
               )}
@@ -170,14 +161,13 @@ export default function Home() {
             ))}
           </svg>
           <div className="orbit" aria-hidden="true">
-            {ORBIT.map(([l, t, inner]) => (
-              <span className="pt" style={{ left: l, top: t }} key={l + t}>
-                <span className="chip">{inner}</span>
+            {ORBIT.map(([l, t, id]) => (
+              <span className="pt" style={{ left: l, top: t }} key={id}>
+                <span className="chip">
+                  <BrandLogo id={id} size={20} />
+                </span>
               </span>
             ))}
-            <span className="pt" style={{ left: "6.3%", top: "35.8%" }}>
-              <span className="chip code">&lt;your code/&gt;</span>
-            </span>
           </div>
         </div>
       </section>

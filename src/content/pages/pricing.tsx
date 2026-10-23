@@ -1,5 +1,6 @@
 /* Ported from the original static site. Edit freely: this file is now the source of truth. */
 import { Breadcrumb, Estimator, Faq, HeroFx, Integrations, Split, VolumeTiles } from "@/components";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const meta = { title: "Pricing: Pay-Per-Minute Telephony for AI Voice Agents | TryVox", description: "Telephony for AI voice agents in India: ₹100 setup fee, ₹399 monthly rent and per-minute calls. No lock-in. Volume rate cards on request." };
 
@@ -31,24 +32,16 @@ export function Body() {
       <section className="gx">
         <p className="lg-lbl mono">Works with your voice stack</p>
         <div className="lgrid rv">
-          <div className="lgc">
-            <img src="/assets/logos/vapi.svg" alt="Vapi" width="55" height="20" />
-          </div>
-          <div className="lgc">
-            <img src="/assets/logos/retell.svg" alt="Retell AI" width="65" height="20" />
-          </div>
-          <div className="lgc">
-            <img src="/assets/logos/livekit.svg" alt="LiveKit" width="18" height="20" />
-          </div>
-          <div className="lgc">
-            <img src="/assets/logos/bolna.svg" alt="Bolna" width="28" height="20" />
-          </div>
-          <div className="lgc"><em>ElevenLabs</em></div>
-          <div className="lgc"><em>Deepgram</em></div>
-          <div className="lgc"><em>WhatsApp</em></div>
-          <div className="lgc"><em>Amazon Polly</em></div>
-          <div className="lgc"><em>SIP / BYOC</em></div>
-          <div className="lgc"><em>VoxML</em></div>
+          <div className="lgc"><BrandLogo id="vapi" size={24} /></div>
+          <div className="lgc"><BrandLogo id="retell" size={24} /></div>
+          <div className="lgc"><BrandLogo id="livekit" size={24} /></div>
+          <div className="lgc"><BrandLogo id="bolna" size={24} /></div>
+          <div className="lgc"><BrandLogo id="elevenlabs" size={24} /></div>
+          <div className="lgc"><BrandLogo id="deepgram" size={24} /></div>
+          <div className="lgc"><BrandLogo id="whatsapp" size={24} /></div>
+          <div className="lgc"><BrandLogo id="amazon-polly" size={24} /></div>
+          <div className="lgc"><BrandLogo id="sip-byoc" size={24} /></div>
+          <div className="lgc"><BrandLogo id="voxml" size={24} /></div>
         </div>
         <div className="wrap gsec">
           <div className="shd c rv">

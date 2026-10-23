@@ -1,6 +1,7 @@
 /* Ported from the original static site. Edit freely: this file is now the source of truth. */
 import type { ReactNode } from "react";
-import type { CodeSet } from "./code";
+import { BrandLogo } from "@/components/BrandLogo";
+import { SIP_HEADERS, type CodeSet } from "./code";
 import type { QA } from "./site";
 
 export type Panel = { tag: string; heading: ReactNode; body: string; points: string[]; visual: ReactNode };
@@ -108,17 +109,17 @@ export const PRODUCT_PAGES: Record<string, Product> = {
             <div className="pm-body">
               <div className="mprov">
                 <span className="on">
-                  <img src="/assets/logos/vapi.svg" alt="Vapi" width="55" height="18" />
+                  <BrandLogo id="vapi" size={16} onDark />
                 </span>
                 <span>
-                  <img src="/assets/logos/retell.svg" alt="Retell AI" width="65" height="18" />
+                  <BrandLogo id="retell" size={16} onDark />
                 </span>
-                <span><em>ElevenLabs</em></span>
+                <span><BrandLogo id="elevenlabs" size={16} onDark /></span>
                 <span>
-                  <img src="/assets/logos/livekit.svg" alt="LiveKit" width="18" height="18" />
+                  <BrandLogo id="livekit" size={16} onDark />
                 </span>
                 <span>
-                  <img src="/assets/logos/bolna.svg" alt="Bolna" width="28" height="18" />
+                  <BrandLogo id="bolna" size={16} onDark />
                 </span>
                 <span><em>+ more</em></span>
               </div>
@@ -478,17 +479,17 @@ export const PRODUCT_PAGES: Record<string, Product> = {
             <div className="pm-body">
               <div className="mprov">
                 <span>
-                  <img src="/assets/logos/vapi.svg" alt="Vapi" width="55" height="18" />
+                  <BrandLogo id="vapi" size={16} onDark />
                 </span>
                 <span className="on">
-                  <img src="/assets/logos/retell.svg" alt="Retell AI" width="65" height="18" />
+                  <BrandLogo id="retell" size={16} onDark />
                 </span>
-                <span><em>ElevenLabs</em></span>
+                <span><BrandLogo id="elevenlabs" size={16} onDark /></span>
                 <span>
-                  <img src="/assets/logos/livekit.svg" alt="LiveKit" width="18" height="18" />
+                  <BrandLogo id="livekit" size={16} onDark />
                 </span>
                 <span>
-                  <img src="/assets/logos/bolna.svg" alt="Bolna" width="28" height="18" />
+                  <BrandLogo id="bolna" size={16} onDark />
                 </span>
                 <span><em>+ more</em></span>
               </div>
@@ -553,7 +554,7 @@ export const PRODUCT_PAGES: Record<string, Product> = {
             </div>
             <div className="pm-body">
               <pre className="mcode">
-                {"# Headers your agent receives on an inbound call # after you bind a TryVox number to it X-TryVox-Direction: inbound X-TryVox-Route: ai-agent X-TryVox-AI-Provider: vapi | elevenlabs | retell X-TryVox-From: <E.164 caller> X-TryVox-To: <E.164 TryVox number>"}
+                {SIP_HEADERS}
               </pre>
             </div>
           </div>

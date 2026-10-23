@@ -1,5 +1,7 @@
 /* Ported from the original static site. Edit freely: this file is now the source of truth. */
 import { Breadcrumb, Faq, HeroFx, Integrations } from "@/components";
+import { SIP_HEADERS } from "@/content/code";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const meta = { title: "Integrations: Vapi, Retell, ElevenLabs, LiveKit, Bolna | TryVox", description: "Connect TryVox Indian phone numbers to Vapi, Retell, ElevenLabs, LiveKit and Bolna voice agents, or any SIP stack." };
 
@@ -46,17 +48,17 @@ export function Body() {
                 <div className="pm-body">
                   <div className="mprov">
                     <span className="on">
-                      <img src="/assets/logos/vapi.svg" alt="Vapi" width="55" height="18" />
+                      <BrandLogo id="vapi" size={16} onDark />
                     </span>
                     <span>
-                      <img src="/assets/logos/retell.svg" alt="Retell AI" width="65" height="18" />
+                      <BrandLogo id="retell" size={16} onDark />
                     </span>
-                    <span><em>ElevenLabs</em></span>
+                    <span><BrandLogo id="elevenlabs" size={16} onDark /></span>
                     <span>
-                      <img src="/assets/logos/livekit.svg" alt="LiveKit" width="18" height="18" />
+                      <BrandLogo id="livekit" size={16} onDark />
                     </span>
                     <span>
-                      <img src="/assets/logos/bolna.svg" alt="Bolna" width="28" height="18" />
+                      <BrandLogo id="bolna" size={16} onDark />
                     </span>
                     <span><em>+ more</em></span>
                   </div>
@@ -88,31 +90,31 @@ export function Body() {
         </div>
         <div className="tiles">
           <a className="tile rv" href="https://docs.tryvox.io/ai-agents/vapi">
-            <span className="tl-i"><img src="/assets/logos/vapi.svg" alt="" width="55" height="20" /></span>
+            <span className="tl-i"><BrandLogo id="vapi" size={26} /></span>
             <b>Vapi</b>
             <small>Bind a TryVox number to your Vapi agent.</small>
             <span className="go">↗</span>
           </a>
           <a className="tile rv" href="https://docs.tryvox.io/ai-agents/retell">
-            <span className="tl-i"><img src="/assets/logos/retell.svg" alt="" width="65" height="20" /></span>
+            <span className="tl-i"><BrandLogo id="retell" size={26} /></span>
             <b>Retell</b>
             <small>Bind a TryVox number to your Retell agent.</small>
             <span className="go">↗</span>
           </a>
           <a className="tile rv" href="https://docs.tryvox.io/ai-agents/elevenlabs">
-            <span className="tl-i"><em>ElevenLabs</em></span>
+            <span className="tl-i"><BrandLogo id="elevenlabs" size={26} /></span>
             <b>ElevenLabs</b>
             <small>Bind a TryVox number to your ElevenLabs agent.</small>
             <span className="go">↗</span>
           </a>
           <a className="tile rv" href="https://docs.tryvox.io/ai-agents/livekit">
-            <span className="tl-i"><img src="/assets/logos/livekit.svg" alt="" width="18" height="20" /></span>
+            <span className="tl-i"><BrandLogo id="livekit" size={26} /></span>
             <b>LiveKit</b>
             <small>Bind a TryVox number to your LiveKit agent.</small>
             <span className="go">↗</span>
           </a>
           <a className="tile rv" href="https://docs.tryvox.io/ai-agents/bolna">
-            <span className="tl-i"><img src="/assets/logos/bolna.svg" alt="" width="28" height="20" /></span>
+            <span className="tl-i"><BrandLogo id="bolna" size={26} /></span>
             <b>Bolna</b>
             <small>Bind a TryVox number to your Bolna agent.</small>
             <span className="go">↗</span>
@@ -166,17 +168,17 @@ export function Body() {
               <div className="pm-body">
                 <div className="mprov">
                   <span className="on">
-                    <img src="/assets/logos/vapi.svg" alt="Vapi" width="55" height="18" />
+                    <BrandLogo id="vapi" size={16} onDark />
                   </span>
                   <span>
-                    <img src="/assets/logos/retell.svg" alt="Retell AI" width="65" height="18" />
+                    <BrandLogo id="retell" size={16} onDark />
                   </span>
-                  <span><em>ElevenLabs</em></span>
+                  <span><BrandLogo id="elevenlabs" size={16} onDark /></span>
                   <span>
-                    <img src="/assets/logos/livekit.svg" alt="LiveKit" width="18" height="18" />
+                    <BrandLogo id="livekit" size={16} onDark />
                   </span>
                   <span>
-                    <img src="/assets/logos/bolna.svg" alt="Bolna" width="28" height="18" />
+                    <BrandLogo id="bolna" size={16} onDark />
                   </span>
                   <span><em>+ more</em></span>
                 </div>
@@ -223,7 +225,7 @@ export function Body() {
               </div>
               <div className="pm-body">
                 <pre className="mcode">
-                  {"# Headers your agent receives on an inbound call # after you bind a TryVox number to it X-TryVox-Direction: inbound X-TryVox-Route: ai-agent X-TryVox-AI-Provider: vapi | elevenlabs | retell X-TryVox-From: <E.164 caller> X-TryVox-To: <E.164 TryVox number>"}
+                  {SIP_HEADERS}
                 </pre>
               </div>
             </div>

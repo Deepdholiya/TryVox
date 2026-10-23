@@ -1,5 +1,6 @@
 /* Ported from the original static site. Edit freely: this file is now the source of truth. */
 import { Breadcrumb, CodePanel, Faq, HeroFx, Integrations } from "@/components";
+import { CALL_RESP } from "@/content/code";
 
 export const meta = { title: "Voice API Docs and Quickstart for Developers | TryVox", description: "Build on TryVox: REST API with HTTP Basic auth, VoxML call flows and webhooks for every call event. Place your first call in minutes." };
 
@@ -166,7 +167,7 @@ export function Body() {
               </div>
               <div className="pm-body">
                 <pre className="mcode">
-                  {"// 201 Created { \"data\": { \"request_uuid\": \"…\", \"from\": \"+918047182290\", \"to\": \"+919812345678\", \"direction\": \"outbound\", \"status\": \"queued\", \"duration\": 0, \"billsec\": 0 } }"}
+                  {CALL_RESP}
                 </pre>
               </div>
             </div>

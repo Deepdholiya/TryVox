@@ -351,3 +351,39 @@ body{font-family:var(--f-sans)}
 @container (max-width:380px){.isob-c{--s:.66}}
 @container (max-width:340px){.isob-c{--s:.58}}
 @container (max-width:300px){.isob-c{--s:.5}}
+
+/* =====================================================================
+   v13 · integration logos: one component, equal visual size
+   ===================================================================== */
+.blogo{display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1;vertical-align:middle;color:var(--ink);white-space:nowrap}
+.blogo img{display:block;width:auto;max-width:none}
+.blogo-word img{height:var(--bh)}
+.blogo-word .dk{display:none}
+.blogo-lock{gap:calc(var(--bs) * .34)}
+.blogo-lock .mk{height:calc(var(--bs) * .92);width:auto}
+.blogo-lock .ic-mk{display:grid;place-items:center;width:calc(var(--bs) * 1.1);height:calc(var(--bs) * 1.1);border-radius:30%;background:var(--accent-soft,rgba(157,97,255,.14));color:var(--brand,#9D61FF)}
+.blogo-lock .ic-mk svg{width:62%;height:62%}
+.blogo-lock .lb{font:600 calc(var(--bs) * .74)/1 var(--f-head);letter-spacing:-.02em;color:currentColor}
+/* dark ink flips to light on dark surfaces and in dark theme */
+.blogo.ink.on-dark img{filter:invert(1) hue-rotate(180deg)}
+.blogo.on-dark{color:#F3F0F9}
+:root[data-theme="dark"] .blogo.ink img{filter:invert(1) hue-rotate(180deg)}
+:root[data-theme="dark"] .blogo-word.has-dark img:not(.dk){display:none}
+:root[data-theme="dark"] .blogo-word.has-dark .dk{display:block}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .blogo.ink img{filter:invert(1) hue-rotate(180deg)}
+  :root:not([data-theme="light"]) .blogo-word.has-dark img:not(.dk){display:none}
+  :root:not([data-theme="light"]) .blogo-word.has-dark .dk{display:block}
+}
+/* logo component wins over the older per-container image rules (fixed heights, filters) */
+.blogo img{max-width:none!important;opacity:1!important;filter:none!important}
+.blogo-word img{height:var(--bh)!important;width:auto!important}
+.blogo-lock img.mk{height:calc(var(--bs) * .92)!important;width:auto!important}
+.blogo.ink.on-dark img{filter:invert(1) hue-rotate(180deg)!important}
+:root[data-theme="dark"] .blogo.ink img{filter:invert(1) hue-rotate(180deg)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .blogo.ink img{filter:invert(1) hue-rotate(180deg)!important}}
+.mq .it{height:auto!important;opacity:.85}
+.orbit .chip{height:auto!important;min-height:44px;padding:8px 14px}
+.mprov span{height:auto!important;min-height:46px;padding:6px 8px}
+.ig-c{opacity:.45}
+.ig-c.near{opacity:.75}.ig-c.on{opacity:1}

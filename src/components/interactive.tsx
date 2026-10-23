@@ -1,7 +1,8 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
-import { IG, LOGOIMG, THF } from "@/content/site";
+import { IG, THF } from "@/content/site";
+import { BrandLogo } from "./BrandLogo";
 import { all, makeCtx, prefersReduced, useDom } from "@/lib/dom";
 import { ThreeField } from "./ThreeField";
 
@@ -126,10 +127,9 @@ export function Integrations({ id }: { id?: string }) {
               <div className="ig-tr" ref={(n) => void (tracks.current[i] = n)} style={i === g ? { transform: `translateY(${shift}px)` } : undefined}>
                 {items.map((it, j) => {
                   const cls = `ig-c${i === g && j === k ? " on" : ""}${i === g && Math.abs(j - k) === 1 ? " near" : ""}`;
-                  const logo = LOGOIMG[it];
                   return (
                     <div className={cls} key={it} role="listitem">
-                      {logo ? <img src={`/assets/logos/${it}.svg`} alt={logo[0]} width={logo[1]} height={26} loading="lazy" /> : <em>{it}</em>}
+                      <BrandLogo id={it} size={28} />
                     </div>
                   );
                 })}

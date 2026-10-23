@@ -30,12 +30,6 @@ export const SOLUTIONS: NavItem[] = [
   { slug: "travel-hospitality", name: "Travel & hospitality", icon: "plane", desc: "24/7 booking and guest lines." },
 ];
 
-export const LOGOIMG: Record<string, [string, number]> = {
-  vapi: ["Vapi", 55],
-  retell: ["Retell AI", 65],
-  livekit: ["LiveKit", 18],
-  bolna: ["Bolna", 28],
-};
 
 export const THF = [
   "call_8f2a19 · ringing",
@@ -49,10 +43,10 @@ export const THF = [
 ];
 
 export const IG: [string, string[]][] = [
-  ["Agent platforms", ["vapi", "retell", "livekit", "bolna", "ElevenLabs"]],
-  ["Voice stack", ["Deepgram", "Amazon Polly", "Asterisk", "FreeSWITCH", "Any SIP PBX"]],
-  ["Channels", ["WhatsApp", "DLT SMS", "Toll-free", "Local numbers", "SIP trunks"]],
-  ["Developer tools", ["Webhooks", "VoxML", "REST API", "Recordings", "Signed callbacks"]],
+  ["Agent platforms", ["vapi", "retell", "livekit", "bolna", "elevenlabs"]],
+  ["Voice stack", ["deepgram", "amazon-polly", "asterisk", "freeswitch", "any-sip-pbx"]],
+  ["Channels", ["whatsapp", "dlt-sms", "toll-free", "local-numbers", "sip-trunks"]],
+  ["Developer tools", ["webhooks", "voxml", "rest-api", "recordings", "signed-callbacks"]],
 ];
 
 export type QA = [string, string];
