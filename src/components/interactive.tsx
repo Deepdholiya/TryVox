@@ -190,13 +190,15 @@ export function CodePanel({ code, children }: { code: Record<string, [string, st
   return (
     <>
       <div className="code">
-        <div className="code-top" role="tablist" aria-label="Code example">
-          {keys.map((k) => (
-            <button role="tab" key={k} aria-selected={k === lang} onClick={() => choose(k)}>
-              {code[k][0]}
-            </button>
-          ))}
-          <button className="copy" type="button" onClick={copy}>
+        <div className="code-top">
+          <div className="code-langs" role="group" aria-label="Code language">
+            {keys.map((k) => (
+              <button type="button" key={k} aria-pressed={k === lang} onClick={() => choose(k)}>
+                {code[k][0]}
+              </button>
+            ))}
+          </div>
+          <button className="copy" type="button" onClick={copy} aria-live="polite">
             {copied}
           </button>
         </div>

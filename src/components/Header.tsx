@@ -62,6 +62,9 @@ export function Header() {
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        // return focus to the menu's own button so keyboard users don't land on <body>
+        const panel = (document.activeElement as HTMLElement | null)?.closest<HTMLElement>("[id^='mega-']");
+        if (panel) document.querySelector<HTMLElement>(`[aria-controls="${panel.id}"]`)?.focus();
         setOpen(null);
         setSheet(false);
       }

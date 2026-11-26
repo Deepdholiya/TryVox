@@ -39,7 +39,7 @@
 main h1,main h1.hd,main .hd.h1,.htitle h3{font-size:var(--t-h1)!important;line-height:1.02!important;letter-spacing:-.045em!important;font-weight:500}
 
 /* section headings */
-main h2,main h2.hd,main .hd.h2,footer .fcta h2.hd,.abp .ab-p h3.hd{font-size:var(--t-h2)!important;line-height:1.06!important;letter-spacing:-.04em!important;font-weight:500}
+main h2,main h2.hd,main .hd.h2,footer .fcta h2.hd,.abp .ab-p :is(h2,h3).hd{font-size:var(--t-h2)!important;line-height:1.06!important;letter-spacing:-.04em!important;font-weight:500}
 
 /* sub-section headings: headings that sit beside a visual, inside a section */
 main .ppn-c h2.hd,main .r3 h2.hd,main .ind-copy h3,main .ab-st.hd,main .revp p{font-size:var(--t-h3)!important;line-height:1.16!important;letter-spacing:-.03em!important}
@@ -116,7 +116,7 @@ main .th .sub{max-width:60ch}
   /* hero secondary button stays legible where the gradient turns light */
   main .th .obtn{background:rgba(17,7,36,.62)!important;border-color:rgba(255,255,255,.28)!important;color:#fff!important;backdrop-filter:blur(6px)}
   /* about: problem statements step down a size so each description fits the frame */
-  .abp .ab-p h3.hd{font-size:var(--t-h3)!important}
+  .abp .ab-p :is(h2,h3).hd{font-size:var(--t-h3)!important}
 }
 
 /* product pages: hero flows straight into the dark layer stack (no white-to-grey band) */
@@ -465,3 +465,28 @@ pre,code,.code pre,.mcode,.mlab.code{font-family:ui-monospace,SFMono-Regular,Men
 /* minimal: no floating telemetry text, no page-wide grid lines, no hatching behind cards, no theme switch */
 .th-f,.gridlines,.theme-t{display:none!important}
 .mc{background-image:none}
+
+/* ================= v17: accessibility pass (WCAG 2.2 AA contrast, structure) ================= */
+/* muted text: .44 alpha ink was ~3:1 on white; .6 gives ~5:1 */
+:root{--ink-3:rgba(15,13,20,.6);--glass-ink-3:rgba(236,232,244,.6);--green-ink:#0A7A1E}
+.code-langs{display:flex;align-items:center;gap:4px}
+.ft .fh{font-size:11px!important;line-height:1.4;font-weight:400}
+.gx .sub{color:var(--ink-2)}
+.code .c{color:#9A93AB}
+.seg .cnt{color:var(--ink-3)}
+.s3 .n{color:var(--green-ink)}
+.hc-n{opacity:1;color:var(--ink-3)}
+.gn{opacity:1;color:var(--ink-3)}
+.layers li b{opacity:1}
+/* scroll stories dim inactive steps; keep dimmed text readable */
+.ab-p{opacity:.62}
+@media (max-width:1000px){.ab-p{opacity:.62!important}}
+.ab-p.on{opacity:1!important}
+/* respect reduced motion everywhere */
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+.pp-nav a{opacity:1;color:var(--ink-3)}.pp-nav a.on,.pp-nav a:hover{color:var(--ink)}
+.ab-r span{opacity:1;color:var(--ink-3)}
+.est-cta input:focus-visible,.g-form input:focus-visible,input:focus-visible{outline:2px solid var(--brand,#9D61FF)!important;outline-offset:2px}
+.ah-r li:not(.on){color:rgba(236,232,244,.66)}
+.lv-s{color:rgba(243,240,249,.7)}
+@media (max-width:1000px) and (prefers-reduced-motion:reduce){.ab-p{opacity:1!important}}

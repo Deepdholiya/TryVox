@@ -36,7 +36,7 @@ const COMPARE: [string, string, string, string, string][] = [
   ["Self-serve setup in minutes", "y", "Varies", "y", "n"],
   ["Voice, WhatsApp and SMS on one account", "y", "Varies", "y", "n"],
 ];
-const cellOf = (v: string) => (v === "y" ? <span className="cy">Yes</span> : v === "n" ? <span className="cn" aria-label="No" /> : v);
+const cellOf = (v: string) => (v === "y" ? <span className="cy">Yes</span> : v === "n" ? <span className="cn" role="img" aria-label="No" /> : v);
 
 const FAQ: QA[] = [
   ["What is TryVox?", "TryVox is telephony infrastructure for voice AI. We provide phone numbers, SIP trunking, programmable voice APIs, call routing and real-time call events that connect any AI voice agent to the phone network."],
@@ -179,7 +179,7 @@ export default function Home() {
 
       {/* ---------- comparison ---------- */}
       <section className="wrap" id="compare" aria-label="How TryVox compares">
-        <div className="cmpw rv">
+        <div className="cmpw rv" tabIndex={0} role="region" aria-label="Comparison table (scrolls sideways on small screens)">
           <table className="cmp">
             <caption className="sr-only">TryVox compared with telephony providers that sell their own AI agents, global CPaaS and local telcos</caption>
             <thead>

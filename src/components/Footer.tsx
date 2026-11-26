@@ -84,7 +84,7 @@ export function Footer() {
         </div>
         {COLS.map(([title, links]) => (
           <nav key={title} aria-label={title}>
-            <h4>{title}</h4>
+            <h2 className="fh">{title}</h2>
             <ul>
               {links.map(([t, h]) => (
                 <li key={h}>
