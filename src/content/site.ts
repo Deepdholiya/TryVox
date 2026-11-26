@@ -8,17 +8,29 @@ export const EMAIL = "team@tryvox.io";
 export const COMPANY = "Tryjolt Solutions Pvt Ltd";
 export const TAGLINE = "Telephony infrastructure for voice AI";
 export const ONE_LINER =
-  "TryVox is telephony infrastructure for voice AI. It gives AI voice agents Indian phone numbers, SIP trunking, a programmable Voice API, WhatsApp and DLT SMS, with KYC, consent and DLT compliance built in. TryVox does not build AI agents; it connects the agent you already use (Vapi, Retell, ElevenLabs, LiveKit, Bolna or your own code) to the real phone network.";
+  "TryVox is telephony infrastructure for voice AI. It gives AI voice agents Indian phone numbers, SIP trunking, a programmable Voice API, WebRTC, WhatsApp, SMS and RCS, outbound campaign tooling and number reputation management, with KYC, consent and DLT compliance built in. TryVox does not build AI agents; it connects the agent you already use (Vapi, Retell, ElevenLabs, LiveKit, Bolna or your own code) to the real phone network.";
 
-export type NavItem = { slug: string; name: string; icon: string; desc: string };
+export type NavItem = { slug: string; name: string; icon: string; desc: string; group?: string };
+
+/** Products, grouped by the stage of a call they serve. The header mega menu, footer, sitemap and llms.txt read this list. */
+export const STAGES: { id: string; label: string; note: string }[] = [
+  { id: "reach", label: "Reach", note: "Before the call" },
+  { id: "connect", label: "Connect", note: "The call path" },
+  { id: "control", label: "Control", note: "During the call" },
+  { id: "engage", label: "Engage", note: "Around the call" },
+];
 
 export const PRODUCTS: NavItem[] = [
-  { slug: "phone-numbers", name: "Phone Numbers", icon: "phone", desc: "Local, national and toll-free numbers with KYC." },
-  { slug: "sip-trunking", name: "SIP Trunking", icon: "sip", desc: "Trunks, credentials and channel limits." },
-  { slug: "voice-api", name: "Voice API", icon: "wave", desc: "Calls, conferences and VoxML call flows." },
-  { slug: "ai-agents", name: "AI Agents", icon: "bot", desc: "Bind a number to Vapi, Retell, LiveKit or Bolna." },
-  { slug: "messaging", name: "Messaging", icon: "chat", desc: "WhatsApp and SMS on the same account." },
-  { slug: "compliance", name: "Compliance", icon: "shield", desc: "Consent, DLT and verified caller IDs." },
+  { slug: "phone-numbers", name: "Phone Numbers", icon: "phone", group: "reach", desc: "Local, national, toll-free and 140/160 series numbers." },
+  { slug: "number-reputation", name: "Number Reputation", icon: "eye", group: "reach", desc: "Keep caller IDs trusted and off spam lists." },
+  { slug: "compliance", name: "Compliance", icon: "shield", group: "reach", desc: "KYC, consent, DLT and verified caller IDs." },
+  { slug: "sip-trunking", name: "SIP Trunking", icon: "sip", group: "connect", desc: "Trunks, credentials, failover and BYOC." },
+  { slug: "webrtc", name: "WebRTC", icon: "globe", group: "connect", desc: "Calls from a browser tab or app." },
+  { slug: "ai-agents", name: "Agent Connect", icon: "bot", group: "connect", desc: "Bind a number to Vapi, Retell, LiveKit or Bolna." },
+  { slug: "voice-api", name: "Voice API", icon: "wave", group: "control", desc: "Call control, VoxML and live audio streams." },
+  { slug: "whatsapp", name: "WhatsApp", icon: "chat", group: "engage", desc: "WhatsApp messages and calls on one account." },
+  { slug: "sms-rcs", name: "SMS & RCS", icon: "mail", group: "engage", desc: "DLT-ready SMS and rich RCS messages." },
+  { slug: "campaign-manager", name: "Smart Campaign Manager", icon: "flow", group: "engage", desc: "Outbound campaigns that keep their answer rate." },
 ];
 
 export const SOLUTIONS: NavItem[] = [

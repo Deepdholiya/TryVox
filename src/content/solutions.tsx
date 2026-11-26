@@ -35,7 +35,7 @@ export const SOLUTION_PAGES: Record<string, Solution> = {
       { tag: "Loan servicing", heading: <>Answer servicing calls{" "}<em>any hour.</em></>, body: "Let your agent handle balance, schedule and foreclosure questions on a dedicated line, with a person one transfer away.", lines: [["ev", "Inbound · servicing line"], ["c", "What's my outstanding balance?"], ["a", "It's ₹1,12,400 with 26 EMIs left."], ["ev", "Transfer offered · Dial"]] }
     ],
     flow: [["Trigger", "EMI due in 3 days"], ["Call", "Agent calls from a local number"], ["Outcome", "Promise to pay: Friday"], ["Follow-up", "WhatsApp payment link sent"]],
-    products: ["phone-numbers", "ai-agents", "messaging"],
+    products: ["phone-numbers", "ai-agents", "whatsapp"],
     faq: [["Can collection calls come from a local number?", "Yes. Buy local numbers per region and use verified caller IDs so borrowers recognise the call."], ["How does TryVox handle consent for financial calls?", "Store consent per contact in TryVox and respect withdrawals before your agent dials."], ["Can a human take over a collections call?", "Yes. Bring a person into the call with Dial or a conference."], ["Can I send a payment link after the call?", "Yes. Send a WhatsApp or SMS template from the same account when the call ends."]],
   },
   "healthcare": {
@@ -61,7 +61,7 @@ export const SOLUTION_PAGES: Record<string, Solution> = {
       { tag: "Reminders", heading: <>Fewer no-shows{" "}<em>with reminders.</em></>, body: "Send SMS or WhatsApp reminders before every visit from the same account.", lines: [["ev", "24 hours before visit"], ["ev ok", "SMS · appointment_confirm · delivered"], ["c", "CONFIRM"], ["ev ok", "Visit confirmed"]] }
     ],
     flow: [["Inbound", "Patient calls the clinic"], ["Agent", "Checks open slots"], ["Booked", "Thursday, 4 PM"], ["Reminder", "SMS 24 hours before"]],
-    products: ["phone-numbers", "ai-agents", "messaging"],
+    products: ["phone-numbers", "ai-agents", "whatsapp"],
     faq: [["Can each clinic have its own phone number?", "Yes. Buy a local number per clinic and bind each to an agent."], ["Can staff take over a patient call?", "Yes. Transfer to a person with Dial."], ["Can I send appointment reminders?", "Yes. Send SMS or WhatsApp from the same account."], ["Does the agent answer after hours?", "Yes. A bound number reaches your agent 24/7."]],
   },
   "ecommerce": {
@@ -87,7 +87,7 @@ export const SOLUTION_PAGES: Record<string, Solution> = {
       { tag: "Order status", heading: <>Answer{" "}<em>where-is-my-order</em>{" "}instantly.</>, body: "Let your agent answer order status calls on a toll-free line, so your team handles the exceptions.", lines: [["ev", "Inbound · support line"], ["c", "Where is my order?"], ["a", "It's out for delivery and arrives by 6 PM."], ["ev ok", "Resolved on the call"]] }
     ],
     flow: [["Trigger", "COD order placed"], ["Call", "Agent confirms the order"], ["Keypad", "Customer presses 1"], ["Outcome", "Order released to ship"]],
-    products: ["voice-api", "ai-agents", "messaging"],
+    products: ["voice-api", "ai-agents", "whatsapp"],
     faq: [["Can customers confirm an order with a keypress?", "Yes. Collect input with VoxML Gather."], ["Can I place confirmation calls in bulk?", "Yes. The calls endpoint accepts a list of calls."], ["Can I follow up on WhatsApp?", "Yes, from the same account."], ["Will it scale on sale days?", "Calls run on TryVox infrastructure with 99.9% platform uptime. Talk to us before big events so we can plan capacity with you."]],
   },
   "logistics": {
@@ -139,7 +139,7 @@ export const SOLUTION_PAGES: Record<string, Solution> = {
       { tag: "Site visits", heading: <>Book the visit{" "}<em>on the call.</em></>, body: "Lock in a site visit while interest is high and send the location by WhatsApp.", lines: [["a", "Sunday at 11 for a site visit?"], ["c", "Yes."], ["ev ok", "Visit booked · Sunday 11 AM"], ["ev", "WhatsApp · location sent"]] }
     ],
     flow: [["Lead", "Form filled on a portal"], ["Call", "Agent calls back in a minute"], ["Qualify", "Budget and location"], ["Booked", "Site visit on Sunday"]],
-    products: ["phone-numbers", "ai-agents", "messaging"],
+    products: ["phone-numbers", "ai-agents", "whatsapp"],
     faq: [["How quickly can the agent call a new lead?", "As soon as your system triggers the call through the Voice API or your agent platform."], ["Can calls come from a local number?", "Yes. Use a local number per city."], ["Can my sales team take over?", "Yes. Transfer to a person when the lead is ready."], ["Can I send a confirmation after the call?", "Yes. Send WhatsApp or SMS from the same account."]],
   },
   "travel-hospitality": {
@@ -165,7 +165,7 @@ export const SOLUTION_PAGES: Record<string, Solution> = {
       { tag: "Confirmations", heading: <>Confirm every change{" "}<em>in writing.</em></>, body: "Send SMS or WhatsApp confirmations the moment a booking changes.", lines: [["ev ok", "Booking updated"], ["ev", "WhatsApp · booking_confirm"], ["ev ok", "Delivered · read"], ["c", "Got it, thanks!"]] }
     ],
     flow: [["Inbound", "Guest calls the hotel"], ["Agent", "Finds the booking"], ["Change", "Late check-out added"], ["Confirm", "SMS sent to guest"]],
-    products: ["phone-numbers", "ai-agents", "messaging"],
+    products: ["phone-numbers", "ai-agents", "whatsapp"],
     faq: [["Can I offer guests a toll-free number?", "Yes. Buy toll-free numbers for inbound lines."], ["Can staff take over a call?", "Yes. Transfer to a person when needed."], ["Can I confirm bookings by message?", "Yes, by SMS or WhatsApp from the same account."], ["Does the agent work at night?", "Yes. Calls to a bound number reach your agent 24/7."]],
   }
 };

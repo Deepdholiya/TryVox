@@ -1,6 +1,7 @@
 import { Estimator, Faq, HeroFx, Icon, Integrations, LogoMark } from "@/components";
 import { BrandLogo } from "@/components/BrandLogo";
 import { CodePanel } from "@/components/interactive";
+import { StrandField } from "@/components/StrandField";
 import { HeroRig, HowItWorks, Industries, LayerStack } from "@/components/home";
 import { CALL_CURL, CALL_NODE, CALL_PY, SIP_HEADERS } from "@/content/code";
 import { APP, DOCS, PRODUCTS, type QA } from "@/content/site";
@@ -16,12 +17,15 @@ export const metadata = pageMeta({
 const MQ = ["vapi", "retell", "livekit", "bolna", "elevenlabs", "deepgram", "amazon-polly", "whatsapp", "webhooks"];
 
 const STACK: { slug: string; k: string; h: string; p: string; go: string }[] = [
-  { slug: "phone-numbers", k: "Numbers", h: "Phone numbers callers pick up", p: "Search, buy and configure local, national and toll-free numbers. Verified caller IDs for every campaign.", go: "Get a number" },
+  { slug: "phone-numbers", k: "Numbers", h: "Phone numbers callers pick up", p: "Local, national, toll-free and 140/160 series numbers, live as soon as business KYC clears.", go: "Get a number" },
+  { slug: "number-reputation", k: "Reputation", h: "Caller IDs people trust", p: "Verified business names, health tracking per number, and automatic rest for tired numbers.", go: "Protect answer rates" },
   { slug: "sip-trunking", k: "SIP", h: "SIP trunking, set up for you", p: "Create trunks, manage credentials and IP ACLs, and set channel limits. Or bring your own carrier.", go: "Create a trunk" },
+  { slug: "webrtc", k: "WebRTC", h: "Calls from a browser tab", p: "Make and take phone calls in the browser, and hand a live AI call to a human with context.", go: "Call from the browser" },
+  { slug: "ai-agents", k: "Agent Connect", h: "Connect any AI agent", p: "Bind a number to a Vapi, Retell, ElevenLabs, LiveKit or Bolna agent. No SIP setup needed.", go: "Connect an agent" },
   { slug: "voice-api", k: "Voice API", h: "Voice API & VoxML", p: "Place calls, run conferences and build call flows with Say, Gather, Dial and Stream.", go: "See the API" },
-  { slug: "ai-agents", k: "AI Agents", h: "Connect any AI agent", p: "Bind a number to a Vapi, Retell, ElevenLabs, LiveKit or Bolna agent. No SIP setup needed.", go: "Connect an agent" },
-  { slug: "messaging", k: "Messaging", h: "WhatsApp and SMS", p: "Follow up every AI call with a confirmation, summary or payment link, including WhatsApp calling.", go: "Explore messaging" },
-  { slug: "compliance", k: "Compliance", h: "Consent and DLT, built in", p: "Consent records, DLT registration and verified caller IDs, so India's rules are handled.", go: "See compliance" },
+  { slug: "whatsapp", k: "WhatsApp", h: "WhatsApp messages and calls", p: "Follow up every AI call with a confirmation or payment link, and take WhatsApp calls on the same account.", go: "Explore WhatsApp" },
+  { slug: "sms-rcs", k: "SMS & RCS", h: "DLT SMS and rich RCS", p: "OTPs, reminders and tappable RCS cards, with automatic fallback to SMS.", go: "Send a message" },
+  { slug: "campaign-manager", k: "Campaigns", h: "Outbound that keeps connecting", p: "Pre-launch checks, live number rules and a reason for every call that didn't connect.", go: "Run a campaign" },
 ];
 
 const COMPARE: [string, string, string, string, string][] = [
@@ -58,7 +62,7 @@ export default function Home() {
     <main id="top">
       {/* ---------- hero ---------- */}
       <div className="th hsky" id="hsky">
-        <HeroFx variant="globe" />
+        <HeroFx variant="none" />
         <section className="hero wrap" aria-labelledby="hero-h">
           <p className="tag">
             <i />
@@ -83,6 +87,7 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <StrandField />
           <HeroRig />
         </section>
       </div>
@@ -215,7 +220,7 @@ export default function Home() {
           <h2 className="hd h2" id="stack-h" style={{ marginTop: 20 }}>
             Everything your agent needs to <em>reach a phone.</em>
           </h2>
-          <p className="sub">Six building blocks on one account and one bill.</p>
+          <p className="sub">Nine building blocks on one account and one bill, from the first ring to the follow-up.</p>
         </div>
         <div className="grid3">
           {STACK.map((s) => (

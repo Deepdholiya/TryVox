@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SIP_HEADERS, type CodeSet } from "./code";
 import type { QA } from "./site";
+import { MORE_PRODUCTS } from "./products-more";
 
 export type Panel = { tag: string; heading: ReactNode; body: string; points: string[]; visual: ReactNode };
 export type Product = {
@@ -452,7 +453,7 @@ export const PRODUCT_PAGES: Record<string, Product> = {
     faq: [["How do I authenticate with the TryVox Voice API?", "HTTP Basic auth. Your Auth ID is the username and your Auth Token is the password. Both are in the dashboard."], ["What does answer_url need to return?", "VoxML. TryVox calls answer_url when the call is answered and runs the VoxML verbs you return."], ["Can I place outbound calls in bulk?", "Yes. The same calls endpoint accepts a list of calls."], ["Can I record calls?", "Yes. Record calls and fetch recordings through the API."], ["Is answering machine detection available?", "Not yet. The parameter is accepted but has no effect today, so don't rely on it."]],
   },
   "ai-agents": {
-    name: "AI Agents",
+    name: "Agent Connect",
     title: "Connect Vapi, Retell, ElevenLabs, LiveKit and Bolna to Indian Numbers | TryVox",
     description: "Bind an Indian phone number to your Vapi, Retell, ElevenLabs, LiveKit or Bolna voice agent in a few clicks. No SIP configuration or deployment needed.",
     h1: <>Put your AI agent on{" "}<em>a real phone number.</em></>,
@@ -471,7 +472,7 @@ export const PRODUCT_PAGES: Record<string, Product> = {
           <div className="pm">
             <div className="pm-h">
               <span className="pm-c">
-                <span>AI agents</span>
+                <span>Agent Connect</span>
                 <span className="sep">›</span>
                 <span>Providers</span>
               </span>
@@ -506,7 +507,7 @@ export const PRODUCT_PAGES: Record<string, Product> = {
           <div className="pm">
             <div className="pm-h">
               <span className="pm-c">
-                <span>AI agents</span>
+                <span>Agent Connect</span>
                 <span className="sep">›</span>
                 <span>Bindings</span>
               </span>
@@ -569,7 +570,7 @@ export const PRODUCT_PAGES: Record<string, Product> = {
           <div className="pm">
             <div className="pm-h">
               <span className="pm-c">
-                <span>AI Agents</span>
+                <span>Agent Connect</span>
                 <span className="sep">›</span>
                 <span>Overview</span>
               </span>
@@ -894,5 +895,6 @@ export const PRODUCT_PAGES: Record<string, Product> = {
     code: null,
     note: null,
     faq: [["Why does TryVox need business KYC?", "India's telecom rules require business verification before numbers are issued."], ["What is DLT registration?", "Distributed Ledger Technology registration, required in India for commercial SMS. TryVox links your DLT entity and templates."], ["How do verified caller IDs work?", "You verify that you own a number, then use it as the caller ID on outbound calls."], ["Can I record consent for the people I call?", "Yes. Store consent per contact and respect withdrawals."]],
-  }
+  },
+  ...MORE_PRODUCTS,
 };

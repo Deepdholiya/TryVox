@@ -2,8 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { PREVIEWS } from "@/content/nav-previews";
-import { APP, PRODUCTS, SOLUTIONS } from "@/content/site";
+import { APP, PRODUCTS, SOLUTIONS, STAGES } from "@/content/site";
 import { Icon, LogoFull } from "./ui";
 
 const Chev = () => (
@@ -82,6 +81,13 @@ export function Header() {
     if (!sheet) setAcc(null);
   }, [sheet]);
   useEffect(() => {
+    const root = document.documentElement;
+    const on = () => root.classList.toggle("hdr-float", scrollY > 24);
+    on();
+    addEventListener("scroll", on, { passive: true });
+    return () => removeEventListener("scroll", on);
+  }, []);
+  useEffect(() => {
     const k = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(null);
@@ -102,21 +108,25 @@ export function Header() {
           <nav aria-label="Main" style={{ display: "contents" }}>
             <ul className="nav">
               <Mega id="p" label="Products" open={open} setOpen={setOpen}>
-                <div className="mega mega-p" id="mega-p">
-                  {PRODUCTS.map((p) => (
-                    <Link className="mc" href={`/products/${p.slug}/`} key={p.slug} onClick={() => setOpen(null)}>
-                      <span className="mc-h">
-                        <span className="mc-i">
-                          <Icon name={p.icon} bare />
-                        </span>
-                        <b>{p.name}</b>
-                        <RChev />
-                      </span>
-                      <span className="mc-d">{p.desc}</span>
-                      <span className="mc-pv" aria-hidden="true">
-                        {PREVIEWS[p.slug]}
-                      </span>
-                    </Link>
+                <div className="mega mega-p mega-g" id="mega-p">
+                  {STAGES.map((g) => (
+                    <div className="mg-col" key={g.id}>
+                      <p className="mg-h">
+                        <b>{g.label}</b>
+                        <span>{g.note}</span>
+                      </p>
+                      {PRODUCTS.filter((p) => p.group === g.id).map((p) => (
+                        <Link className="mg-it" href={`/products/${p.slug}/`} key={p.slug} onClick={() => setOpen(null)}>
+                          <span className="mi">
+                            <Icon name={p.icon} bare />
+                          </span>
+                          <span>
+                            <span className="mt">{p.name}</span>
+                            <span className="md">{p.desc}</span>
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
                   ))}
                 </div>
               </Mega>

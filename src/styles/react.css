@@ -419,3 +419,40 @@ main .ppn-c h2.hd,main .r3 h2.hd{font-size:var(--t-h2)!important;line-height:1.0
 .abp+.sect{padding-top:0!important}
 .ahp-fade{height:var(--sp)!important}
 .ahp-fade+.rvs,.ahp-fade+section.rvs{padding-top:0!important}
+
+/* =====================================================================
+   v15 · call-lifecycle redesign: floating glass header, products menu by stage, strand hero
+   ===================================================================== */
+/* header: full width at the top; after a short scroll it lifts into a centred glass bar.
+   Heights never change, so the page below does not shift. */
+.hdr{transition:background-color .45s var(--ease),border-color .45s var(--ease),backdrop-filter .45s}
+.hdr-in{max-width:100%;margin:0 auto;border:1px solid transparent;border-radius:0;transition:max-width .6s var(--ease),transform .6s var(--ease),border-radius .6s var(--ease),background-color .45s,border-color .45s,box-shadow .45s,padding .6s var(--ease)}
+.hdr-float .hdr,.hdr-float.hdr-dk .hdr{background:transparent!important;border-bottom-color:transparent!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+.hdr-float .hdr-in{max-width:min(1080px,calc(100% - 2 * var(--gutter)));transform:translateY(10px);border-radius:999px;padding-left:22px!important;padding-right:12px!important;background:var(--hdr-bg);border-color:var(--line-2);box-shadow:0 18px 44px -18px rgba(20,10,40,.28),inset 0 1px 0 var(--ic-hi);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6)}
+.hdr-float.hdr-dk .hdr-in{background:rgba(17,7,36,.58);border-color:rgba(255,255,255,.14);box-shadow:0 18px 44px -18px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
+.hdr-float .nav{gap:0}
+.menu-open.hdr-float .hdr-in{max-width:100%;transform:none;border-radius:0;box-shadow:none}
+@media (max-width:640px){.hdr-float .hdr-in{transform:translateY(8px);padding-left:16px!important;padding-right:8px!important}}
+@media (prefers-reduced-motion:reduce){.hdr,.hdr-in{transition:none}}
+
+/* products menu: four columns, one per stage of the call */
+.mega.mega-g{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:14px;width:min(1080px,calc(100vw - 48px))}
+.mg-col{display:flex;flex-direction:column;gap:2px;min-width:0;padding:4px;border-radius:12px}
+.mg-col+.mg-col{border-left:1px solid var(--line);border-radius:0 12px 12px 0}
+.mega p.mg-h{display:flex;flex-direction:column;gap:2px;padding:8px 10px 10px;grid-column:auto;text-transform:none;letter-spacing:0}
+.mg-h b{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:500}
+.mg-h span{font-family:var(--f-ital);font-style:italic;font-size:17px;color:var(--ink);letter-spacing:0}
+.mega a.mg-it{display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start;padding:10px;border-radius:10px}
+.mega a.mg-it:hover{background:var(--bg-2)}
+.mega a.mg-it .mi{color:var(--accent);background:var(--accent-soft)}
+
+/* hero: many call paths converge into one line (TryVox), then leave as a voice wave */
+.strand-band{position:relative;width:100vw;margin-left:calc(50% - 50vw);height:clamp(220px,26vw,340px);margin-top:clamp(8px,2vw,24px);margin-bottom:clamp(8px,2vw,24px);opacity:0;transition:opacity 1.4s var(--ease);pointer-events:none}
+.strand-band.on{opacity:1}
+.strand-band canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
+.strand-tag{position:absolute;left:50%;transform:translate(-50%,-100%);padding:12px 20px;text-align:center;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;line-height:1.7;text-transform:uppercase;color:rgba(236,232,244,.62);white-space:nowrap}
+.strand-tag b{color:#F3F0F9;font-weight:500}
+.strand-tag::before,.strand-tag::after,.strand-tag i::before,.strand-tag i::after{content:"";position:absolute;width:8px;height:8px;border:0 solid rgba(236,232,244,.7)}
+.strand-tag::before{left:0;top:0;border-width:1px 0 0 1px}.strand-tag::after{right:0;top:0;border-width:1px 1px 0 0}
+.strand-tag i::before{left:0;bottom:0;border-width:0 0 1px 1px}.strand-tag i::after{right:0;bottom:0;border-width:0 1px 1px 0}
+@media (max-width:1000px){.strand-tag{display:none}}

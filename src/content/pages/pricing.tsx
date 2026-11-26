@@ -179,16 +179,16 @@ export function Body() {
                   <circle cx="15" cy="12.5" r="1.3" fill="currentColor" stroke="none" />
                   <path d="M9.5 16h5" />
                 </svg>
-                AI Agents
+                Agent Connect
               </a>
-              <a className="gp" href="/products/messaging/">
+              <a className="gp" href="/products/whatsapp/">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M4 19.5l1.4-3.6A8 8 0 1112 20a8 8 0 01-3.9-1z" fill="currentColor" fillOpacity=".14" />
                   <circle cx="8.5" cy="12" r="1.1" fill="currentColor" stroke="none" />
                   <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
                   <circle cx="15.5" cy="12" r="1.1" fill="currentColor" stroke="none" />
                 </svg>
-                Messaging
+                WhatsApp &amp; SMS
               </a>
               <a className="gp" href="/products/compliance/">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

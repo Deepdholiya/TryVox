@@ -7,7 +7,7 @@ import { all, makeCtx, prefersReduced, useDom } from "@/lib/dom";
 import { ThreeField } from "./ThreeField";
 
 /* ---------- hero backdrop: typed telemetry snippets + Three.js field ---------- */
-export function HeroFx({ variant = "wave" }: { variant?: "globe" | "wave" }) {
+export function HeroFx({ variant = "wave" }: { variant?: "globe" | "wave" | "none" }) {
   const ref = useDom<HTMLDivElement>((el, c) => {
     all(el, "span").forEach((sp, idx) => {
       const t = sp.dataset.t || "";
@@ -37,7 +37,7 @@ export function HeroFx({ variant = "wave" }: { variant?: "globe" | "wave" }) {
   });
   return (
     <>
-      <ThreeField variant={variant} />
+      {variant !== "none" && <ThreeField variant={variant} />}
       <div className="th-f" aria-hidden="true" ref={ref}>
         {THF.map((t, i) => (
           <span className="mono" style={{ "--i": i } as CSSProperties} data-t={t} key={t} />
