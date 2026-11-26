@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { APP, PRODUCTS, SOLUTIONS, STAGES } from "@/content/site";
 import { Icon, LogoFull } from "./ui";
 
@@ -15,34 +15,6 @@ const RChev = () => (
     <path d="M3.5 2l3 3-3 3" fill="none" stroke="currentColor" strokeWidth="1.4" />
   </svg>
 );
-
-function toggleTheme(e: MouseEvent<HTMLButtonElement>) {
-  const root = document.documentElement;
-  const dark = root.dataset.theme === "dark" || (!root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
-  const next = dark ? "light" : "dark";
-  const apply = () => {
-    root.dataset.theme = next;
-    try {
-      localStorage.setItem("tv-theme", next);
-    } catch {}
-  };
-  const doc = document as Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void> } };
-  if (doc.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const r = e.currentTarget.getBoundingClientRect();
-    const x = r.left + r.width / 2;
-    const y = r.top + r.height / 2;
-    const end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-    doc
-      .startViewTransition(apply)
-      .ready.then(() =>
-        root.animate(
-          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${end}px at ${x}px ${y}px)`] },
-          { duration: 700, easing: "cubic-bezier(.22,1,.36,1)", pseudoElement: "::view-transition-new(root)" },
-        ),
-      )
-      .catch(() => {});
-  } else apply();
-}
 
 function Mega({ id, label, open, setOpen, children }: { id: string; label: string; open: string | null; setOpen: (v: string | null) => void; children: React.ReactNode }) {
   const t = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -158,15 +130,6 @@ export function Header() {
             </ul>
           </nav>
           <div className="hdr-r">
-            <button className="theme-t" id="themeT" aria-label="Switch light or dark theme" onClick={toggleTheme}>
-              <svg className="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                <circle cx="12" cy="12" r="4.2" />
-                <path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6" />
-              </svg>
-              <svg className="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" />
-              </svg>
-            </button>
             <a className="signin" href={APP}>Sign in</a>
             <a className="kbtn" href={APP}>Start free</a>
             <button className="burger" id="burger" aria-label={sheet ? "Close menu" : "Open menu"} aria-expanded={sheet} aria-controls="sheet" onClick={() => setSheet(!sheet)}>
@@ -204,15 +167,6 @@ export function Header() {
         ))}
         <div className="sh-foot">
           <a className="obtn" href={APP}>Sign in</a>
-          <button className="theme-t" type="button" aria-label="Switch light or dark theme" onClick={toggleTheme}>
-            <svg className="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-              <circle cx="12" cy="12" r="4.2" />
-              <path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6" />
-            </svg>
-            <svg className="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-              <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" />
-            </svg>
-          </button>
         </div>
       </nav>
     </>

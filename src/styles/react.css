@@ -120,8 +120,7 @@ main .th .sub{max-width:60ch}
 }
 
 /* product pages: hero flows straight into the dark layer stack (no white-to-grey band) */
-.ah6.th,:root[data-theme="dark"] .ah6.th{background:linear-gradient(180deg,#110724 0%,#1E0D44 20%,#3A1B8A 48%,#4A2EA0 64%,#22124A 86%,var(--night) 100%)!important}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ah6.th{background:linear-gradient(180deg,#110724 0%,#1E0D44 20%,#3A1B8A 48%,#4A2EA0 64%,#22124A 86%,var(--night) 100%)!important}}
+.ah6.th{background:linear-gradient(180deg,#110724 0%,#1E0D44 20%,#3A1B8A 48%,#4A2EA0 64%,#22124A 86%,var(--night) 100%)!important}
 .ah6.th::after{display:none}
 .ahp{background:var(--night)!important}
 
@@ -367,21 +366,11 @@ body{font-family:var(--f-sans)}
 /* dark ink flips to light on dark surfaces and in dark theme */
 .blogo.ink.on-dark img{filter:invert(1) hue-rotate(180deg)}
 .blogo.on-dark{color:#F3F0F9}
-:root[data-theme="dark"] .blogo.ink img{filter:invert(1) hue-rotate(180deg)}
-:root[data-theme="dark"] .blogo-word.has-dark img:not(.dk){display:none}
-:root[data-theme="dark"] .blogo-word.has-dark .dk{display:block}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .blogo.ink img{filter:invert(1) hue-rotate(180deg)}
-  :root:not([data-theme="light"]) .blogo-word.has-dark img:not(.dk){display:none}
-  :root:not([data-theme="light"]) .blogo-word.has-dark .dk{display:block}
-}
 /* logo component wins over the older per-container image rules (fixed heights, filters) */
 .blogo img{max-width:none!important;opacity:1!important;filter:none!important}
 .blogo-word img{height:var(--bh)!important;width:auto!important}
 .blogo-lock img.mk{height:calc(var(--bs) * .92)!important;width:auto!important}
 .blogo.ink.on-dark img{filter:invert(1) hue-rotate(180deg)!important}
-:root[data-theme="dark"] .blogo.ink img{filter:invert(1) hue-rotate(180deg)!important}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .blogo.ink img{filter:invert(1) hue-rotate(180deg)!important}}
 .mq .it{height:auto!important;opacity:.85}
 .orbit .chip{height:auto!important;min-height:44px;padding:8px 14px}
 .mprov span{height:auto!important;min-height:46px;padding:6px 8px}
@@ -456,3 +445,23 @@ main .ppn-c h2.hd,main .r3 h2.hd{font-size:var(--t-h2)!important;line-height:1.0
 .strand-tag::before{left:0;top:0;border-width:1px 0 0 1px}.strand-tag::after{right:0;top:0;border-width:1px 1px 0 0}
 .strand-tag i::before{left:0;bottom:0;border-width:0 0 1px 1px}.strand-tag i::after{right:0;bottom:0;border-width:0 1px 1px 0}
 @media (max-width:1000px){.strand-tag{display:none}}
+
+/* =====================================================================
+   v16 · light only, minimal, one typeface
+   ===================================================================== */
+/* every face is Instrument Sans; code samples use the system monospace so columns stay aligned */
+:root{
+  --f-head:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-sans:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-ital:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-dot:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-code:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+pre,code,.code pre,.mcode,.mlab.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+/* accents: the italic now comes from Instrument Sans itself, slightly lighter so it still reads as an accent */
+.hd em,.mg-h span{font-style:italic;font-weight:400;letter-spacing:-.03em}
+/* minimal: no floating telemetry text, no page-wide grid lines, no hatching behind cards, no theme switch */
+.th-f,.gridlines,.theme-t{display:none!important}
+.mc{background-image:none}
