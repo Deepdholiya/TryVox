@@ -143,7 +143,7 @@ export function Code({
 
 /* ---------- sizing estimator ---------- */
 const nf = (n: number) => Math.round(n).toLocaleString("en-IN");
-export function Estimator() {
+export function Estimator({ cta }: { cta?: [string, string] } = {}) {
   const [calls, setCalls] = useState(50000);
   const [mins, setMins] = useState(2.5);
   const [hrs, setHrs] = useState(9);
@@ -201,15 +201,24 @@ export function Estimator() {
             />
           </label>
           <div className="btns">
-            <a
-              className="btn"
-              href={`mailto:team@tryvox.io?subject=${encodeURIComponent("Rate card request")}&body=${encodeURIComponent(body)}`}
-            >
-              Get a rate card{" "}
-              <span className="ar" aria-hidden="true">
-                →
-              </span>
-            </a>
+            {cta ? (
+              <a className="btn" href={cta[1]}>
+                {cta[0]}{" "}
+                <span className="ar" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            ) : (
+              <a
+                className="btn"
+                href={`mailto:team@tryvox.io?subject=${encodeURIComponent("Rate card request")}&body=${encodeURIComponent(body)}`}
+              >
+                Get a rate card{" "}
+                <span className="ar" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            )}
           </div>
         </div>
         <div className="est-out" aria-live="polite">
@@ -236,14 +245,7 @@ export function Estimator() {
 }
 
 /* ---------- home: three ways to connect an agent ---------- */
-type Way = {
-  k: string;
-  t: string;
-  p: string;
-  pts: string[];
-  link: [string, string];
-  panel: ReactNode;
-};
+type Way = { k: string; t: string; p: string; panel: ReactNode };
 export function ConnectWays({ ways }: { ways: Way[] }) {
   const [i, setI] = useState(0);
   const key = (e: React.KeyboardEvent, k: number) => {
@@ -288,16 +290,6 @@ export function ConnectWays({ ways }: { ways: Way[] }) {
             </button>
           ))}
         </div>
-        <div className="way-more">
-          <ul className="ticks">
-            {ways[i].pts.map((x) => (
-              <li key={x}>{x}</li>
-            ))}
-          </ul>
-          <a className="tl" href={ways[i].link[1]}>
-            {ways[i].link[0]} →
-          </a>
-        </div>
       </div>
       {ways.map((w, k) => (
         <div
@@ -311,6 +303,102 @@ export function ConnectWays({ ways }: { ways: Way[] }) {
           {w.panel}
         </div>
       ))}
+    </div>
+  );
+}
+
+/* ---------- home: how it works, one step at a time ---------- */
+type HowStep = { k: string; t: string; p: string; ui: ReactNode };
+export function HowTabs({ steps, docs }: { steps: HowStep[]; docs: string }) {
+  const [i, setI] = useState(0);
+  const n = steps.length;
+  const key = (e: React.KeyboardEvent, k: number) => {
+    const to =
+      e.key === "ArrowRight"
+        ? (k + 1) % n
+        : e.key === "ArrowLeft"
+          ? (k - 1 + n) % n
+          : e.key === "Home"
+            ? 0
+            : e.key === "End"
+              ? n - 1
+              : -1;
+    if (to < 0) return;
+    e.preventDefault();
+    setI(to);
+    document.getElementById(`hw-${to}`)?.focus();
+  };
+  return (
+    <div className="hw">
+      <div className="hw-bar">
+        <div className="hw-tabs" role="tablist" aria-label="How it works steps">
+          {steps.map((s, k) => (
+            <button
+              key={s.k}
+              id={`hw-${k}`}
+              role="tab"
+              aria-selected={k === i}
+              aria-controls={`hwp-${k}`}
+              tabIndex={k === i ? 0 : -1}
+              onClick={() => setI(k)}
+              onKeyDown={(e) => key(e, k)}
+            >
+              <span className="hw-n">0{k + 1}</span>
+              {s.k}
+            </button>
+          ))}
+        </div>
+        <span className="hw-count" aria-hidden="true">
+          0{i + 1} / 0{n}
+        </span>
+      </div>
+      {steps.map((s, k) => (
+        <div
+          key={s.k}
+          id={`hwp-${k}`}
+          role="tabpanel"
+          aria-labelledby={`hw-${k}`}
+          hidden={k !== i}
+          className="hw-p"
+        >
+          <div className="hw-copy">
+            <span className="hw-big" aria-hidden="true">
+              0{k + 1}
+            </span>
+            <h3 className="h3">{s.t}</h3>
+            <p className="body">{s.p}</p>
+            <div className="hw-nav">
+              <button
+                type="button"
+                className="btn line sm"
+                onClick={() => setI((k - 1 + n) % n)}
+                aria-label="Previous step"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                className="btn sm"
+                onClick={() => setI((k + 1) % n)}
+                aria-label="Next step"
+              >
+                →
+              </button>
+              <a className="tl" href={docs}>
+                Read the docs ↗
+              </a>
+            </div>
+          </div>
+          <div className="hw-ui" aria-hidden="true">
+            {s.ui}
+          </div>
+        </div>
+      ))}
+      <div className="hw-prog" aria-hidden="true">
+        {steps.map((s, k) => (
+          <i key={s.k} className={k <= i ? "on" : undefined} />
+        ))}
+      </div>
     </div>
   );
 }

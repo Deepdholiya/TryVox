@@ -13,7 +13,7 @@
   --btn:#3B1584; --btn-h:#5B21B6; --tint:#F6F3FC; --tint-line:#E6DFF5; --band:#1E0F45;
   --f:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  --max:1600px; --gut:80px; --hdr:64px;
+  --max:1600px; --gut:40px; --hdr:64px;
   --s1:8px; --s2:16px; --s3:24px; --s4:32px; --s5:48px; --s6:64px; --s7:96px; --sec:112px;
   --r:2px;
   --ease:cubic-bezier(.22,1,.36,1);
@@ -687,6 +687,70 @@ a.cd:hover{border-color:var(--ink)}
 .faq-jump{display:flex;flex-wrap:wrap;gap:10px}
 .faq-jump a{display:inline-flex;align-items:center;height:40px;padding:0 16px;border:1px solid var(--line-2);font-size:14.5px;transition:border-color .2s,color .2s}
 .faq-jump a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- home: why TryVox (6 animated cards) ---------- */
+.why{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s3)}
+.why .pn{display:flex;flex-direction:column;background:#fff}
+.why-v{display:grid;place-items:center;min-height:220px;padding:var(--s4) var(--s3);border-bottom:1px solid var(--line);overflow:hidden}
+.why-c{padding:var(--s3)}
+.why-c .small{margin-top:8px}
+@media (max-width:1100px){.why{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:700px){.why{grid-template-columns:1fr}}
+.why .hop-l{position:relative;overflow:visible}
+.why .hop-l::after{content:"";position:absolute;top:-2.5px;left:0;width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pkt 2.4s linear infinite;animation-delay:calc(var(--i) * .8s - .8s);opacity:0}
+@keyframes pkt{0%{left:0;opacity:0}10%{opacity:1}30%{left:calc(100% - 6px);opacity:1}35%,100%{left:calc(100% - 6px);opacity:0}}
+.bindv{position:relative;display:grid;gap:8px;width:min(300px,100%)}
+.bindv li{display:flex;align-items:center;justify-content:space-between;height:42px;padding:0 14px;border:1px solid var(--line);background:#fff;animation:bindrow 8s infinite;animation-delay:calc(var(--n,0) * 1s)}
+.bindv li:nth-child(1){--n:0}.bindv li:nth-child(2){--n:2}.bindv li:nth-child(3){--n:4}.bindv li:nth-child(4){--n:6}
+.bindv .tag{opacity:0;animation:bindtag 8s infinite;animation-delay:inherit}
+@keyframes bindrow{0%,25%{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}26%,100%{border-color:var(--line);box-shadow:none}}
+@keyframes bindtag{0%,25%{opacity:1}26%,100%{opacity:0}}
+.why .meter i b{animation:fill 4s ease-in-out infinite}
+@keyframes fill{0%{width:12%;background:#D97706}50%,85%{width:82%;background:var(--ok)}100%{width:12%;background:#D97706}}
+.why .cid .tag{animation:pop 4s ease-in-out infinite}
+@keyframes pop{0%,40%{opacity:0;transform:scale(.8)}50%,85%{opacity:1;transform:scale(1)}100%{opacity:0}}
+.ticker li .tag{opacity:0;animation:tick 6s infinite;animation-delay:calc(var(--i) * .6s)}
+@keyframes tick{0%{opacity:0;transform:translateY(4px)}8%,80%{opacity:1;transform:none}90%,100%{opacity:0}}
+.events li{opacity:0;animation:evin 6s infinite;animation-delay:calc(var(--i) * .7s)}
+@keyframes evin{0%{opacity:0;transform:translateX(-8px)}8%,80%{opacity:1;transform:none}92%,100%{opacity:0}}
+.chatv{display:grid;gap:8px;width:min(300px,100%)}
+.chatv p{opacity:0;animation:evin 7s infinite}
+.cv-call{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+.cv-b{justify-self:start;max-width:85%;padding:9px 12px;font-size:13.5px;background:#fff;border:1px solid var(--line);animation-delay:.8s!important}
+.cv-b.me{justify-self:end;background:var(--accent-soft);border-color:transparent;animation-delay:1.8s!important}
+.cv-s{justify-self:end;font-size:11.5px;color:var(--ink-3);animation-delay:2.4s!important}
+@media (prefers-reduced-motion:reduce){.why *{animation:none!important;opacity:1!important}.why .hop-l::after{display:none}.bindv li:first-child{border-color:var(--accent)}.bindv li:not(:first-child) .tag{opacity:0!important}}
+
+/* ---------- home: how it works tabs ---------- */
+.hw{border:1px solid var(--night-line);background:rgba(255,255,255,.03)}
+.hw-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--night-line);padding-right:20px}
+.hw-tabs{display:flex;overflow-x:auto}
+.hw-tabs button{display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 24px;border-right:1px solid var(--night-line);color:var(--night-ink-2);font-size:15px;position:relative;white-space:nowrap}
+.hw-tabs button[aria-selected="true"]{color:#fff;background:rgba(255,255,255,.05)}
+.hw-tabs button[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#C4A8FF}
+.hw-tabs button:hover{color:#fff}
+.hw-n{font-family:var(--mono);font-size:11.5px;color:#C4A8FF}
+.hw-count{font-family:var(--mono);font-size:12px;color:var(--night-ink-2)}
+.hw-p{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s5);padding:var(--s5);align-items:center}
+.hw-p[hidden]{display:none}
+.hw-big{display:block;font-size:88px;line-height:1;letter-spacing:-.04em;background:linear-gradient(90deg,#FFB8D9,#C9A8FF,#8FB8FF);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:var(--s3)}
+.hw-copy .h3{color:#fff;font-size:28px}
+.hw-copy .body{margin-top:12px;color:var(--night-ink-2);max-width:44ch}
+.hw-nav{display:flex;align-items:center;gap:10px;margin-top:var(--s4)}
+.hw-nav .tl{margin-left:12px;color:#C4A8FF}
+.how .hw-nav .btn{min-width:44px;justify-content:center;background:#fff;border-color:#fff;color:var(--btn)}
+.how .hw-nav .btn.line{background:transparent;border-color:rgba(255,255,255,.4);color:#fff}
+.hw-ui{display:grid;place-items:center;min-height:300px;padding:var(--s4);border:1px solid var(--night-line);background:rgba(0,0,0,.2)}
+.hw-ui .fl-ui{width:min(420px,100%);animation:hwin .4s ease}
+@keyframes hwin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hw-prog{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:0 var(--s5) var(--s4)}
+.hw-prog i{height:2px;background:var(--night-line)}
+.hw-prog i.on{background:#C4A8FF}
+.wavev{display:flex;align-items:center;justify-content:center;gap:4px;height:64px;margin-bottom:12px}
+.wavev i{width:4px;height:20%;background:#C4A8FF;border-radius:2px;animation:wv 1.2s ease-in-out infinite;animation-delay:calc(var(--j) * -.09s)}
+@keyframes wv{0%,100%{height:15%}50%{height:90%}}
+@media (prefers-reduced-motion:reduce){.wavev i{animation:none;height:50%}.hw-ui .fl-ui{animation:none}}
+@media (max-width:900px){.hw-p{grid-template-columns:1fr;padding:var(--s4) var(--s3)}.hw-big{font-size:56px}.hw-count{display:none}.hw-tabs button{padding:0 16px}.hw-prog{padding:0 var(--s3) var(--s3)}}
 
 /* ---------- brand logos ---------- */
 .blogo{display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1;vertical-align:middle;color:var(--ink);white-space:nowrap}
