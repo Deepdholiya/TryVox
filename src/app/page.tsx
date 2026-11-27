@@ -77,76 +77,60 @@ export default function Home() {
 
       {/* 01 connect */}
       <Sec id="connect-h">
-        <SecHead n="01" label="Bring your agent" meta="No SIP setup needed" id="connect-h" split lead="Bind a number in a few clicks, point a SIP trunk at your stack, or drive calls from code. Switch agent platforms without moving numbers.">
+        <SecHead n="01" label="Bring your agent" meta="No SIP setup needed" id="connect-h" split lead="Bind a number in a few clicks, point a SIP trunk at your stack, or drive calls from code.">
           Any agent, any stack. One phone line.
         </SecHead>
-        <Panel path="/connect/your-agent" right="6 ways in">
-          <div className="cn-g dots">
-            <ul className="cards">
-              {AGENTS.map(([id, k, p]) => (
-                <li className="cd" key={id}>
-                  <span className="cd-h">
-                    <BrandLogo id={id} size={22} />
-                    <span className="k">{k}</span>
-                  </span>
-                  <p>{p}</p>
+        <div className="cn2">
+          <div className="cn2-l">
+            <ul className="lg-tiles" aria-label="Agent platforms and transports">
+              {AGENTS.map(([id, k]) => (
+                <li key={id}>
+                  <BrandLogo id={id} size={22} />
+                  <span className="k">{k}</span>
                 </li>
               ))}
             </ul>
-            <Code
-              path="POST /v1/voice/accounts/{auth_id}/calls"
-              tabs={[
-                ["cURL", CALL_CURL],
-                ["Node", CALL_NODE],
-                ["Python", CALL_PY],
-                ["SIP headers", SIP_HEADERS],
-              ]}
-            />
-          </div>
-          <div className="cn-foot">
-            <div>
-              <h3 className="h3">
-                Programmable telephony for voice AI <small>REST · VoxML · Webhooks</small>
-              </h3>
-              <p className="body">One REST API with an Auth ID and Auth Token, VoxML for call flows, and a webhook at every stage of the call.</p>
-            </div>
-            <Ticks items={["Numbers live once business KYC clears", "Webhooks for ring, answer, status and hangup", "Hand a live AI call to a person with context"]} />
-            <div className="btns">
-              <Btn href={`${DOCS}/getting-started/quickstart`} line>
-                Quickstart
-              </Btn>
+            <div className="cn2-note">
+              <h3 className="h3">Switch platforms, keep your numbers.</h3>
+              <p className="body">Bindings live on TryVox, so moving from one agent platform to another never means porting a number.</p>
+              <a className="tl" href={`${DOCS}/getting-started/quickstart`}>
+                Read the quickstart →
+              </a>
             </div>
           </div>
-          <div className="langs" aria-label="Works from">
-            <span>cURL</span>
-            <span>Node.js</span>
-            <span>Python</span>
-            <span>Any HTTP client</span>
-            <span>Any SIP stack</span>
-          </div>
-        </Panel>
+          <Code
+            path="POST /v1/voice/accounts/{auth_id}/calls"
+            tabs={[
+              ["cURL", CALL_CURL],
+              ["Node", CALL_NODE],
+              ["Python", CALL_PY],
+              ["SIP headers", SIP_HEADERS],
+            ]}
+          />
+        </div>
       </Sec>
 
       {/* 02 stack */}
       <Sec id="stack-h" className="tint">
-        <SecHead n="02" label="The stack" meta="10 products · 1 account" id="stack-h" split lead="Every building block around an AI call is on one account and one bill, from the number your agent calls from to the WhatsApp that follows up.">
+        <SecHead n="02" label="The stack" meta="10 products · 1 account" id="stack-h" split lead="One account and one bill, from the number your agent calls from to the WhatsApp that follows up.">
           Everything around the call, in one place.
         </SecHead>
-        <div className="stage">
-          {STAGES.map((st) => (
+        <div className="stage2">
+          {STAGES.map((st, i) => (
             <div key={st.id}>
-              <p className="stage-h">
+              <p className="stage2-h">
+                <span className="n">0{i + 1}</span>
                 <b>{st.label}</b>
-                <span>{st.note}</span>
+                <span className="m">{st.note}</span>
               </p>
               <ul>
                 {PRODUCTS.filter((p) => p.group === st.id).map((p) => (
                   <li key={p.slug}>
                     <a href={`/products/${p.slug}/`}>
                       <Ic name={p.icon} />
-                      <span>
-                        <b>{p.name}</b>
-                        <small>{p.desc}</small>
+                      <span>{p.name}</span>
+                      <span className="go" aria-hidden="true">
+                        →
                       </span>
                     </a>
                   </li>
@@ -158,23 +142,96 @@ export default function Home() {
       </Sec>
 
       {/* 03 how */}
-      <Sec id="how-h">
-        <SecHead n="03" label="How it works" meta="Same day" id="how-h">
-          From sign-up to a live call in four steps.
-        </SecHead>
-        <ol className="steps">
-          {STEPS.map(([t, p], i) => (
-            <li key={t}>
-              <span className="n">0{i + 1}</span>
-              <h3 className="h3">{t}</h3>
-              <p className="small">{p}</p>
-            </li>
-          ))}
-        </ol>
-      </Sec>
+      <section className="sec how" aria-labelledby="how-h">
+        <div className="wrap">
+          <SecHead n="03" label="How it works" meta="Most teams go live the same day" id="how-h" split lead="Four steps from sign-up to your agent's first real call. Each one happens in the dashboard or through the API.">
+            From sign-up to a <span className="grad">live call</span> in four steps.
+          </SecHead>
+          <ol className="flow4">
+            {STEPS.map(([t, p], i) => (
+              <li key={t}>
+                <div className="fl-top" aria-hidden="true">
+                  <span className="fl-n">0{i + 1}</span>
+                  <i />
+                </div>
+                <h3 className="h3">{t}</h3>
+                <p className="small">{p}</p>
+                <div className="fl-ui" aria-hidden="true">
+                  {i === 0 && (
+                    <>
+                      <p className="fl-row">
+                        <span>Business details</span>
+                        <b className="ok">✓</b>
+                      </p>
+                      <p className="fl-row">
+                        <span>Documents uploaded</span>
+                        <b className="ok">✓</b>
+                      </p>
+                      <p className="fl-row">
+                        <span>KYC status</span>
+                        <span className="tag ok">Verified</span>
+                      </p>
+                    </>
+                  )}
+                  {i === 1 && (
+                    <>
+                      <p className="fl-big">+91 80 4718 2290</p>
+                      <p className="fl-row">
+                        <span>Local · Bengaluru</span>
+                        <span className="tag acc">₹399/mo</span>
+                      </p>
+                      <p className="fl-row">
+                        <span>Toll-free · National</span>
+                        <span className="m">available</span>
+                      </p>
+                    </>
+                  )}
+                  {i === 2 && (
+                    <>
+                      <p className="fl-bind">
+                        <span>+91 80 •••• 2290</span>
+                        <i />
+                        <span className="us">Vapi</span>
+                      </p>
+                      <p className="fl-row">
+                        <span>Agent</span>
+                        <span className="m">support-agent</span>
+                      </p>
+                      <p className="fl-row">
+                        <span>Binding</span>
+                        <span className="tag ok">Live</span>
+                      </p>
+                    </>
+                  )}
+                  {i === 3 && (
+                    <>
+                      <p className="fl-log">
+                        <span>ring_url</span>
+                        <b>200</b>
+                      </p>
+                      <p className="fl-log">
+                        <span>answer_url</span>
+                        <b>VoxML</b>
+                      </p>
+                      <p className="fl-log">
+                        <span>status_callback</span>
+                        <b>200</b>
+                      </p>
+                      <p className="fl-log">
+                        <span>hangup_url</span>
+                        <b>200</b>
+                      </p>
+                    </>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
       {/* 04 pillars */}
-      <Sec id="pil-h" className="tint">
+      <Sec id="pil-h">
         <SecHead n="04" label="Why TryVox" meta="4 pillars" id="pil-h">
           What a phone line for an AI agent needs.
         </SecHead>

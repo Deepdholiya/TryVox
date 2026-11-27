@@ -122,6 +122,7 @@ export function Hero({ label, meta, crumbs, chip, h1, lead, ctas, note, stats, v
   ctas?: ReactNode; note?: ReactNode; stats?: [string, ReactNode][]; visual?: ReactNode; below?: ReactNode;
 }) {
   return (
+    <>
     <section className="hero" aria-labelledby="hero-h">
       <div className="wrap">
         <div className="frame">
@@ -150,9 +151,10 @@ export function Hero({ label, meta, crumbs, chip, h1, lead, ctas, note, stats, v
             {visual}
           </div>
         </div>
-        {below}
       </div>
     </section>
+    {below && <div className="wrap hero-below">{below}</div>}
+    </>
   );
 }
 
@@ -232,12 +234,12 @@ export function Rows({ items }: { items: [string, string, string?][] }) {
 /** Indian telecom compliance block, shared by home and product pages. */
 export function ComplianceBlock({ n }: { n?: string }) {
   return (
-    <Sec id="cmp-h">
+    <Sec id="cmp-h" className="dark">
       <div className="split2">
         <div>
           <Lbl n={n}>Compliance</Lbl>
           <h2 className="h2" id="cmp-h" style={{ marginTop: 32 }}>
-            Indian telecom rules, handled for you.
+            Indian telecom rules, <span className="grad">handled for you.</span>
           </h2>
           <p className="lead" style={{ marginTop: 16 }}>
             KYC, consent and DLT are part of setting up a number, not a project you run on the side. Every record stays on your account if anyone asks.
