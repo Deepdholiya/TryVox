@@ -1,180 +1,300 @@
-import { Estimator, Faq, HeroFx, LogoMark } from "@/components";
+import type { Metadata } from "next";
 import { BrandLogo } from "@/components/BrandLogo";
-import { StrandField } from "@/components/StrandField";
-import { Industries, LayerStack } from "@/components/home";
-import { BringAgent, Blocks, CallTrace, Pillars, UseTicker } from "@/components/home-v2";
-import { APP, type QA } from "@/content/site";
+import { CALL_CURL, CALL_NODE, CALL_PY, SIP_HEADERS } from "@/content/code";
+import { APP, DOCS, PRODUCTS, STAGES } from "@/content/site";
 import { pageMeta } from "@/lib/seo";
+import { CallTrace, Code, Estimator } from "@/v3/client";
+import { Btn, ComplianceBlock, CtaBand, Faq, Hero, Ic, LogoStrip, Panel, Sec, SecHead, Ticks } from "@/v3/ui";
 
-export const metadata = pageMeta({
-  title: "TryVox: Telephony Infrastructure for AI Voice Agents in India",
+export const metadata: Metadata = pageMeta({
+  title: "TryVox: Telephony Infrastructure for Voice AI in India",
   description:
-    "Indian phone numbers, SIP trunking and a programmable Voice API for AI voice agents. Bind Vapi, Retell, ElevenLabs, LiveKit or Bolna in a few clicks. KYC, consent and DLT built in. Pay per minute.",
+    "Give your AI voice agent a real Indian phone number. Numbers, SIP trunking, a Voice API, WebRTC, WhatsApp and SMS for Vapi, Retell, ElevenLabs, LiveKit, Bolna or your own code, with KYC and DLT handled.",
   path: "/",
 });
 
-const MQ = ["vapi", "retell", "livekit", "bolna", "elevenlabs", "deepgram", "amazon-polly", "whatsapp", "sip-byoc", "voxml"];
+const AGENTS: [string, string, string][] = [
+  ["vapi", "Platform", "Bind a number to a Vapi assistant from the dashboard."],
+  ["retell", "Platform", "Send inbound calls to a Retell agent with no SIP setup."],
+  ["elevenlabs", "Platform", "Answer calls with an ElevenLabs conversational agent."],
+  ["livekit", "Framework", "Give a LiveKit agent a phone number over a SIP trunk."],
+  ["bolna", "Platform", "Run Bolna agents on Indian numbers, KYC already done."],
+  ["your-code", "Transport", "Stream live call audio to your own service."],
+];
+
+const STEPS: [string, string][] = [
+  ["Verify your business", "Finish KYC online with your company documents. It's a one-time check for every number on the account."],
+  ["Pick a number", "Choose a local, national or toll-free Indian number. It's yours from ₹399 a month."],
+  ["Bind your agent", "Connect the number to Vapi, Retell, ElevenLabs, LiveKit, Bolna, a SIP trunk or your own code."],
+  ["Watch every call", "Get webhooks for ring, answer, status and hangup, plus recordings and a reason for each missed call."],
+];
 
 const COMPARE: [string, string, string, string, string][] = [
-  ["Infrastructure only, never competes with you", "y", "n", "y", "y"],
-  ["Bring any agent platform", "y", "Varies", "y", "SIP only"],
-  ["Indian numbers with KYC handled", "y", "y", "Limited", "y"],
-  ["DLT-ready messaging", "y", "y", "Limited", "Varies"],
-  ["Self-serve setup in minutes", "y", "Varies", "y", "n"],
-  ["Voice, WhatsApp and SMS on one account", "y", "Varies", "y", "n"],
+  ["Infrastructure only, never sells its own agents", "Yes", "No", "Yes", "Yes"],
+  ["Bring any agent platform", "Yes", "Varies", "Yes", "SIP only"],
+  ["Indian numbers with KYC handled online", "Yes", "Yes", "Limited", "Yes"],
+  ["DLT-ready SMS on the same account", "Yes", "Yes", "Limited", "Varies"],
+  ["Self-serve setup", "Yes", "Varies", "Yes", "No"],
+  ["Voice, WhatsApp and SMS on one bill", "Yes", "Varies", "Yes", "No"],
 ];
-const cellOf = (v: string) => (v === "y" ? <span className="cy">Yes</span> : v === "n" ? <span className="cn" role="img" aria-label="No" /> : v);
+const cell = (v: string) => (v === "Yes" ? <span className="yes">Yes</span> : v === "No" ? <span className="no">No</span> : v);
 
-const FAQ: QA[] = [
-  ["What is TryVox?", "TryVox is telephony infrastructure for voice AI. We provide phone numbers, SIP trunking, programmable voice APIs, call routing and real-time call events that connect any AI voice agent to the phone network."],
-  ["Do you provide an AI voice agent?", "No. You bring your own agent, built on Vapi, Retell, ElevenLabs, LiveKit, Bolna or your own code, and we connect it to real phone calls."],
-  ["Can I get Indian phone numbers for my AI agent?", "Yes. Local, national and toll-free numbers, with business KYC and India's telecom requirements handled during setup."],
-  ["How do I connect TryVox to Vapi or Retell?", "Open AI Agents in the dashboard, pick your provider and click Connect number. Choose a TryVox number and an agent, confirm, and the agent answers calls on that number straight away. No SIP setup needed."],
-  ["Is TryVox only for voice AI?", "No. The same account covers SIP, programmable voice, WhatsApp, SMS and alerts."],
-  ["How is TryVox priced?", "A one-time ₹100 setup fee, ₹399 monthly rent and calls billed per minute, with no lock-in. Use the estimator above and ask for a rate card for your volume."],
-  ["Is TryVox an alternative to Exotel, Plivo or Twilio for voice AI?", "Yes, for teams running AI voice agents in India. TryVox puts Indian numbers, SIP trunking, a Voice API, agent bindings and DLT-ready messaging on one account, and never sells its own agents."],
+const FAQ: [string, string][] = [
+  ["What is TryVox?", "TryVox is telephony infrastructure for voice AI. It gives your AI agent Indian phone numbers, SIP trunks, a Voice API, WebRTC and messaging, with KYC, consent and DLT handled on one account."],
+  ["Do you build AI voice agents?", "No. You bring the agent you already run on Vapi, Retell, ElevenLabs, LiveKit, Bolna or your own code. TryVox connects it to the phone network and never competes with you."],
+  ["How do I connect a number to Vapi or Retell?", "Open AI Agents in the dashboard, pick your provider, choose a TryVox number and an agent, and confirm. The agent answers calls on that number straight away. No SIP setup is needed."],
+  ["Can my agent make outbound calls?", "Inbound calls through agent bindings work today. Outbound calls placed by agents through bindings are in progress. You can already place outbound calls with the Voice API or a SIP trunk."],
+  ["How is TryVox priced?", "A one-time ₹100 setup fee, ₹399 a month for each number and calls billed per minute, with no lock-in. For larger volumes, ask for a rate card."],
+  ["Is TryVox an alternative to Exotel, Plivo or Twilio?", "For teams running AI voice agents in India, yes. TryVox puts Indian numbers, SIP trunking, a Voice API, agent bindings and DLT-ready messaging on one account."],
 ];
-
-const ORBIT: [string, string, string][] = [
-  ["50%", "4%", "vapi"],
-  ["93.7%", "35.8%", "retell"],
-  ["77%", "87.2%", "livekit"],
-  ["23%", "87.2%", "bolna"],
-  ["6.3%", "35.8%", "your-code"],
-];
-const SPOKES = [[50, 4], [93.7, 35.8], [77, 87.2], [23, 87.2], [6.3, 35.8]];
 
 export default function Home() {
   return (
     <main id="top">
-      {/* ---------- 01 hero ---------- */}
-      <div className="th hsky v2h" id="hsky">
-        <HeroFx variant="none" />
-        <section className="hero wrap" aria-labelledby="hero-h">
-          <div className="h2g">
-            <div className="h2g-l">
-              <p className="tag">
-                <i />
-                Telephony infrastructure for voice AI
+      <Hero
+        label="Telephony for voice AI"
+        meta="India · Inbound + outbound"
+        chip={
+          <>
+            <i className="dot" /> Indian numbers from <b>₹399/month</b>
+          </>
+        }
+        h1={
+          <>
+            Give your voice agent a <span className="hl">real phone number</span>.
+          </>
+        }
+        lead="Numbers, SIP trunks and a Voice API for the AI agent you already built. KYC, consent and DLT are handled, so your agent can take its first call today."
+        note="₹100 one-time setup · per-minute billing · no lock-in"
+        stats={[
+          ["Response time", <>&lt;200<small>ms</small></>],
+          ["Platform uptime", <>99.9<small>%</small></>],
+          ["Support", <>24/7</>],
+        ]}
+        visual={<CallTrace />}
+        below={<LogoStrip />}
+      />
+
+      {/* 01 connect */}
+      <Sec id="connect-h">
+        <SecHead n="01" label="Bring your agent" meta="No SIP setup needed" id="connect-h" split lead="Bind a number in a few clicks, point a SIP trunk at your stack, or drive calls from code. Switch agent platforms without moving numbers.">
+          Any agent, any stack. One phone line.
+        </SecHead>
+        <Panel path="/connect/your-agent" right="6 ways in">
+          <div className="cn-g dots">
+            <ul className="cards">
+              {AGENTS.map(([id, k, p]) => (
+                <li className="cd" key={id}>
+                  <span className="cd-h">
+                    <BrandLogo id={id} size={22} />
+                    <span className="k">{k}</span>
+                  </span>
+                  <p>{p}</p>
+                </li>
+              ))}
+            </ul>
+            <Code
+              path="POST /v1/voice/accounts/{auth_id}/calls"
+              tabs={[
+                ["cURL", CALL_CURL],
+                ["Node", CALL_NODE],
+                ["Python", CALL_PY],
+                ["SIP headers", SIP_HEADERS],
+              ]}
+            />
+          </div>
+          <div className="cn-foot">
+            <div>
+              <h3 className="h3">
+                Programmable telephony for voice AI <small>REST · VoxML · Webhooks</small>
+              </h3>
+              <p className="body">One REST API with an Auth ID and Auth Token, VoxML for call flows, and a webhook at every stage of the call.</p>
+            </div>
+            <Ticks items={["Numbers live once business KYC clears", "Webhooks for ring, answer, status and hangup", "Hand a live AI call to a person with context"]} />
+            <div className="btns">
+              <Btn href={`${DOCS}/getting-started/quickstart`} line>
+                Quickstart
+              </Btn>
+            </div>
+          </div>
+          <div className="langs" aria-label="Works from">
+            <span>cURL</span>
+            <span>Node.js</span>
+            <span>Python</span>
+            <span>Any HTTP client</span>
+            <span>Any SIP stack</span>
+          </div>
+        </Panel>
+      </Sec>
+
+      {/* 02 stack */}
+      <Sec id="stack-h">
+        <SecHead n="02" label="The stack" meta="10 products · 1 account" id="stack-h" split lead="Every building block around an AI call is on one account and one bill, from the number your agent calls from to the WhatsApp that follows up.">
+          Everything around the call, in one place.
+        </SecHead>
+        <div className="stage">
+          {STAGES.map((st) => (
+            <div key={st.id}>
+              <p className="stage-h">
+                <b>{st.label}</b>
+                <span>{st.note}</span>
               </p>
-              <h1 className="hd h1" id="hero-h">
-                <span className="ln">Give your agent</span> <span className="ln">a <em>phone line.</em></span>
-              </h1>
-              <p className="sub">
-                Indian phone numbers, SIP trunking and carrier-grade calling APIs that connect any AI voice agent to real phone networks. We don&rsquo;t build agents, so we never compete with yours.
-              </p>
-              <div className="cta">
-                <a className="kbtn" href={APP}>Start free</a>
-                <a className="obtn" href="/contact/">Book a demo</a>
+              <ul>
+                {PRODUCTS.filter((p) => p.group === st.id).map((p) => (
+                  <li key={p.slug}>
+                    <a href={`/products/${p.slug}/`}>
+                      <Ic name={p.icon} />
+                      <span>
+                        <b>{p.name}</b>
+                        <small>{p.desc}</small>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </Sec>
+
+      {/* 03 how */}
+      <Sec id="how-h">
+        <SecHead n="03" label="How it works" meta="Same day" id="how-h">
+          From sign-up to a live call in four steps.
+        </SecHead>
+        <ol className="steps">
+          {STEPS.map(([t, p], i) => (
+            <li key={t}>
+              <span className="n">0{i + 1}</span>
+              <h3 className="h3">{t}</h3>
+              <p className="small">{p}</p>
+            </li>
+          ))}
+        </ol>
+      </Sec>
+
+      {/* 04 pillars */}
+      <Sec id="pil-h">
+        <SecHead n="04" label="Why TryVox" meta="4 pillars" id="pil-h">
+          What a phone line for an AI agent needs.
+        </SecHead>
+        <div className="pil">
+          <article className="pn">
+            <div className="pn-bar">
+              <span>pillar / 01</span>
+              <span className="r">Media path</span>
+            </div>
+            <div className="pil-v dots" aria-hidden="true">
+              <div className="hops">
+                {["Caller", "Carrier", "TryVox", "Your agent"].map((h, i) => (
+                  <span key={h} style={{ display: "contents" }}>
+                    {i > 0 && <i className="hop-l" />}
+                    <span className={i === 2 ? "hop us" : "hop"}>{h}</span>
+                  </span>
+                ))}
               </div>
-              <dl className="hstat">
-                <div>
-                  <dt>Response time</dt>
-                  <dd>&lt;200ms</dd>
-                </div>
-                <div>
-                  <dt>Platform uptime</dt>
-                  <dd>99.9%</dd>
-                </div>
-                <div>
-                  <dt>Always on</dt>
-                  <dd>24/7</dd>
-                </div>
-              </dl>
             </div>
-            <div className="h2g-r">
-              <CallTrace />
+            <div className="pil-c">
+              <h3 className="h3">A short, direct audio path</h3>
+              <Ticks two items={["SIP, WebRTC or WebSocket", "Any platform or your code", "Events for every leg", "Live handover to a person"]} />
             </div>
-          </div>
-          <StrandField />
-        </section>
-      </div>
-
-      {/* ---------- partners: hairline logo grid ---------- */}
-      <section className="wrap lgx-w" id="works" aria-labelledby="works-h">
-        <div className="lgx">
-          <div className="lgx-l">
-            <p id="works-h">
-              <b>Works with the voice stack</b> you already trust.
-            </p>
-            <a className="tlink" href="/integrations/">
-              All integrations <span aria-hidden="true">→</span>
-            </a>
-          </div>
-          <ul className="lgx-g">
-            {MQ.map((id) => (
-              <li key={id}>
-                <BrandLogo id={id} size={24} />
-              </li>
-            ))}
-          </ul>
+          </article>
+          <article className="pn">
+            <div className="pn-bar">
+              <span>pillar / 02</span>
+              <span className="r">Answer rates</span>
+            </div>
+            <div className="pil-v dots" aria-hidden="true">
+              <div>
+                <div className="cid">
+                  <span className="av">KB</span>
+                  <span>
+                    <b>Kirana Box</b>
+                    <small>Verified business · Delivery update</small>
+                  </span>
+                  <span className="tag ok">Verified</span>
+                </div>
+                <div className="meter">
+                  <span>Number health</span>
+                  <i>
+                    <b />
+                  </i>
+                  <span>Good</span>
+                </div>
+              </div>
+            </div>
+            <div className="pil-c">
+              <h3 className="h3">Calls people actually pick up</h3>
+              <Ticks two items={["Business name on caller ID", "Health tracked per number", "Tired numbers rested", "Local, national, toll-free"]} />
+            </div>
+          </article>
+          <article className="pn">
+            <div className="pn-bar">
+              <span>pillar / 03</span>
+              <span className="r">Compliance</span>
+            </div>
+            <div className="pil-v dots" aria-hidden="true">
+              <ul className="mini">
+                {["Business KYC", "Consent records", "DLT registration", "Verified caller ID"].map((c) => (
+                  <li key={c}>
+                    <span className="l">{c}</span>
+                    <span className="tag ok">Done</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="pil-c">
+              <h3 className="h3">Compliance that's built in</h3>
+              <Ticks two items={["KYC during number setup", "DLT-ready SMS", "Consent kept per campaign", "An audit trail by default"]} />
+            </div>
+          </article>
+          <article className="pn">
+            <div className="pn-bar">
+              <span>pillar / 04</span>
+              <span className="r">Visibility</span>
+            </div>
+            <div className="pil-v dots" aria-hidden="true">
+              <ul className="mini">
+                {[
+                  ["ok", "answered", "agent handled"],
+                  ["", "no-answer", "retry scheduled"],
+                  ["", "busy", "retry scheduled"],
+                  ["warn", "number rested", "health rule"],
+                ].map(([k, t, m]) => (
+                  <li key={t}>
+                    <span className="l">
+                      <i className="dot" style={k === "ok" ? { background: "#16A34A" } : k === "warn" ? { background: "#D97706" } : { background: "var(--line-3)" }} />
+                      {t}
+                    </span>
+                    <span className="m">{m}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="pil-c">
+              <h3 className="h3">A reason for every call</h3>
+              <Ticks two items={["Ring, answer, hangup hooks", "Why a call didn't connect", "Checks before a campaign", "Number rules while dialling"]} />
+            </div>
+          </article>
         </div>
-      </section>
+      </Sec>
 
-      <BringAgent />
-      <Blocks />
-      <LayerStack />
-      <Pillars />
+      {/* 05 compliance */}
+      <ComplianceBlock n="05" />
 
-      {/* ---------- infrastructure only ---------- */}
-      <section className="wrap story" aria-labelledby="story-h">
-        <div className="rv">
-          <p className="tag">
-            <i />
-            Infrastructure only
-          </p>
-          <h2 className="hd h2" id="story-h" style={{ marginTop: 20 }}>
-            We don&rsquo;t build agents. We <em>connect</em> them.
-          </h2>
-          <p className="quote">
-            Some telephony providers now sell their own AI agents. TryVox is <b>only the phone layer</b>, so <b>agent platforms</b> and <b>builders</b> can run on us{" "}
-            <b>without feeding a competitor</b>. Keep the voice stack you already trust, with <b>no lock-in</b>.
-          </p>
-          <a className="obtn" href="#compare">See how we compare</a>
-        </div>
-        <div className="orb rv" role="img" aria-label="Works with Vapi, Retell, LiveKit, Bolna and your own code">
-          <span className="ring" />
-          <span className="ring r2" />
-          <span className="ring r3" />
-          <span className="pulse" />
-          <span className="pulse p2" />
-          <span className="core">
-            <LogoMark />
-          </span>
-          <svg className="spokes" viewBox="0 0 100 100" aria-hidden="true">
-            {SPOKES.map(([x, y]) => (
-              <line x1="50" y1="50" x2={x} y2={y} key={`l${x}`} />
-            ))}
-            {SPOKES.map(([x, y], i) => (
-              <circle r=".9" key={`c${x}`}>
-                <animateMotion dur={`${2.6 + i * 0.3}s`} repeatCount="indefinite" path={`M${x} ${y} L50 50`} />
-              </circle>
-            ))}
-          </svg>
-          <div className="orbit" aria-hidden="true">
-            {ORBIT.map(([l, t, id]) => (
-              <span className="pt" style={{ left: l, top: t }} key={id}>
-                <span className="chip">
-                  <BrandLogo id={id} size={20} />
-                </span>
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- comparison ---------- */}
-      <section className="wrap" id="compare" aria-label="How TryVox compares">
-        <div className="cmpw rv" tabIndex={0} role="region" aria-label="Comparison table (scrolls sideways on small screens)">
+      {/* 06 compare */}
+      <Sec id="vs-h">
+        <SecHead n="06" label="Compare" meta="Voice AI in India" id="vs-h" split lead="Built for teams that already have an agent and need the phone side done properly.">
+          How TryVox compares.
+        </SecHead>
+        <div className="cmp-w" tabIndex={0} role="region" aria-label="Comparison table, scrolls sideways on small screens">
           <table className="cmp">
             <caption className="sr-only">TryVox compared with telephony providers that sell their own AI agents, global CPaaS and local telcos</caption>
             <thead>
               <tr>
-                <th scope="col">
-                  <span className="sr-only">Capability</span>
-                </th>
+                <th scope="col">Capability</th>
                 <th scope="col" className="us">TryVox</th>
-                <th scope="col">Telephony + own AI agents</th>
+                <th scope="col">Telephony + own agents</th>
                 <th scope="col">Global CPaaS</th>
                 <th scope="col">Local telcos</th>
               </tr>
@@ -183,22 +303,53 @@ export default function Home() {
               {COMPARE.map(([label, ...v]) => (
                 <tr key={label}>
                   <th scope="row">{label}</th>
-                  <td className="us">{cellOf(v[0])}</td>
-                  <td>{cellOf(v[1])}</td>
-                  <td>{cellOf(v[2])}</td>
-                  <td>{cellOf(v[3])}</td>
+                  <td className="us">{cell(v[0])}</td>
+                  <td>{cell(v[1])}</td>
+                  <td>{cell(v[2])}</td>
+                  <td>{cell(v[3])}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </section>
+      </Sec>
 
-      <Industries />
-      <UseTicker />
+      {/* 07 pricing */}
+      <Sec id="price-h">
+        <SecHead n="07" label="Pricing" meta="No lock-in" id="price-h" split lead="Simple to start, with rate cards for volume. Voice and messaging land on the same bill.">
+          Pay for the line, then pay per minute.
+        </SecHead>
+        <div className="price">
+          <div>
+            <span className="cap">Setup</span>
+            <span className="v">₹100<small>one time</small></span>
+            <p className="small">Business KYC and your first number.</p>
+          </div>
+          <div>
+            <span className="cap">Number rent</span>
+            <span className="v">₹399<small>/ month</small></span>
+            <p className="small">Local, national or toll-free.</p>
+          </div>
+          <div>
+            <span className="cap">Calls</span>
+            <span className="v">Per min<small>on one bill</small></span>
+            <p className="small">Billed on one account. Rate cards for volume.</p>
+          </div>
+        </div>
+        <div style={{ marginTop: 24 }}>
+          <Estimator />
+        </div>
+        <div className="btns" style={{ marginTop: 24 }}>
+          <Btn href="/pricing/" line>
+            See full pricing
+          </Btn>
+          <Btn href={APP}>Start free</Btn>
+        </div>
+      </Sec>
 
-      <Estimator />
-      <Faq items={FAQ} />
+      <Faq items={FAQ} n="08" />
+      <div style={{ height: "var(--sec)" }} />
+      <CtaBand />
     </main>
   );
 }

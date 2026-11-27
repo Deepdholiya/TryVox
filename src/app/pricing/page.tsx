@@ -1,12 +1,8 @@
-import { Body, meta } from "@/content/pages/pricing";
 import { pageMeta } from "@/lib/seo";
+import { Pricing, pricingMeta } from "@/v3/static-pages";
 
-export const metadata = pageMeta({ ...meta, path: "/pricing/" });
+export const metadata = pageMeta({ ...pricingMeta, path: "/pricing/" });
 
 export default function Page() {
-  return (
-    <main id="top" className="mdk">
-      <Body />
-    </main>
-  );
+  return <Pricing />;
 }

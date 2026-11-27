@@ -1,12 +1,8 @@
-import { Body, meta } from "@/content/pages/integrations";
 import { pageMeta } from "@/lib/seo";
+import { Integrations, integrationsMeta } from "@/v3/static-pages";
 
-export const metadata = pageMeta({ ...meta, path: "/integrations/" });
+export const metadata = pageMeta({ ...integrationsMeta, path: "/integrations/" });
 
 export default function Page() {
-  return (
-    <main id="top">
-      <Body />
-    </main>
-  );
+  return <Integrations />;
 }
