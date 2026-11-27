@@ -1,8 +1,8 @@
 /* Builds llms.txt (index) and llms-full.txt (all page content as Markdown) from the same content the pages render. */
-import { PRODUCT_PAGES } from "@/content/products";
-import { SOLUTION_PAGES } from "@/content/solutions";
+import { PRODUCT_PAGES } from "@/content/v3/products";
+import { SOLUTION_PAGES } from "@/content/v3/solutions";
 import { APP, DOCS, EMAIL, ONE_LINER, PRODUCTS, SITE_URL, SOLUTIONS } from "@/content/site";
-import { text } from "./text";
+const text = (s: string) => s.replace(/[\[\]]/g, "");
 
 const KEY_FACTS = [
   "TryVox is infrastructure only. It does not build or sell AI voice agents, so it never competes with the agent platforms and builders that use it.",
@@ -53,17 +53,19 @@ export function llmsFull() {
   const out: string[] = [llmsIndex(), "---", ""];
   for (const p of PRODUCTS) {
     const d = PRODUCT_PAGES[p.slug];
-    out.push(`## Product: ${d.name}`, `URL: ${SITE_URL}/products/${p.slug}/`, "", `# ${text(d.h1)}`, d.sub, "", d.story.join(" "), "");
-    out.push("### How it fits together", ...d.layers.map((x, i) => `- ${x}: ${d.layerNotes[i]}`), "");
-    for (const pn of d.panels) out.push(`### ${pn.tag}: ${text(pn.heading)}`, pn.body, ...pn.points.map((x) => `- ${x}`), "");
+    out.push(`## Product: ${d.name}`, `URL: ${SITE_URL}/products/${p.slug}/`, "", `# ${text(d.h1)}`, d.lead, "", ...d.stats.map(([k, v]) => `- ${k}: ${v}`), "");
+    out.push(`### ${d.two.heading}`, d.two.lead, "");
+    for (const o of d.two.items) out.push(`#### ${o.tag}: ${o.title}`, o.body, ...o.points.map((x) => `- ${x}`), "");
+    out.push(`### ${d.feat.heading}`, d.feat.lead, "");
+    for (const [cap, t, pts] of d.feat.groups) out.push(`#### ${cap}: ${t}`, ...pts.map((x) => `- ${x}`), "");
     out.push(...faqMd(d.faq), "---", "");
   }
   for (const s of SOLUTIONS) {
     const d = SOLUTION_PAGES[s.slug];
-    out.push(`## Solution: ${d.name}`, `URL: ${SITE_URL}/solutions/${s.slug}/`, "", `# ${d.h1Text}`, d.sub, "");
-    out.push(`### The challenge: ${text(d.challenge)}`, ...d.pains.map(([t, x]) => `- ${t}: ${x}`), "");
-    out.push("### Use cases", ...d.uses.map((u) => `- ${u.tag}: ${text(u.heading)} ${u.body}`), "");
-    out.push("### Example call flow", ...d.flow.map(([k, v], i) => `${i + 1}. ${k}: ${v}. ${text(d.did[i] ?? "")}`), `Outcome: ${text(d.result)}`, "");
+    out.push(`## Solution: ${d.name}`, `URL: ${SITE_URL}/solutions/${s.slug}/`, "", `# ${text(d.h1)}`, d.lead, "");
+    out.push("### The problem", ...d.pains.map(([t, x]) => `- ${t}: ${x}`), "");
+    out.push("### Use cases", ...d.uses.map((u) => `- ${u.tag}: ${u.title}. ${u.body}`), "");
+    out.push("### Example call flow", ...d.flow.map(([k, v], i) => `${i + 1}. ${k}: ${v}`), "");
     out.push(`Products used: ${d.products.map((x) => PRODUCTS.find((p) => p.slug === x)?.name).join(", ")}`, "", ...faqMd(d.faq), "---", "");
   }
   return out.join("\n") + "\n";

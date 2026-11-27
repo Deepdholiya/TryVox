@@ -1,12 +1,8 @@
-import { Body, meta } from "@/content/pages/contact";
 import { pageMeta } from "@/lib/seo";
+import { Contact, contactMeta } from "@/v3/static-pages";
 
-export const metadata = pageMeta({ ...meta, path: "/contact/" });
+export const metadata = pageMeta({ ...contactMeta, path: "/contact/" });
 
 export default function Page() {
-  return (
-    <main id="top">
-      <Body />
-    </main>
-  );
+  return <Contact />;
 }
