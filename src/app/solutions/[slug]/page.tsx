@@ -21,7 +21,7 @@ export default async function SolutionPage({ params }: Params) {
   if (!d) notFound();
   return (
     <>
-      <SolutionView d={d} />
+      <SolutionView d={d} slug={slug} />
       <JsonLd data={serviceLd({ name: `TryVox for ${d.name}`, description: d.description, path: `/solutions/${slug}/`, category: "AI voice calling infrastructure" })} />
     </>
   );

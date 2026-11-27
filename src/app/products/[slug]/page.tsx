@@ -21,7 +21,7 @@ export default async function ProductPage({ params }: Params) {
   if (!d) notFound();
   return (
     <>
-      <ProductView d={d} />
+      <ProductView d={d} slug={slug} />
       <JsonLd data={serviceLd({ name: `TryVox ${d.name}`, description: d.description, path: `/products/${slug}/`, category: "Telephony infrastructure for AI voice agents" })} />
     </>
   );

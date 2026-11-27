@@ -1,10 +1,16 @@
 /* Product and solution page templates. */
 import type { ReactNode } from "react";
-import { PRODUCTS } from "@/content/site";
+import { PRODUCTS, SOLUTIONS } from "@/content/site";
 import type { Product, Visual } from "@/content/v3/products";
 import type { Solution } from "@/content/v3/solutions";
 import { Code } from "./client";
-import { ComplianceBlock, CtaBand, Faq, Hero, Ic, LogoStrip, Panel, Sec, SecHead, Ticks } from "./ui";
+import { ClientLogos, ComplianceBlock, CtaBand, Faq, Ic, PageHero, Panel, Sec, SecHead, Ticks } from "./ui";
+
+/** 7 icons with `mid` in the centre and the others spread around it. */
+function ring(mid: string, others: string[]) {
+  const o = others.filter((x) => x !== mid).slice(0, 6);
+  return [...o.slice(0, 3), mid, ...o.slice(3, 6)];
+}
 
 /** "Words with [highlight]" → ReactNode */
 export function hl(s: string): ReactNode {
@@ -103,15 +109,17 @@ function Related({ slugs, n }: { slugs: string[]; n: string }) {
   );
 }
 
-export function ProductView({ d }: { d: Product }) {
+export function ProductView({ d, slug }: { d: Product; slug: string }) {
+  const me = PRODUCTS.find((p) => p.slug === slug)!;
+  const icons = ring(me.icon, PRODUCTS.filter((p) => p.slug !== slug).map((p) => p.icon));
   let n = 0;
   const nx = () => String(++n).padStart(2, "0");
   return (
     <main id="top">
-      <Hero
+      <PageHero
+        variant="light"
+        icons={icons}
         crumbs={[["Products", "/#stack"], [d.name, ""]]}
-        label={d.label}
-        meta={d.meta}
         chip={
           <>
             <i className="dot" /> {d.chip}
@@ -121,16 +129,16 @@ export function ProductView({ d }: { d: Product }) {
         lead={d.lead}
         stats={d.stats}
         visual={<HeroVisual v={d.visual} />}
-        below={<LogoStrip />}
       />
+      <ClientLogos />
       <Sec id="two-h">
-        <SecHead n={nx()} label={d.two.label} id="two-h" split lead={d.two.lead}>
+        <SecHead n={nx()} label={d.two.label} id="two-h" lead={d.two.lead}>
           {d.two.heading}
         </SecHead>
         <OptionCards items={d.two.items} />
       </Sec>
       <Sec id="feat-h" className="tint">
-        <SecHead n={nx()} label="Capabilities" id="feat-h" split lead={d.feat.lead}>
+        <SecHead n={nx()} label="Capabilities" id="feat-h" lead={d.feat.lead}>
           {d.feat.heading}
         </SecHead>
         <div className="feat">
@@ -145,7 +153,7 @@ export function ProductView({ d }: { d: Product }) {
       </Sec>
       {d.code && (
         <Sec id="code-h">
-          <SecHead n={nx()} label="For developers" id="code-h" split lead="Copy, paste, and swap in your Auth ID and Auth Token from the dashboard.">
+          <SecHead n={nx()} label="For developers" id="code-h" lead="Copy, paste, and swap in your Auth ID and Auth Token from the dashboard.">
             See it in code.
           </SecHead>
           <Code path={d.code.path} tabs={d.code.tabs} foot={<a href="https://docs.tryvox.io">Full reference on docs.tryvox.io ↗</a>} />
@@ -159,13 +167,15 @@ export function ProductView({ d }: { d: Product }) {
   );
 }
 
-export function SolutionView({ d }: { d: Solution }) {
+export function SolutionView({ d, slug }: { d: Solution; slug: string }) {
+  const me = SOLUTIONS.find((x) => x.slug === slug)!;
+  const icons = ring(me.icon, [...d.products.map((x) => PRODUCTS.find((p) => p.slug === x)!.icon), "phone", "chat", "hook", "users"].filter((v, i, a) => a.indexOf(v) === i));
   return (
     <main id="top">
-      <Hero
+      <PageHero
+        variant="dark"
+        icons={icons}
         crumbs={[["Solutions", "/#stack"], [d.name, ""]]}
-        label={d.label}
-        meta={d.meta}
         chip={
           <>
             <i className="dot" /> {d.chip}
@@ -188,8 +198,8 @@ export function SolutionView({ d }: { d: Solution }) {
             </ol>
           </Panel>
         }
-        below={<LogoStrip />}
       />
+      <ClientLogos />
       <Sec id="pain-h">
         <SecHead n="01" label="The problem" id="pain-h">
           Where calls go wrong today.
@@ -205,7 +215,7 @@ export function SolutionView({ d }: { d: Solution }) {
         </div>
       </Sec>
       <Sec id="use-h" className="tint">
-        <SecHead n="02" label="Use cases" id="use-h" split lead="Your agent runs the conversation. TryVox handles the line, the rules and the follow-up.">
+        <SecHead n="02" label="Use cases" id="use-h" lead="Your agent runs the conversation. TryVox handles the line, the rules and the follow-up.">
           What teams run on TryVox.
         </SecHead>
         <OptionCards items={d.uses} />

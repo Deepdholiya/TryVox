@@ -323,3 +323,120 @@ export function CtaBand({ title = "Put your agent on a real phone line today.", 
     </section>
   );
 }
+
+/* ---------- client logos (placeholders until real logos are supplied) ---------- */
+const CLIENT_SLOTS = 6;
+export function ClientLogos({ caption = "Trusted by teams building voice AI in India" }: { caption?: string }) {
+  return (
+    <section className="clients" aria-label="Customers">
+      <div className="wrap clients-in">
+        <p className="clients-cap">{caption}</p>
+        {/* Placeholder marks. Swap each <li> for a customer's logo once approved for use. */}
+        <ul className="clients-l">
+          {Array.from({ length: CLIENT_SLOTS }, (_, i) => (
+            <li key={i}>
+              <span className="cl-mk" aria-hidden="true" />
+              <span>Client logo</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- internal page hero ----------
+   light: centred copy on soft grey with perspective rays and a row of icon tiles (products, company pages)
+   dark:  centred copy on a dark-to-light fade with an arc of round icon nodes (solutions) */
+const RAYS = [-700, -330, -40, 230, 500, 770, 1040, 1330, 1700];
+function Rays() {
+  return (
+    <svg className="ph-rays" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+      {RAYS.map((x) => (
+        <line key={x} x1="500" y1="-420" x2={x} y2="600" vectorEffect="non-scaling-stroke" />
+      ))}
+    </svg>
+  );
+}
+
+function Tiles({ icons }: { icons: string[] }) {
+  const mid = (icons.length - 1) / 2;
+  return (
+    <ul className="ph-tiles" aria-hidden="true">
+      {icons.map((ic, i) => {
+        const d = i - mid;
+        return (
+          <li key={i} className={d === 0 ? "on" : undefined} style={{ ["--d" as string]: d, ["--a" as string]: Math.abs(d) }}>
+            {ICONS[ic]}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function Arc({ icons }: { icons: string[] }) {
+  const n = icons.length;
+  return (
+    <div className="ph-arc" aria-hidden="true">
+      <svg viewBox="0 0 1000 600" preserveAspectRatio="none">
+        <ellipse cx="500" cy="600" rx="420" ry="450" vectorEffect="non-scaling-stroke" />
+        <ellipse cx="500" cy="600" rx="300" ry="330" vectorEffect="non-scaling-stroke" />
+        <ellipse cx="500" cy="600" rx="540" ry="560" vectorEffect="non-scaling-stroke" />
+      </svg>
+      {icons.map((ic, i) => {
+        const a = Math.PI + (Math.PI * (i + 1)) / (n + 1); // spread across the top half
+        const x = 50 + 42 * Math.cos(a);
+        const y = 100 + (450 / 600) * 100 * Math.sin(a);
+        const edge = Math.min(i, n - 1 - i);
+        return (
+          <span key={i} className={`ph-node e${edge}${i === (n - 1) / 2 ? " on" : ""}`} style={{ left: `${x}%`, top: `${y}%` }}>
+            {ICONS[ic]}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+export function PageHero({ variant = "light", icons, crumbs, chip, h1, lead, ctas, note, stats, visual }: {
+  variant?: "light" | "dark"; icons?: string[]; label?: string; meta?: ReactNode; crumbs?: [string, string][]; chip?: ReactNode; h1: ReactNode; lead: ReactNode;
+  ctas?: ReactNode; note?: ReactNode; stats?: [string, ReactNode][]; visual?: ReactNode; below?: ReactNode;
+}) {
+  return (
+    <section className={`ph ph-${variant}${icons?.length ? " has-ic" : ""}`} aria-labelledby="hero-h">
+      {variant === "light" ? <Rays /> : icons?.length ? <Arc icons={icons} /> : null}
+      <div className="wrap ph-in">
+        {variant === "light" && icons?.length ? <Tiles icons={icons} /> : null}
+        {crumbs && <Crumbs items={crumbs} />}
+        {chip && <p className="ph-chip">{chip}</p>}
+        <h1 className="h1" id="hero-h">
+          {h1}
+        </h1>
+        <p className="lead">{lead}</p>
+        <div className="btns">
+          {ctas ?? (
+            <>
+              <Btn href={APP}>Start free</Btn>
+              <Btn href="/contact/" line>
+                Talk to sales
+              </Btn>
+            </>
+          )}
+        </div>
+        {note && <p className="ph-note">{note}</p>}
+        {stats && (
+          <dl className="ph-stats">
+            {stats.map(([k, v]) => (
+              <div key={k}>
+                <dt>{k}</dt>
+                <dd>{v}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        {visual && <div className="ph-vis">{visual}</div>}
+      </div>
+    </section>
+  );
+}

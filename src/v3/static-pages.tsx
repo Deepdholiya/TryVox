@@ -3,7 +3,7 @@ import { BrandLogo } from "@/components/BrandLogo";
 import { AUTH_CURL, CALL_CURL, CALL_NODE, CALL_PY, CALL_RESP } from "@/content/code";
 import { APP, COMPANY, DOCS, EMAIL } from "@/content/site";
 import { Code, Estimator } from "./client";
-import { Btn, CtaBand, Faq, Hero, Lbl, LogoStrip, Panel, Rows, Sec, SecHead, Stats, Ticks } from "./ui";
+import { Btn, ClientLogos, CtaBand, Faq, PageHero, Lbl, LogoStrip, Panel, Rows, Sec, SecHead, Stats, Ticks } from "./ui";
 
 const D = DOCS;
 const end = (
@@ -18,7 +18,9 @@ export const pricingMeta = { title: "Pricing: Pay-Per-Minute Telephony for AI Vo
 export function Pricing() {
   return (
     <main id="top">
-      <Hero
+      <PageHero
+        variant="light"
+        icons={["chat","phone","sip","rupee","wave","mail","flow"]}
         crumbs={[["Pricing", ""]]}
         label="Pricing"
         meta="No lock-in"
@@ -42,8 +44,9 @@ export function Pricing() {
           </>
         }
       />
+      <ClientLogos />
       <Sec id="plans-h">
-        <SecHead n="01" label="Plans" id="plans-h" split lead="Most teams start on pay as you go and move to a rate card once volume is steady.">
+        <SecHead n="01" label="Plans" id="plans-h" lead="Most teams start on pay as you go and move to a rate card once volume is steady.">
           Two ways to pay.
         </SecHead>
         <div className="plans" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))" }}>
@@ -110,7 +113,7 @@ export function Pricing() {
         </div>
       </Sec>
       <Sec id="est-h">
-        <SecHead n="03" label="Estimate" id="est-h" split lead="Move the sliders to size your minutes and peak calls, then send the numbers to us for a rate card.">
+        <SecHead n="03" label="Estimate" id="est-h" lead="Move the sliders to size your minutes and peak calls, then send the numbers to us for a rate card.">
           Size your line.
         </SecHead>
         <Estimator />
@@ -134,7 +137,9 @@ export const aboutMeta = { title: "About TryVox: Telephony Infrastructure for Vo
 export function About() {
   return (
     <main id="top">
-      <Hero
+      <PageHero
+        variant="light"
+        icons={["phone","sip","wave","users","chat","shield","globe"]}
         crumbs={[["About", ""]]}
         label="About"
         meta="Built in India"
@@ -145,6 +150,7 @@ export function About() {
         }
         lead="Teams can build a great voice agent in a week, then spend months on carriers, KYC and SIP. TryVox exists to close that gap."
       />
+      <ClientLogos />
       <Sec id="why-h">
         <SecHead n="01" label="The problem" id="why-h">
           Four things that slow every voice AI launch.
@@ -165,7 +171,7 @@ export function About() {
         </div>
       </Sec>
       <Sec id="pr-h" className="tint">
-        <SecHead n="02" label="Principles" id="pr-h" split lead="The rules behind every TryVox product.">
+        <SecHead n="02" label="Principles" id="pr-h" lead="The rules behind every TryVox product.">
           Built for production, not prototypes.
         </SecHead>
         <Panel path="/tryvox/principles">
@@ -216,7 +222,9 @@ const INTEG: [string, string, string, string][] = [
 export function Integrations() {
   return (
     <main id="top">
-      <Hero
+      <PageHero
+        variant="light"
+        icons={["phone","sip","wave","bot","code","hook","globe"]}
         crumbs={[["Integrations", ""]]}
         label="Integrations"
         meta="5 platforms + any SIP"
@@ -234,8 +242,8 @@ export function Integrations() {
             </Btn>
           </>
         }
-        below={<LogoStrip ids={["vapi", "retell", "elevenlabs", "livekit", "bolna", "sip-byoc"]} caption="Setup guides for every provider" />}
       />
+      <ClientLogos />
       <Sec id="ag-h">
         <SecHead n="01" label="Agent platforms" id="ag-h">
           Setup guides for every provider.
@@ -292,7 +300,7 @@ export function Integrations() {
         </div>
       </Sec>
       <Sec id="stack-h">
-        <SecHead n="03" label="Voice stack" id="stack-h" split lead="Anything that speaks SIP, WebSocket or HTTP works with TryVox.">
+        <SecHead n="03" label="Voice stack" id="stack-h" lead="Anything that speaks SIP, WebSocket or HTTP works with TryVox.">
           Works with the rest of your stack too.
         </SecHead>
         <ul className="logos" aria-label="Voice stack">
@@ -319,7 +327,9 @@ const DOC_LINKS: [string, [string, string][]][] = [
 export function Developers() {
   return (
     <main id="top">
-      <Hero
+      <PageHero
+        variant="light"
+        icons={["sip","hook","wave","code","doc","key","flow"]}
         crumbs={[["Developers", ""]]}
         label="Developers"
         meta="REST · VoxML · Webhooks"
@@ -344,6 +354,7 @@ export function Developers() {
         }
         visual={<Code path="POST /v1/voice/accounts/{auth_id}/calls" tabs={[["cURL", CALL_CURL], ["Node", CALL_NODE], ["Python", CALL_PY]]} />}
       />
+      <ClientLogos />
       <Sec id="qs-h">
         <SecHead n="01" label="Quickstart" id="qs-h">
           Four steps to a live call.
@@ -367,7 +378,7 @@ export function Developers() {
         </ol>
       </Sec>
       <Sec id="io-h" className="tint">
-        <SecHead n="02" label="Auth and responses" id="io-h" split lead="Every request uses HTTP Basic auth. Every call returns a request_uuid and a status you can follow through webhooks.">
+        <SecHead n="02" label="Auth and responses" id="io-h" lead="Every request uses HTTP Basic auth. Every call returns a request_uuid and a status you can follow through webhooks.">
           Predictable in, predictable out.
         </SecHead>
         <div className="opts">
@@ -437,7 +448,9 @@ export function Contact() {
   ];
   return (
     <main id="top">
-      <Hero
+      <PageHero
+        variant="light"
+        icons={["phone","chat","users","mail","doc","globe","rupee"]}
         crumbs={[["Contact", ""]]}
         label="Contact"
         meta="Replies by email"
@@ -474,6 +487,7 @@ export function Contact() {
           </Panel>
         }
       />
+      <ClientLogos />
       <Sec id="ways-h" className="tint">
         <SecHead n="01" label="Ways to reach us" id="ways-h">
           Pick what you need.
@@ -501,7 +515,8 @@ export function Contact() {
 export function NotFoundView() {
   return (
     <main id="top">
-      <Hero
+      <PageHero
+        variant="light"
         label="404"
         meta="Page not found"
         h1={

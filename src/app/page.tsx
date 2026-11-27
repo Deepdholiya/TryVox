@@ -3,8 +3,8 @@ import { BrandLogo } from "@/components/BrandLogo";
 import { CALL_CURL, CALL_NODE, CALL_PY, SIP_HEADERS } from "@/content/code";
 import { APP, DOCS, PRODUCTS, STAGES } from "@/content/site";
 import { pageMeta } from "@/lib/seo";
-import { CallTrace, Code, Estimator } from "@/v3/client";
-import { Btn, ComplianceBlock, CtaBand, Faq, Hero, Ic, LogoStrip, Panel, Sec, SecHead, Ticks } from "@/v3/ui";
+import { CallTrace, Code, ConnectWays, Estimator } from "@/v3/client";
+import { Btn, ClientLogos, ComplianceBlock, CtaBand, Faq, Hero, Ic, LogoStrip, Panel, Sec, SecHead, Ticks } from "@/v3/ui";
 
 export const metadata: Metadata = pageMeta({
   title: "TryVox: Telephony Infrastructure for Voice AI in India",
@@ -72,47 +72,94 @@ export default function Home() {
           ["Support", <>24/7</>],
         ]}
         visual={<CallTrace />}
-        below={<LogoStrip />}
       />
+      <ClientLogos />
 
       {/* 01 connect */}
       <Sec id="connect-h">
-        <SecHead n="01" label="Bring your agent" meta="No SIP setup needed" id="connect-h" split lead="Bind a number in a few clicks, point a SIP trunk at your stack, or drive calls from code.">
+        <SecHead n="01" label="Bring your agent" meta="3 ways in" id="connect-h" lead="Keep the agent you already built. Bind it to a number in a few clicks, point a SIP trunk at your stack, or place calls from your own code.">
           Any agent, any stack. One phone line.
         </SecHead>
-        <div className="cn2">
-          <div className="cn2-l">
-            <ul className="lg-tiles" aria-label="Agent platforms and transports">
-              {AGENTS.map(([id, k]) => (
-                <li key={id}>
-                  <BrandLogo id={id} size={22} />
-                  <span className="k">{k}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="cn2-note">
-              <h3 className="h3">Switch platforms, keep your numbers.</h3>
-              <p className="body">Bindings live on TryVox, so moving from one agent platform to another never means porting a number.</p>
-              <a className="tl" href={`${DOCS}/getting-started/quickstart`}>
-                Read the quickstart →
-              </a>
-            </div>
-          </div>
-          <Code
-            path="POST /v1/voice/accounts/{auth_id}/calls"
-            tabs={[
-              ["cURL", CALL_CURL],
-              ["Node", CALL_NODE],
-              ["Python", CALL_PY],
-              ["SIP headers", SIP_HEADERS],
-            ]}
-          />
-        </div>
+        <ConnectWays
+          ways={[
+            {
+              k: "No SIP setup",
+              t: "Agent binding",
+              p: "Connect a number to Vapi, Retell, ElevenLabs, LiveKit or Bolna from the dashboard.",
+              pts: ["Answers calls the moment you confirm", "Switch platforms, keep the number", "Inbound today, outbound through bindings in progress"],
+              link: ["Connect a number", `${DOCS}/ai-agents/connect-number`],
+              panel: (
+                <Panel path="/ai-agents/connect-number" right="Bound" ok>
+                  <div className="bind dots">
+                    <div className="bind-num">
+                      <span className="cap">TryVox number</span>
+                      <b>+91 80 4718 2290</b>
+                      <span className="tag ok">KYC verified</span>
+                    </div>
+                    <div className="bind-line" aria-hidden="true" />
+                    <ul className="bind-pl">
+                      {["vapi", "retell", "elevenlabs", "livekit", "bolna"].map((id, k) => (
+                        <li key={id} className={k === 0 ? "on" : undefined}>
+                          <BrandLogo id={id} size={20} />
+                          {k === 0 && <span className="tag ok">Bound</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </Panel>
+              ),
+            },
+            {
+              k: "Any SIP stack",
+              t: "SIP trunk",
+              p: "Point LiveKit, a PBX or your own SIP client at a TryVox trunk.",
+              pts: ["Credentials and IP allow-lists per trunk", "Channel limits you set", "Bring your own carrier"],
+              link: ["Create a trunk", `${DOCS}/sip-trunking/create-trunk`],
+              panel: (
+                <Panel path="/sip-trunking/trunks/livekit-prod" right="Active" ok>
+                  <dl className="kv">
+                    {[
+                      ["Directions", "Inbound + outbound"],
+                      ["Authentication", "Credentials + IP ACL"],
+                      ["Channel limit", "Set per trunk"],
+                      ["Carrier", "TryVox or BYOC"],
+                      ["Numbers", "+91 80 4718 2290"],
+                      ["Events", "ring · answer · hangup"],
+                    ].map(([k, v]) => (
+                      <div key={k}>
+                        <dt className="k">{k}</dt>
+                        <dd className="v">{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </Panel>
+              ),
+            },
+            {
+              k: "Your own code",
+              t: "Voice API",
+              p: "Place and control calls with REST, VoxML and webhooks.",
+              pts: ["HTTP Basic auth with Auth ID and Token", "VoxML: Say, Gather, Dial, Stream", "Signed webhooks for every stage"],
+              link: ["Make your first call", `${DOCS}/voice/make-call`],
+              panel: (
+                <Code
+                  path="POST /v1/voice/accounts/{auth_id}/calls"
+                  tabs={[
+                    ["cURL", CALL_CURL],
+                    ["Node", CALL_NODE],
+                    ["Python", CALL_PY],
+                    ["SIP headers", SIP_HEADERS],
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
       </Sec>
 
       {/* 02 stack */}
       <Sec id="stack-h" className="tint">
-        <SecHead n="02" label="The stack" meta="10 products · 1 account" id="stack-h" split lead="One account and one bill, from the number your agent calls from to the WhatsApp that follows up.">
+        <SecHead n="02" label="The stack" meta="10 products · 1 account" id="stack-h" lead="One account and one bill, from the number your agent calls from to the WhatsApp that follows up.">
           Everything around the call, in one place.
         </SecHead>
         <div className="stage2">
@@ -144,7 +191,7 @@ export default function Home() {
       {/* 03 how */}
       <section className="sec how" aria-labelledby="how-h">
         <div className="wrap">
-          <SecHead n="03" label="How it works" meta="Most teams go live the same day" id="how-h" split lead="Four steps from sign-up to your agent's first real call. Each one happens in the dashboard or through the API.">
+          <SecHead n="03" label="How it works" meta="Most teams go live the same day" id="how-h" lead="Four steps from sign-up to your agent's first real call. Each one happens in the dashboard or through the API.">
             From sign-up to a <span className="grad">live call</span> in four steps.
           </SecHead>
           <ol className="flow4">
@@ -341,7 +388,7 @@ export default function Home() {
 
       {/* 06 compare */}
       <Sec id="vs-h" className="tint">
-        <SecHead n="06" label="Compare" meta="Voice AI in India" id="vs-h" split lead="Built for teams that already have an agent and need the phone side done properly.">
+        <SecHead n="06" label="Compare" meta="Voice AI in India" id="vs-h" lead="Built for teams that already have an agent and need the phone side done properly.">
           How TryVox compares.
         </SecHead>
         <div className="cmp-w" tabIndex={0} role="region" aria-label="Comparison table, scrolls sideways on small screens">
@@ -373,7 +420,7 @@ export default function Home() {
 
       {/* 07 pricing */}
       <Sec id="price-h">
-        <SecHead n="07" label="Pricing" meta="No lock-in" id="price-h" split lead="Simple to start, with rate cards for volume. Voice and messaging land on the same bill.">
+        <SecHead n="07" label="Pricing" meta="No lock-in" id="price-h" lead="Simple to start, with rate cards for volume. Voice and messaging land on the same bill.">
           Pay for the line, then pay per minute.
         </SecHead>
         <div className="price">
