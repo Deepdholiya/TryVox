@@ -178,9 +178,12 @@ export function Header() {
   }, [sheet]);
 
   const cur = (href: string) => (path === href ? "page" : undefined);
+  /* pages whose hero is dark: the transparent header starts with light text */
+  const darkHero = path === "/" || path.startsWith("/solutions/");
+  const cls = ["hdr", scrolled && "scrolled", !scrolled && !sheet && darkHero && "ondk", sheet && "open"].filter(Boolean).join(" ");
 
   return (
-    <header className={scrolled ? "hdr scrolled" : "hdr"}>
+    <header className={cls}>
       <div className="wrap hdr-in">
         <Link className="logo" href="/" aria-label="TryVox home">
           <LogoMark />

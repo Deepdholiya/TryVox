@@ -69,6 +69,114 @@ const cell = (v: string) =>
     v
   );
 
+/* Why TryVox cards. Line art only, so it reads on the dark glass panels. */
+const FEATS: { k: string; t: string; p: string; tags: string[]; href: string; art: React.ReactNode }[] = [
+  {
+    k: "Media path",
+    t: "A short, direct audio path",
+    p: "Calls go from the carrier through TryVox straight to your agent over SIP, WebRTC or WebSocket.",
+    tags: ["SIP", "WebRTC", "WebSocket"],
+    href: "/products/sip-trunking/",
+    art: (
+      <svg viewBox="0 0 320 140">
+        <rect x="16" y="52" width="64" height="36" rx="6" />
+        <rect x="128" y="44" width="64" height="52" rx="6" className="hot" />
+        <rect x="240" y="52" width="64" height="36" rx="6" />
+        <path d="M80 70H128M192 70H240" className="d" />
+        <circle r="4" className="pkt">
+          <animateMotion dur="2.4s" repeatCount="indefinite" path="M80 70H240" />
+        </circle>
+        <path d="M30 66h30M30 74h18M142 60h36M142 70h24M142 80h30M254 66h30M254 74h20" className="ln" />
+      </svg>
+    ),
+  },
+  {
+    k: "Agent binding",
+    t: "Any agent, a few clicks",
+    p: "Bind a number to Vapi, Retell, ElevenLabs, LiveKit or Bolna, and switch without changing the number.",
+    tags: ["Vapi", "Retell", "LiveKit", "Bolna"],
+    href: "/products/ai-agents/",
+    art: (
+      <svg viewBox="0 0 220 140">
+        {[34, 56, 78, 100].map((y) => (
+          <g key={y}>
+            <circle cx="30" cy={y} r="5" />
+            <path d={`M35 ${y} C 90 ${y}, 100 70, 140 70`} className="wire" />
+          </g>
+        ))}
+        <rect x="140" y="40" width="20" height="60" rx="10" className="hot" />
+        <path d="M160 70H200" />
+        <circle cx="200" cy="70" r="2.5" className="fill" />
+      </svg>
+    ),
+  },
+  {
+    k: "Answer rates",
+    t: "Calls people actually pick up",
+    p: "Your verified business name on caller ID, health tracked per number, and tired numbers rested before they lose answers.",
+    tags: ["Caller ID", "Number health", "Rotation"],
+    href: "/products/number-reputation/",
+    art: (
+      <svg viewBox="0 0 260 140">
+        <rect x="104" y="18" width="52" height="104" rx="10" />
+        <path d="M120 30h20" />
+        <rect x="112" y="48" width="36" height="22" rx="3" className="hot" />
+        <path d="M118 80h24M118 88h16" className="ln" />
+        <circle cx="130" cy="70" r="46" className="ring r1" />
+        <circle cx="130" cy="70" r="62" className="ring r2" />
+        <circle cx="130" cy="70" r="78" className="ring r3" />
+      </svg>
+    ),
+  },
+  {
+    k: "Compliance",
+    t: "Compliance that's built in",
+    p: "Business KYC during number setup, DLT-ready SMS and consent kept with every campaign, with a record of each.",
+    tags: ["KYC", "DLT", "Consent", "Verified ID"],
+    href: "/products/compliance/",
+    art: (
+      <svg viewBox="0 0 280 140">
+        <path d="M140 20 L230 52 L140 84 L50 52 Z" className="hot lay l1" />
+        <path d="M140 44 L230 76 L140 108 L50 76 Z" className="lay l2" />
+        <path d="M140 68 L230 100 L140 132 L50 100 Z" className="lay l3" />
+        <path d="M126 50l10 9 18-18" className="ck" />
+      </svg>
+    ),
+  },
+  {
+    k: "Visibility",
+    t: "A reason for every call",
+    p: "Ring, answer and hangup webhooks, recordings on request, and a clear reason when a call didn't connect.",
+    tags: ["Webhooks", "Recordings", "Call records"],
+    href: "/products/voice-api/",
+    art: (
+      <svg viewBox="0 0 280 140">
+        <path d="M20 110H260" className="d" />
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((j) => (
+          <rect key={j} x={30 + j * 23} y={110 - [40, 64, 30, 82, 54, 70, 26, 60, 46, 76][j]} width="12" height={[40, 64, 30, 82, 54, 70, 26, 60, 46, 76][j]} rx="2" className="bar" style={{ ["--j" as string]: j }} />
+        ))}
+      </svg>
+    ),
+  },
+  {
+    k: "One account",
+    t: "Voice and messaging together",
+    p: "Follow a call with WhatsApp or SMS from the same account, with one balance and one bill.",
+    tags: ["WhatsApp", "SMS", "RCS"],
+    href: "/products/whatsapp/",
+    art: (
+      <svg viewBox="0 0 260 140">
+        <rect x="40" y="24" width="130" height="44" rx="10" className="b1" />
+        <path d="M60 68v14l14-14" className="b1" />
+        <path d="M58 40h80M58 52h54" className="ln b1" />
+        <rect x="100" y="80" width="120" height="38" rx="10" className="hot b2" />
+        <path d="M200 118v12l-12-12" className="b2" />
+        <path d="M118 94h70M118 104h40" className="ln b2" />
+      </svg>
+    ),
+  },
+];
+
 const FAQ: [string, string][] = [
   [
     "What is TryVox?",
@@ -223,192 +331,39 @@ export default function Home() {
       </Sec>
 
       {/* 02 why */}
-      <Sec id="why-h" className="tint">
-        <SecHead
-          n="02"
-          label="Why TryVox"
-          meta="6 reasons"
-          id="why-h"
-          lead="The six things a phone line for an AI agent needs, built into one account."
-        >
-          What a phone line for an AI agent needs.
-        </SecHead>
-        <div className="why">
-          <article className="pn">
-            <div className="pn-bar">
-              <span>why / 01</span>
-              <span className="r">Media path</span>
-            </div>
-            <div className="why-v dots" aria-hidden="true">
-              <div className="hops">
-                {["Caller", "Carrier", "TryVox", "Your agent"].map((h, i) => (
-                  <span key={h} style={{ display: "contents" }}>
-                    {i > 0 && (
-                      <i className="hop-l" style={{ ["--i" as string]: i }} />
-                    )}
-                    <span className={i === 2 ? "hop us" : "hop"}>{h}</span>
+      <section className="sec feats" aria-labelledby="why-h">
+        <div className="wrap">
+          <SecHead n="02" label="Why TryVox" meta="6 reasons" id="why-h" lead="The six things a phone line for an AI agent needs, built into one account. Hover a card to see how each one works.">
+            What a phone line for an <span className="grad">AI agent needs.</span>
+          </SecHead>
+          <ul className="bento">
+            {FEATS.map((f, i) => (
+              <li key={f.k} className={`bx bx${i + 1}`}>
+                <a href={f.href}>
+                  <span className="bx-k">
+                    0{i + 1} · {f.k}
                   </span>
-                ))}
-              </div>
-            </div>
-            <div className="why-c">
-              <h3 className="h3">A short, direct audio path</h3>
-              <p className="small">
-                SIP, WebRTC or WebSocket from the caller to your agent, with
-                events for every leg.
-              </p>
-            </div>
-          </article>
-          <article className="pn">
-            <div className="pn-bar">
-              <span>why / 02</span>
-              <span className="r">Agent binding</span>
-            </div>
-            <div className="why-v dots" aria-hidden="true">
-              <ul className="bindv">
-                {["vapi", "retell", "elevenlabs", "livekit"].map((id) => (
-                  <li key={id}>
-                    <BrandLogo id={id} size={18} />
-                    <span className="tag ok">Bound</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="why-c">
-              <h3 className="h3">Any agent, a few clicks</h3>
-              <p className="small">
-                Bind a number to Vapi, Retell, ElevenLabs, LiveKit or Bolna, and
-                switch without changing the number.
-              </p>
-            </div>
-          </article>
-          <article className="pn">
-            <div className="pn-bar">
-              <span>why / 03</span>
-              <span className="r">Answer rates</span>
-            </div>
-            <div className="why-v dots" aria-hidden="true">
-              <div>
-                <div className="cid">
-                  <span className="av">KB</span>
-                  <span>
-                    <b>Kirana Box</b>
-                    <small>Verified business · Delivery update</small>
+                  <span className="bx-art" aria-hidden="true">
+                    {f.art}
                   </span>
-                  <span className="tag ok">Verified</span>
-                </div>
-                <div className="meter">
-                  <span>Number health</span>
-                  <i>
-                    <b />
-                  </i>
-                  <span>Good</span>
-                </div>
-              </div>
-            </div>
-            <div className="why-c">
-              <h3 className="h3">Calls people actually pick up</h3>
-              <p className="small">
-                Your business name on caller ID, health tracked per number, and
-                tired numbers rested.
-              </p>
-            </div>
-          </article>
-          <article className="pn">
-            <div className="pn-bar">
-              <span>why / 04</span>
-              <span className="r">Compliance</span>
-            </div>
-            <div className="why-v dots" aria-hidden="true">
-              <ul className="mini ticker">
-                {[
-                  "Business KYC",
-                  "Consent records",
-                  "DLT registration",
-                  "Verified caller ID",
-                ].map((c, i) => (
-                  <li key={c} style={{ ["--i" as string]: i }}>
-                    <span className="l">{c}</span>
-                    <span className="tag ok">Done</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="why-c">
-              <h3 className="h3">Compliance that's built in</h3>
-              <p className="small">
-                KYC during number setup, DLT-ready SMS, and consent kept with
-                every campaign.
-              </p>
-            </div>
-          </article>
-          <article className="pn">
-            <div className="pn-bar">
-              <span>why / 05</span>
-              <span className="r">Visibility</span>
-            </div>
-            <div className="why-v dots" aria-hidden="true">
-              <ul className="mini events">
-                {[
-                  ["ok", "answered", "agent handled"],
-                  ["", "no-answer", "retry scheduled"],
-                  ["", "busy", "retry scheduled"],
-                  ["warn", "number rested", "health rule"],
-                ].map(([k, t, m], i) => (
-                  <li key={t} style={{ ["--i" as string]: i }}>
-                    <span className="l">
-                      <i
-                        className="dot"
-                        style={
-                          k === "ok"
-                            ? { background: "#16A34A" }
-                            : k === "warn"
-                              ? { background: "#D97706" }
-                              : { background: "var(--line-3)" }
-                        }
-                      />
-                      {t}
+                  <span className="bx-t">{f.t}</span>
+                  <span className="bx-more">
+                    <span className="bx-p">{f.p}</span>
+                    <span className="bx-tags">
+                      {f.tags.map((t) => (
+                        <span key={t}>{t}</span>
+                      ))}
                     </span>
-                    <span className="m">{m}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="why-c">
-              <h3 className="h3">A reason for every call</h3>
-              <p className="small">
-                Ring, answer and hangup webhooks, and a clear reason when a call
-                didn't connect.
-              </p>
-            </div>
-          </article>
-          <article className="pn">
-            <div className="pn-bar">
-              <span>why / 06</span>
-              <span className="r">One account</span>
-            </div>
-            <div className="why-v dots" aria-hidden="true">
-              <div className="chatv">
-                <p className="cv-call">
-                  <i className="dot ok" /> Call ended · slot confirmed
-                </p>
-                <p className="cv-b">
-                  Your delivery is booked for tomorrow, 6 to 8 PM.
-                </p>
-                <p className="cv-b me">Thanks!</p>
-                <p className="cv-s">WhatsApp · read</p>
-              </div>
-            </div>
-            <div className="why-c">
-              <h3 className="h3">Voice and messaging together</h3>
-              <p className="small">
-                Follow a call with WhatsApp or SMS from the same account, on one
-                bill.
-              </p>
-            </div>
-          </article>
+                    <span className="bx-go">
+                      Learn more <span aria-hidden="true">→</span>
+                    </span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
-      </Sec>
+      </section>
 
       {/* 03 how */}
       <section className="sec how" aria-labelledby="how-h">
