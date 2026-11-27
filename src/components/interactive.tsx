@@ -7,7 +7,7 @@ import { all, makeCtx, prefersReduced, useDom } from "@/lib/dom";
 import { ThreeField } from "./ThreeField";
 
 /* ---------- hero backdrop: typed telemetry snippets + Three.js field ---------- */
-export function HeroFx({ variant = "wave" }: { variant?: "globe" | "wave" | "none" }) {
+export function HeroFx({ variant = "none" }: { variant?: "globe" | "wave" | "none" }) {
   const ref = useDom<HTMLDivElement>((el, c) => {
     all(el, "span").forEach((sp, idx) => {
       const t = sp.dataset.t || "";

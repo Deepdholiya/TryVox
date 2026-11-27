@@ -52,7 +52,7 @@ export function StrandField() {
           const u = j / 24;
           j ? ctx.lineTo(u * cx, yAt(s, u, cy)) : ctx.moveTo(0, yAt(s, 0, cy));
         }
-        ctx.strokeStyle = "rgba(205,176,255,0.05)";
+        ctx.strokeStyle = "rgba(109,46,230,0.06)";
         ctx.lineWidth = 0.6;
         ctx.stroke();
         for (const o of s.offs) {
@@ -64,9 +64,9 @@ export function StrandField() {
             j ? ctx.lineTo(u * cx, yAt(s, u, cy)) : ctx.moveTo(u * cx, yAt(s, u, cy));
           }
           const g = ctx.createLinearGradient(tail * cx, 0, head * cx, 0);
-          const rgb = s.tone < 0.55 ? "195,162,255" : "243,240,249";
+          const rgb = s.tone < 0.55 ? "109,46,230" : "15,13,20";
           g.addColorStop(0, `rgba(${rgb},0)`);
-          g.addColorStop(1, `rgba(${rgb},${0.35 + head * 0.6})`);
+          g.addColorStop(1, `rgba(${rgb},${0.18 + head * 0.5})`);
           ctx.strokeStyle = g;
           ctx.lineWidth = s.w;
           ctx.stroke();
@@ -74,9 +74,9 @@ export function StrandField() {
       }
       // the single line
       const lg = ctx.createLinearGradient(cx - 70, 0, cx + W * 0.09, 0);
-      lg.addColorStop(0, "rgba(243,240,249,0)");
-      lg.addColorStop(0.35, "rgba(243,240,249,1)");
-      lg.addColorStop(1, "rgba(243,240,249,.85)");
+      lg.addColorStop(0, "rgba(15,13,20,0)");
+      lg.addColorStop(0.35, "rgba(15,13,20,1)");
+      lg.addColorStop(1, "rgba(15,13,20,.85)");
       ctx.beginPath();
       ctx.moveTo(cx - 70, cy);
       ctx.lineTo(cx + W * 0.07, cy);
@@ -95,16 +95,16 @@ export function StrandField() {
         }
         const a = 0.15 + 0.65 * (1 - l / lines);
         const wg = ctx.createLinearGradient(sx, 0, ex, 0);
-        wg.addColorStop(0, `rgba(243,240,249,${a})`);
-        wg.addColorStop(0.6, `rgba(157,97,255,${a})`);
-        wg.addColorStop(1, `rgba(157,97,255,${a * 0.3})`);
+        wg.addColorStop(0, `rgba(15,13,20,${a})`);
+        wg.addColorStop(0.6, `rgba(109,46,230,${a})`);
+        wg.addColorStop(1, `rgba(109,46,230,${a * 0.3})`);
         ctx.strokeStyle = wg;
         ctx.lineWidth = l ? 0.8 : 1.4;
         ctx.stroke();
       }
       const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 46);
-      rg.addColorStop(0, "rgba(195,162,255,.35)");
-      rg.addColorStop(1, "rgba(195,162,255,0)");
+      rg.addColorStop(0, "rgba(109,46,230,.12)");
+      rg.addColorStop(1, "rgba(109,46,230,0)");
       ctx.fillStyle = rg;
       ctx.fillRect(cx - 46, cy - 46, 92, 92);
       if (!reduce && visible && !document.hidden) raf = requestAnimationFrame(draw);
