@@ -12,6 +12,8 @@ export function Footer() {
         ["Documentation", `${DOCS}/`],
         ["Quickstart", `${DOCS}/getting-started/quickstart`],
         ["Integrations", "/integrations/"],
+        ["API reference", `${DOCS}/`],
+        ["FAQ", "/faq/"],
         ["llms.txt", "/llms.txt"],
       ],
     ],
@@ -21,7 +23,18 @@ export function Footer() {
         ["About", "/about/"],
         ["Pricing", "/pricing/"],
         ["Contact", "/contact/"],
+        ["Careers", "/careers/"],
         ["Dashboard", APP],
+      ],
+    ],
+    [
+      "Trust",
+      [
+        ["Security", "/security/"],
+        ["Compliance", "/products/compliance/"],
+        ["Terms of service", "/legal/#terms"],
+        ["Privacy policy", "/legal/#privacy"],
+        ["Acceptable use", "/legal/#acceptable-use"],
       ],
     ],
   ];

@@ -346,86 +346,82 @@ export function ClientLogos({ caption = "Trusted by teams building voice AI in I
 }
 
 /* ---------- internal page hero ----------
-   light: centred copy on soft grey with perspective rays and a row of icon tiles (products, company pages)
-   dark:  centred copy on a dark-to-light fade with an arc of round icon nodes (solutions) */
-const RAYS = [-700, -330, -40, 230, 500, 770, 1040, 1330, 1700];
-function Rays() {
+   Split layout: copy on the left, a blueprint "stage" on the right holding the page's visual
+   (or an icon constellation when there is none), with a spec row underneath.
+   light: products and company pages. dark: solutions. */
+const CELLS = [1, 3, 5, 7, 0, 8, 2, 6]; // 3x3 grid minus the centre: edges first, then corners
+function Constellation({ icons }: { icons: string[] }) {
+  const mid = Math.floor(icons.length / 2);
+  const others = icons.filter((_, i) => i !== mid);
+  const at = (c: number) => [50 + (c % 3) * 100, 50 + Math.floor(c / 3) * 100];
   return (
-    <svg className="ph-rays" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
-      {RAYS.map((x) => (
-        <line key={x} x1="500" y1="-420" x2={x} y2="600" vectorEffect="non-scaling-stroke" />
-      ))}
-    </svg>
-  );
-}
-
-function Tiles({ icons }: { icons: string[] }) {
-  const mid = (icons.length - 1) / 2;
-  return (
-    <ul className="ph-tiles" aria-hidden="true">
-      {icons.map((ic, i) => {
-        const d = i - mid;
-        return (
-          <li key={i} className={d === 0 ? "on" : undefined} style={{ ["--d" as string]: d, ["--a" as string]: Math.abs(d) }}>
-            {ICONS[ic]}
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-function Arc({ icons }: { icons: string[] }) {
-  const n = icons.length;
-  return (
-    <div className="ph-arc" aria-hidden="true">
-      <svg viewBox="0 0 1000 600" preserveAspectRatio="none">
-        <ellipse cx="500" cy="600" rx="420" ry="450" vectorEffect="non-scaling-stroke" />
-        <ellipse cx="500" cy="600" rx="300" ry="330" vectorEffect="non-scaling-stroke" />
-        <ellipse cx="500" cy="600" rx="540" ry="560" vectorEffect="non-scaling-stroke" />
+    <div className="ph-con" aria-hidden="true">
+      <svg viewBox="0 0 300 300">
+        {CELLS.map((c, i) => {
+          const [x, y] = at(c);
+          return <line key={c} x1="150" y1="150" x2={x} y2={y} className={i < others.length ? undefined : "off"} />;
+        })}
+        <circle cx="150" cy="150" r="118" />
       </svg>
-      {icons.map((ic, i) => {
-        const a = Math.PI + (Math.PI * (i + 1)) / (n + 1); // spread across the top half
-        const x = 50 + 42 * Math.cos(a);
-        const y = 100 + (450 / 600) * 100 * Math.sin(a);
-        const edge = Math.min(i, n - 1 - i);
-        return (
-          <span key={i} className={`ph-node e${edge}${i === (n - 1) / 2 ? " on" : ""}`} style={{ left: `${x}%`, top: `${y}%` }}>
-            {ICONS[ic]}
-          </span>
-        );
-      })}
+      {CELLS.map((c, i) => (
+        <span key={c} className={`ph-con-t${others[i] ? "" : " empty"}`} style={{ gridArea: `${Math.floor(c / 3) + 1} / ${(c % 3) + 1}` }}>
+          {others[i] ? ICONS[others[i]] : null}
+        </span>
+      ))}
+      <span className="ph-con-t on" style={{ gridArea: "2 / 2" }}>
+        {ICONS[icons[mid]]}
+      </span>
     </div>
   );
 }
 
-export function PageHero({ variant = "light", icons, crumbs, chip, h1, lead, ctas, note, stats, visual }: {
-  variant?: "light" | "dark"; icons?: string[]; label?: string; meta?: ReactNode; crumbs?: [string, string][]; chip?: ReactNode; h1: ReactNode; lead: ReactNode;
+export function PageHero({ variant = "light", icons, tags, crumbs, chip, h1, lead, ctas, note, stats, visual }: {
+  variant?: "light" | "dark"; icons?: string[]; tags?: [string, string][]; label?: string; meta?: ReactNode; crumbs?: [string, string][]; chip?: ReactNode; h1: ReactNode; lead: ReactNode;
   ctas?: ReactNode; note?: ReactNode; stats?: [string, ReactNode][]; visual?: ReactNode; below?: ReactNode;
 }) {
+  const stage = visual ?? (icons?.length ? <Constellation icons={icons} /> : null);
   return (
-    <section className={`ph ph-${variant}${icons?.length ? " has-ic" : ""}`} aria-labelledby="hero-h">
-      {variant === "light" ? <Rays /> : icons?.length ? <Arc icons={icons} /> : null}
+    <section className={`ph ph-${variant}${stage ? "" : " solo"}`} aria-labelledby="hero-h">
       <div className="wrap ph-in">
-        {variant === "light" && icons?.length ? <Tiles icons={icons} /> : null}
-        {crumbs && <Crumbs items={crumbs} />}
-        {chip && <p className="ph-chip">{chip}</p>}
-        <h1 className="h1" id="hero-h">
-          {h1}
-        </h1>
-        <p className="lead">{lead}</p>
-        <div className="btns">
-          {ctas ?? (
-            <>
-              <Btn href={APP}>Start free</Btn>
-              <Btn href="/contact/" line>
-                Talk to sales
-              </Btn>
-            </>
-          )}
+        <div className="ph-copy">
+          {crumbs && <Crumbs items={crumbs} />}
+          {chip && <p className="ph-chip">{chip}</p>}
+          <h1 className="h1" id="hero-h">
+            {h1}
+          </h1>
+          <p className="lead">{lead}</p>
+          <div className="btns">
+            {ctas ?? (
+              <>
+                <Btn href={APP}>Start free</Btn>
+                <Btn href="/contact/" line>
+                  Talk to sales
+                </Btn>
+              </>
+            )}
+          </div>
+          {note && <p className="ph-note">{note}</p>}
         </div>
-        {note && <p className="ph-note">{note}</p>}
-        {stats && (
+        {stage && (
+          <div className={`ph-stage${visual ? " has-vis" : ""}`}>
+            <span className="ph-corner tl" aria-hidden="true" />
+            <span className="ph-corner br" aria-hidden="true" />
+            {tags?.length ? (
+              <ul className="ph-tags" aria-label="Works with">
+                {tags.slice(0, 3).map(([ic, t], i) => (
+                  <li key={t} className={`t${i}`}>
+                    <span aria-hidden="true">{ICONS[ic]}</span>
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <div className="ph-vis">{stage}</div>
+          </div>
+        )}
+      </div>
+      {stats && (
+        <div className="wrap">
           <dl className="ph-stats">
             {stats.map(([k, v]) => (
               <div key={k}>
@@ -434,9 +430,8 @@ export function PageHero({ variant = "light", icons, crumbs, chip, h1, lead, cta
               </div>
             ))}
           </dl>
-        )}
-        {visual && <div className="ph-vis">{visual}</div>}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

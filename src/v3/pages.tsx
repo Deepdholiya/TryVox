@@ -1,16 +1,12 @@
 /* Product and solution page templates. */
 import type { ReactNode } from "react";
+import { BrandLogo } from "@/components/BrandLogo";
 import { PRODUCTS, SOLUTIONS } from "@/content/site";
+import { PRODUCT_EXTRA } from "@/content/v3/product-extra";
 import type { Product, Visual } from "@/content/v3/products";
 import type { Solution } from "@/content/v3/solutions";
 import { Code } from "./client";
 import { ClientLogos, ComplianceBlock, CtaBand, Faq, Ic, PageHero, Panel, Sec, SecHead, Ticks } from "./ui";
-
-/** 7 icons with `mid` in the centre and the others spread around it. */
-function ring(mid: string, others: string[]) {
-  const o = others.filter((x) => x !== mid).slice(0, 6);
-  return [...o.slice(0, 3), mid, ...o.slice(3, 6)];
-}
 
 /** "Words with [highlight]" → ReactNode */
 export function hl(s: string): ReactNode {
@@ -111,14 +107,16 @@ function Related({ slugs, n }: { slugs: string[]; n: string }) {
 
 export function ProductView({ d, slug }: { d: Product; slug: string }) {
   const me = PRODUCTS.find((p) => p.slug === slug)!;
-  const icons = ring(me.icon, PRODUCTS.filter((p) => p.slug !== slug).map((p) => p.icon));
+  const sib = PRODUCTS.filter((p) => p.slug !== slug && p.group === me.group);
+  const tags = [...sib, ...PRODUCTS.filter((p) => p.slug !== slug && p.group !== me.group)].slice(0, 3).map((p) => [p.icon, p.name] as [string, string]);
+  const x = PRODUCT_EXTRA[slug];
   let n = 0;
   const nx = () => String(++n).padStart(2, "0");
   return (
     <main id="top">
       <PageHero
         variant="light"
-        icons={icons}
+        tags={tags}
         crumbs={[["Products", "/#stack"], [d.name, ""]]}
         chip={
           <>
@@ -131,13 +129,29 @@ export function ProductView({ d, slug }: { d: Product; slug: string }) {
         visual={<HeroVisual v={d.visual} />}
       />
       <ClientLogos />
-      <Sec id="two-h">
+      {x && (
+        <Sec id="how-h">
+          <SecHead n={nx()} label="How it works" id="how-h" lead={`From sign-up to a working setup with ${d.name}.`}>
+            Live in three steps.
+          </SecHead>
+          <ol className="how3">
+            {x.how.map(([t, p], i) => (
+              <li key={t}>
+                <span className="how3-n">0{i + 1}</span>
+                <h3 className="h3">{t}</h3>
+                <p className="small">{p}</p>
+              </li>
+            ))}
+          </ol>
+        </Sec>
+      )}
+      <Sec id="two-h" className={x ? "tint" : undefined}>
         <SecHead n={nx()} label={d.two.label} id="two-h" lead={d.two.lead}>
           {d.two.heading}
         </SecHead>
         <OptionCards items={d.two.items} />
       </Sec>
-      <Sec id="feat-h" className="tint">
+      <Sec id="feat-h" className={x ? undefined : "tint"}>
         <SecHead n={nx()} label="Capabilities" id="feat-h" lead={d.feat.lead}>
           {d.feat.heading}
         </SecHead>
@@ -151,6 +165,49 @@ export function ProductView({ d, slug }: { d: Product; slug: string }) {
           ))}
         </div>
       </Sec>
+      {x && (
+        <Sec id="fit-h" className="tint">
+          <SecHead n={nx()} label="Where it fits" id="fit-h" lead="Works with the agent platform you already use, in the industries that call the most.">
+            Your stack, your industry.
+          </SecHead>
+          <div className="fit">
+            <div className="fit-l">
+              <p className="cap">Works with</p>
+              <ul>
+                {x.works.map((w) => (
+                  <li key={w}>
+                    <BrandLogo id={w} size={22} />
+                  </li>
+                ))}
+                <li className="fit-any">Any SIP stack</li>
+              </ul>
+              <a className="tl" href="/integrations/">
+                All integrations →
+              </a>
+            </div>
+            <div className="fit-r">
+              <p className="cap">Used for</p>
+              <ul>
+                {x.uses.map((u) => {
+                  const so = SOLUTIONS.find((v) => v.slug === u)!;
+                  return (
+                    <li key={u}>
+                      <a href={`/solutions/${u}/`}>
+                        <Ic name={so.icon} />
+                        <span>
+                          <b>{so.name}</b>
+                          <small>{so.desc}</small>
+                        </span>
+                        <span aria-hidden="true">→</span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </Sec>
+      )}
       {d.code && (
         <Sec id="code-h">
           <SecHead n={nx()} label="For developers" id="code-h" lead="Copy, paste, and swap in your Auth ID and Auth Token from the dashboard.">
@@ -169,12 +226,12 @@ export function ProductView({ d, slug }: { d: Product; slug: string }) {
 
 export function SolutionView({ d, slug }: { d: Solution; slug: string }) {
   const me = SOLUTIONS.find((x) => x.slug === slug)!;
-  const icons = ring(me.icon, [...d.products.map((x) => PRODUCTS.find((p) => p.slug === x)!.icon), "phone", "chat", "hook", "users"].filter((v, i, a) => a.indexOf(v) === i));
+  const tags = d.products.slice(0, 3).map((x) => PRODUCTS.find((p) => p.slug === x)!).map((p) => [p.icon, p.name] as [string, string]);
   return (
     <main id="top">
       <PageHero
         variant="dark"
-        icons={icons}
+        tags={tags}
         crumbs={[["Solutions", "/#stack"], [d.name, ""]]}
         chip={
           <>
