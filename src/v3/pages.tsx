@@ -129,7 +129,7 @@ export function ProductView({ d }: { d: Product }) {
         </SecHead>
         <OptionCards items={d.two.items} />
       </Sec>
-      <Sec id="feat-h">
+      <Sec id="feat-h" className="tint">
         <SecHead n={nx()} label="Capabilities" id="feat-h" split lead={d.feat.lead}>
           {d.feat.heading}
         </SecHead>
@@ -204,7 +204,7 @@ export function SolutionView({ d }: { d: Solution }) {
           ))}
         </div>
       </Sec>
-      <Sec id="use-h">
+      <Sec id="use-h" className="tint">
         <SecHead n="02" label="Use cases" id="use-h" split lead="Your agent runs the conversation. TryVox handles the line, the rules and the follow-up.">
           What teams run on TryVox.
         </SecHead>

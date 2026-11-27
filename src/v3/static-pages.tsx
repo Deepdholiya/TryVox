@@ -77,11 +77,11 @@ export function Pricing() {
           </article>
         </div>
       </Sec>
-      <Sec id="inc-h">
+      <Sec id="inc-h" className="tint">
         <SecHead n="02" label="What's included" id="inc-h">
           Every account gets the full stack.
         </SecHead>
-        <div className="cmp-w">
+        <div className="cmp-w" tabIndex={0} role="region" aria-label="Pricing table, scrolls sideways on small screens">
           <table className="cmp" style={{ minWidth: 560 }}>
             <caption className="sr-only">What each charge covers</caption>
             <thead>
@@ -164,7 +164,7 @@ export function About() {
           ))}
         </div>
       </Sec>
-      <Sec id="pr-h">
+      <Sec id="pr-h" className="tint">
         <SecHead n="02" label="Principles" id="pr-h" split lead="The rules behind every TryVox product.">
           Built for production, not prototypes.
         </SecHead>
@@ -259,7 +259,7 @@ export function Integrations() {
           ))}
         </ul>
       </Sec>
-      <Sec id="bind-h">
+      <Sec id="bind-h" className="tint">
         <div className="split2">
           <div>
             <Lbl n="02">How binding works</Lbl>
@@ -366,7 +366,7 @@ export function Developers() {
           ))}
         </ol>
       </Sec>
-      <Sec id="io-h">
+      <Sec id="io-h" className="tint">
         <SecHead n="02" label="Auth and responses" id="io-h" split lead="Every request uses HTTP Basic auth. Every call returns a request_uuid and a status you can follow through webhooks.">
           Predictable in, predictable out.
         </SecHead>
@@ -474,7 +474,7 @@ export function Contact() {
           </Panel>
         }
       />
-      <Sec id="ways-h">
+      <Sec id="ways-h" className="tint">
         <SecHead n="01" label="Ways to reach us" id="ways-h">
           Pick what you need.
         </SecHead>

@@ -128,7 +128,7 @@ export default function Home() {
       </Sec>
 
       {/* 02 stack */}
-      <Sec id="stack-h">
+      <Sec id="stack-h" className="tint">
         <SecHead n="02" label="The stack" meta="10 products · 1 account" id="stack-h" split lead="Every building block around an AI call is on one account and one bill, from the number your agent calls from to the WhatsApp that follows up.">
           Everything around the call, in one place.
         </SecHead>
@@ -174,7 +174,7 @@ export default function Home() {
       </Sec>
 
       {/* 04 pillars */}
-      <Sec id="pil-h">
+      <Sec id="pil-h" className="tint">
         <SecHead n="04" label="Why TryVox" meta="4 pillars" id="pil-h">
           What a phone line for an AI agent needs.
         </SecHead>
@@ -283,7 +283,7 @@ export default function Home() {
       <ComplianceBlock n="05" />
 
       {/* 06 compare */}
-      <Sec id="vs-h">
+      <Sec id="vs-h" className="tint">
         <SecHead n="06" label="Compare" meta="Voice AI in India" id="vs-h" split lead="Built for teams that already have an agent and need the phone side done properly.">
           How TryVox compares.
         </SecHead>
