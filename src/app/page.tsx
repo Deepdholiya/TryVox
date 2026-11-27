@@ -1,10 +1,9 @@
-import { Estimator, Faq, HeroFx, Icon, Integrations, LogoMark } from "@/components";
+import { Estimator, Faq, HeroFx, LogoMark } from "@/components";
 import { BrandLogo } from "@/components/BrandLogo";
-import { CodePanel } from "@/components/interactive";
 import { StrandField } from "@/components/StrandField";
-import { HeroRig, HowItWorks, Industries, LayerStack } from "@/components/home";
-import { CALL_CURL, CALL_NODE, CALL_PY, SIP_HEADERS } from "@/content/code";
-import { APP, DOCS, PRODUCTS, type QA } from "@/content/site";
+import { Industries, LayerStack } from "@/components/home";
+import { BringAgent, Blocks, CallTrace, Pillars, UseTicker } from "@/components/home-v2";
+import { APP, type QA } from "@/content/site";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
@@ -14,19 +13,7 @@ export const metadata = pageMeta({
   path: "/",
 });
 
-const MQ = ["vapi", "retell", "livekit", "bolna", "elevenlabs", "deepgram", "amazon-polly", "whatsapp", "webhooks"];
-
-const STACK: { slug: string; k: string; h: string; p: string; go: string }[] = [
-  { slug: "phone-numbers", k: "Numbers", h: "Phone numbers callers pick up", p: "Local, national, toll-free and 140/160 series numbers, live as soon as business KYC clears.", go: "Get a number" },
-  { slug: "number-reputation", k: "Reputation", h: "Caller IDs people trust", p: "Verified business names, health tracking per number, and automatic rest for tired numbers.", go: "Protect answer rates" },
-  { slug: "sip-trunking", k: "SIP", h: "SIP trunking, set up for you", p: "Create trunks, manage credentials and IP ACLs, and set channel limits. Or bring your own carrier.", go: "Create a trunk" },
-  { slug: "webrtc", k: "WebRTC", h: "Calls from a browser tab", p: "Make and take phone calls in the browser, and hand a live AI call to a human with context.", go: "Call from the browser" },
-  { slug: "ai-agents", k: "Agent Connect", h: "Connect any AI agent", p: "Bind a number to a Vapi, Retell, ElevenLabs, LiveKit or Bolna agent. No SIP setup needed.", go: "Connect an agent" },
-  { slug: "voice-api", k: "Voice API", h: "Voice API & VoxML", p: "Place calls, run conferences and build call flows with Say, Gather, Dial and Stream.", go: "See the API" },
-  { slug: "whatsapp", k: "WhatsApp", h: "WhatsApp messages and calls", p: "Follow up every AI call with a confirmation or payment link, and take WhatsApp calls on the same account.", go: "Explore WhatsApp" },
-  { slug: "sms-rcs", k: "SMS & RCS", h: "DLT SMS and rich RCS", p: "OTPs, reminders and tappable RCS cards, with automatic fallback to SMS.", go: "Send a message" },
-  { slug: "campaign-manager", k: "Campaigns", h: "Outbound that keeps connecting", p: "Pre-launch checks, live number rules and a reason for every call that didn't connect.", go: "Run a campaign" },
-];
+const MQ = ["vapi", "retell", "livekit", "bolna", "elevenlabs", "deepgram", "amazon-polly", "whatsapp", "sip-byoc", "voxml"];
 
 const COMPARE: [string, string, string, string, string][] = [
   ["Infrastructure only, never competes with you", "y", "n", "y", "y"],
@@ -60,19 +47,19 @@ const SPOKES = [[50, 4], [93.7, 35.8], [77, 87.2], [23, 87.2], [6.3, 35.8]];
 export default function Home() {
   return (
     <main id="top">
-      {/* ---------- hero ---------- */}
-      <div className="th hsky" id="hsky">
+      {/* ---------- 01 hero ---------- */}
+      <div className="th hsky v2h" id="hsky">
         <HeroFx variant="none" />
         <section className="hero wrap" aria-labelledby="hero-h">
-          <p className="tag">
-            <i />
-            Telephony infrastructure for voice AI
-          </p>
-          <div className="hero-top">
-            <h1 className="hd h1" id="hero-h">
-              <span className="ln">Give your agent</span> <span className="ln">a <em>phone line.</em></span>
-            </h1>
-            <div className="hero-side">
+          <div className="h2g">
+            <div className="h2g-l">
+              <p className="tag">
+                <i />
+                Telephony infrastructure for voice AI
+              </p>
+              <h1 className="hd h1" id="hero-h">
+                <span className="ln">Give your agent</span> <span className="ln">a <em>phone line.</em></span>
+              </h1>
               <p className="sub">
                 Indian phone numbers, SIP trunking and carrier-grade calling APIs that connect any AI voice agent to real phone networks. We don&rsquo;t build agents, so we never compete with yours.
               </p>
@@ -80,39 +67,54 @@ export default function Home() {
                 <a className="kbtn" href={APP}>Start free</a>
                 <a className="obtn" href="/contact/">Book a demo</a>
               </div>
-              <div className="micro">
-                <span>No lock-in</span>
-                <span>Pay per minute</span>
-                <span>Live in minutes</span>
-              </div>
+              <dl className="hstat">
+                <div>
+                  <dt>Response time</dt>
+                  <dd>&lt;200ms</dd>
+                </div>
+                <div>
+                  <dt>Platform uptime</dt>
+                  <dd>99.9%</dd>
+                </div>
+                <div>
+                  <dt>Always on</dt>
+                  <dd>24/7</dd>
+                </div>
+              </dl>
+            </div>
+            <div className="h2g-r">
+              <CallTrace />
             </div>
           </div>
           <StrandField />
-          <HeroRig />
         </section>
       </div>
 
-      {/* ---------- partners ---------- */}
-      <section className="logos wrap" id="works" aria-label="Works with">
-        <div className="row">
-          <p className="lbl">Works with the voice stack you already trust</p>
-          <div className="marquee">
-            <div className="mq">
-              {[0, 1].map((r) =>
-                MQ.map((id) => (
-                  <span className="it" aria-hidden={r ? true : undefined} key={`${r}${id}`}>
-                    <BrandLogo id={id} size={24} />
-                  </span>
-                )),
-              )}
-            </div>
+      {/* ---------- partners: hairline logo grid ---------- */}
+      <section className="wrap lgx-w" id="works" aria-labelledby="works-h">
+        <div className="lgx">
+          <div className="lgx-l">
+            <p id="works-h">
+              <b>Works with the voice stack</b> you already trust.
+            </p>
+            <a className="tlink" href="/integrations/">
+              All integrations <span aria-hidden="true">→</span>
+            </a>
           </div>
+          <ul className="lgx-g">
+            {MQ.map((id) => (
+              <li key={id}>
+                <BrandLogo id={id} size={24} />
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      <Industries />
+      <BringAgent />
+      <Blocks />
       <LayerStack />
-      <HowItWorks />
+      <Pillars />
 
       {/* ---------- infrastructure only ---------- */}
       <section className="wrap story" aria-labelledby="story-h">
@@ -128,22 +130,6 @@ export default function Home() {
             Some telephony providers now sell their own AI agents. TryVox is <b>only the phone layer</b>, so <b>agent platforms</b> and <b>builders</b> can run on us{" "}
             <b>without feeding a competitor</b>. Keep the voice stack you already trust, with <b>no lock-in</b>.
           </p>
-          <div className="stats">
-            <div>
-              <strong>&lt;200ms</strong>
-              <span>Response time</span>
-            </div>
-            <hr />
-            <div>
-              <strong>99.9%</strong>
-              <span>Platform uptime</span>
-            </div>
-            <hr />
-            <div>
-              <strong>24/7</strong>
-              <span>Always available</span>
-            </div>
-          </div>
           <a className="obtn" href="#compare">See how we compare</a>
         </div>
         <div className="orb rv" role="img" aria-label="Works with Vapi, Retell, LiveKit, Bolna and your own code">
@@ -208,64 +194,8 @@ export default function Home() {
         </div>
       </section>
 
-      <Integrations id="integrations" />
-
-      {/* ---------- the stack ---------- */}
-      <section className="wrap sect" id="stack" aria-labelledby="stack-h">
-        <div className="rv">
-          <p className="tag">
-            <i />
-            The stack
-          </p>
-          <h2 className="hd h2" id="stack-h" style={{ marginTop: 20 }}>
-            Everything your agent needs to <em>reach a phone.</em>
-          </h2>
-          <p className="sub">Nine building blocks on one account and one bill, from the first ring to the follow-up.</p>
-        </div>
-        <div className="grid3">
-          {STACK.map((s) => (
-            <a className="cell rv" href={`/products/${s.slug}/`} key={s.slug}>
-              <span className="k">
-                <Icon name={PRODUCTS.find((p) => p.slug === s.slug)!.icon} />
-                <span>{s.k}</span>
-              </span>
-              <h3>{s.h}</h3>
-              <p>{s.p}</p>
-              <span className="go">
-                {s.go} <span aria-hidden="true">→</span>
-              </span>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------- developers ---------- */}
-      <section className="wrap sect" id="developers" aria-labelledby="dev-h">
-        <div className="devgrid">
-          <div className="rv">
-            <p className="tag">
-              <i />
-              Developers
-            </p>
-            <h2 className="hd h2" id="dev-h" style={{ marginTop: 20 }}>
-              Your first call is a <em>few lines</em> away.
-            </h2>
-            <p className="sub">A REST API at api.tryvox.io with Auth ID and Auth Token, VoxML for call flows, and webhooks for every call event.</p>
-            <div className="devlinks">
-              {[["Quickstart", "/getting-started/quickstart"], ["Make a call", "/voice/make-call"], ["VoxML reference", "/voxml"], ["SIP trunking", "/sip-trunking"], ["AI agents", "/ai-agents"], ["Webhooks", "/getting-started/webhooks"]].map(([t, h]) => (
-                <a href={DOCS + h} key={h}>
-                  {t} <span aria-hidden="true">↗</span>
-                </a>
-              ))}
-            </div>
-          </div>
-          <div className="rv" style={{ minWidth: 0 }}>
-            <CodePanel code={{ curl: ["cURL", CALL_CURL], node: ["Node", CALL_NODE], py: ["Python", CALL_PY], sip: ["Agent SIP headers", SIP_HEADERS] }}>
-              Based on <a href={`${DOCS}/voice/make-call`}>Make a call</a> and <a href={`${DOCS}/ai-agents/connect-number`}>Connect a number</a> in the TryVox docs.
-            </CodePanel>
-          </div>
-        </div>
-      </section>
+      <Industries />
+      <UseTicker />
 
       <Estimator />
       <Faq items={FAQ} />
